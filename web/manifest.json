@@ -1,6 +1,6 @@
 {
-    "name": "desarrollo_frontend",
-    "short_name": "desarrollo_frontend",
+    "name": "godely_front",
+    "short_name": "godely_front",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
