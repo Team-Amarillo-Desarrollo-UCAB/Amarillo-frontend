@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:godely_front/common/color_extension.dart';
 import 'package:godely_front/common_widget/round_button.dart';
+import 'package:godely_front/view/login/login_view.dart';
 import 'package:godely_front/view/on_boarding/startup_view.dart';
 
 class WelcomeView extends StatefulWidget {
@@ -23,7 +24,7 @@ class _WelcomeViewState extends State<WelcomeView> {
               alignment: Alignment.bottomCenter,
               children: [
                 Image.asset(
-                  "assets/img/welcome_top_shape.png",
+                  "assets/img/top-splash.png",
                   width: media.width,
                 ),
                 Image.asset(
@@ -56,7 +57,7 @@ class _WelcomeViewState extends State<WelcomeView> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const StartupView(),//LoginView(),
+                      builder: (context) => const LoginView(),
                     ),
                   );
                 },

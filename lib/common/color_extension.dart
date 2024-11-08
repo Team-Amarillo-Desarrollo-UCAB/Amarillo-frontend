@@ -8,4 +8,6 @@ class TColor {
   static Color get textfield => const Color(0xffF2F2F2);
   static Color get placeholder => const Color(0xffB6B7B7);
   static Color get white => const Color(0xffffffff);
+  static LinearGradient get gradient => const LinearGradient(colors:[Color(0xffFC6011), Color.fromARGB(255, 252, 201, 17)],);
+  static LinearGradient get gradientWhite => const LinearGradient(colors:[Color(0xffffffff), Color(0xffffffff)],);
 }
