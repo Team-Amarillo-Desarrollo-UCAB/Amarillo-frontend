@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:godely_front/common/color_extension.dart';
 import 'package:godely_front/common_widget/round_button.dart';
 import 'package:godely_front/view/login/login_view.dart';
-import 'package:godely_front/view/on_boarding/startup_view.dart';
+
+import 'sing_up_view.dart';
 
 class WelcomeView extends StatefulWidget {
   const WelcomeView({super.key});
@@ -75,7 +76,7 @@ class _WelcomeViewState extends State<WelcomeView> {
                    Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const StartupView(),//SignUpView(),
+                      builder: (context) => const SignUpView(),
                     ),
                   );
                 },
