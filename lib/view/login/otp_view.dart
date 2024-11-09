@@ -30,7 +30,7 @@ class _OTPViewState extends State<OTPView> {
                 height: 64,
               ),
               Text(
-                "We have sent an OTP to your email",
+                "Hemos enviado un código de verificación a tu email",
                 textAlign: TextAlign.center,
                 style: TextStyle(
                     color: TColor.primaryText,
@@ -41,7 +41,7 @@ class _OTPViewState extends State<OTPView> {
                 height: 15,
               ),
               Text(
-                "Please check your email nadinechancay2010@gmail.com\ncontinue to reset your password",
+                "Verifica tu correo nadinechancay2010@gmail.com\n para cambiar tu contraseña",
                 //"Please check your email ${widget.email}\ncontinue to reset your password",
                 textAlign: TextAlign.center,
                 style: TextStyle(
@@ -143,14 +143,14 @@ class _OTPViewState extends State<OTPView> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      "Didn't Received? ",
+                      "¿No lo recibiste? ",
                       style: TextStyle(
                           color: TColor.secondaryText,
                           fontSize: 14,
                           fontWeight: FontWeight.w500),
                     ),
                     Text(
-                      "Click Here",
+                      "Presiona aquí",
                       style: TextStyle(
                           color: TColor.primary,
                           fontSize: 14,

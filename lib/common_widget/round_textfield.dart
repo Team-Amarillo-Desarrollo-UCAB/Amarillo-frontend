@@ -23,7 +23,11 @@ class RoundTextfield extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-          color: bgColor ?? TColor.textfield,
+                border: Border.all(
+          color: Colors.orange, // Set border color to orange
+          width: 1.0, // Adjust border width as needed
+        ),
+          color: TColor.white,
           borderRadius: BorderRadius.circular(25)),
       child: Row(
         children: [
@@ -46,7 +50,7 @@ class RoundTextfield extends StatelessWidget {
                 focusedBorder: InputBorder.none,
                 hintText: hintText,
                 hintStyle: TextStyle(
-                    color: TColor.placeholder,
+                    color: TColor.primary,
                     fontSize: 14,
                     fontWeight: FontWeight.w500),
               ),
@@ -82,7 +86,11 @@ class RoundTitleTextfield extends StatelessWidget {
     return Container(
       height: 55,
       decoration: BoxDecoration(
-          color: bgColor ?? TColor.textfield,
+        border: Border.all(
+          color: Colors.orange, // Set border color to orange
+          width: 1.0, // Adjust border width as needed
+        ),
+          color: TColor.white,
           borderRadius: BorderRadius.circular(25)),
       child: Row(
         children: [
@@ -112,7 +120,7 @@ class RoundTitleTextfield extends StatelessWidget {
                       focusedBorder: InputBorder.none,
                       hintText: hintText,
                       hintStyle: TextStyle(
-                          color: TColor.placeholder,
+                          color: TColor.white,
                           fontSize: 14,
                           fontWeight: FontWeight.w500),
                     ),

@@ -37,7 +37,7 @@ class _WelcomeViewState extends State<WelcomeView> {
               ],
             ),
             SizedBox(
-              height: media.width * 0.05,
+              height: media.width * 0.001,
             ),
             Text(
               "Encuentra los mejores productos\ny vive la experiencia del más \nrápido delivery del país",

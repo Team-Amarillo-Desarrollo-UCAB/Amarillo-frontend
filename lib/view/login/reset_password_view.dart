@@ -29,7 +29,7 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
                 height: 64,
               ),
               Text(
-                "Reset Password",
+                "Cambiar Contraseña",
                 style: TextStyle(
                     color: TColor.primaryText,
                     fontSize: 30,
@@ -41,7 +41,7 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
               ),
 
               Text(
-                "Please enter your email to receive a\n reset code to create a new password via email",
+                "Por favor, ingrese su correo electrónico para recibir un enlace para restablecer su contraseña.",
                 textAlign: TextAlign.center,
                 style: TextStyle(
                     color: TColor.secondaryText,
@@ -52,7 +52,7 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
                 height: 60,
               ),
               RoundTextfield(
-                hintText: "Your Email",
+                hintText: "Tu correo electrónico",
                 controller: txtEmail,
                 keyboardType: TextInputType.emailAddress,
               ),
@@ -60,7 +60,7 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
                 height: 30,
               ),
              
-              RoundButton(title: "Send", onPressed: () {
+              RoundButton(title: "Enviar", onPressed: () {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => NewPasswordView(), ), );
                 //btnSubmit();
                 

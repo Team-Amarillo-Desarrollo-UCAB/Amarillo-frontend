@@ -24,26 +24,46 @@ class _SignUpViewState extends State<SignUpView> {
 
   @override
   Widget build(BuildContext context) {
-
+  var media = MediaQuery.of(context).size;
     return Scaffold(
-      body: SingleChildScrollView(
+      body: Stack( // Use a Stack widget to position the image behind the content
+    children: [
+      // Add the background image as the first child
+      Image.asset(
+        "assets/img/fondologin.png",
+        width: double.infinity,
+        height: double.infinity,
+        fit: BoxFit.cover, 
+      ),
+      
+      SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 25),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const SizedBox(
-                height: 64,
+                height: 80,
+              ),
+              Image.asset(
+                  "assets/img/app-logo.png",
+                  width: media.width*0.70,
+                ),
+              const SizedBox(
+                height: 30,
               ),
               Text(
-                "Sign Up",
+                "Regístrate",
                 style: TextStyle(
-                    color: TColor.primaryText,
+                    color: TColor.primary,
                     fontSize: 30,
                     fontWeight: FontWeight.w800),
               ),
+              const SizedBox(
+                height: 15,
+              ),
               Text(
-                "Add your details to sign up",
+                "Agrega tus detalles para registrarte",
                 style: TextStyle(
                     color: TColor.secondaryText,
                     fontSize: 14,
@@ -53,7 +73,7 @@ class _SignUpViewState extends State<SignUpView> {
                 height: 25,
               ),
               RoundTextfield(
-                hintText: "Name",
+                hintText: "Nombre",
                 controller: txtName,
               ),
               const SizedBox(
@@ -68,7 +88,7 @@ class _SignUpViewState extends State<SignUpView> {
                 height: 25,
               ),
               RoundTextfield(
-                hintText: "Mobile No",
+                hintText: "Número de teléfono",
                 controller: txtMobile,
                 keyboardType: TextInputType.phone,
               ),
@@ -76,14 +96,14 @@ class _SignUpViewState extends State<SignUpView> {
                 height: 25,
               ),
               RoundTextfield(
-                hintText: "Address",
+                hintText: "Dirección",
                 controller: txtAddress,
               ),
               const SizedBox(
                 height: 25,
               ),
               RoundTextfield(
-                hintText: "Password",
+                hintText: "Contraseña",
                 controller: txtPassword,
                 obscureText: true,
               ),
@@ -91,14 +111,14 @@ class _SignUpViewState extends State<SignUpView> {
                 height: 25,
               ),
               RoundTextfield(
-                hintText: "Confirm Password",
+                hintText: "Confirma tu contraseña",
                 controller: txtConfirmPassword,
                 obscureText: true,
               ),
               const SizedBox(
                 height: 25,
               ),
-              RoundButton(title: "Sign Up", onPressed: () {
+              RoundButton(title: "Regístrate", onPressed: () {
                 // btnSignUp();
                 //  Navigator.push(
                 //       context,
@@ -123,14 +143,14 @@ class _SignUpViewState extends State<SignUpView> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      "Already have an Account? ",
+                      "¿Ya tienes una cuenta? ",
                       style: TextStyle(
                           color: TColor.secondaryText,
                           fontSize: 14,
                           fontWeight: FontWeight.w500),
                     ),
                     Text(
-                      "Login",
+                      "Inicia Sesión",
                       style: TextStyle(
                           color: TColor.primary,
                           fontSize: 14,
@@ -143,8 +163,10 @@ class _SignUpViewState extends State<SignUpView> {
           ),
         ),
       ),
-    );
-  }
+    ],
+  ),
+  );
+}
 /*
   //TODO: Action
   void btnSignUp() {

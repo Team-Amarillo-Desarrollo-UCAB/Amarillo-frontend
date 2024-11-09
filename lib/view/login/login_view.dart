@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:godely_front/common/color_extension.dart';
 import 'package:godely_front/common_widget/round_button.dart';
 import 'package:godely_front/common_widget/round_textfield.dart';
-
-import '../../common_widget/round_icon_button.dart';
+import '../main_tabview/main_tabview.dart';
 import 'reset_password_view.dart';
 import 'sing_up_view.dart';
 
@@ -20,59 +19,97 @@ class _LoginViewState extends State<LoginView> {
 
   @override
   Widget build(BuildContext context) {
-//    var media = MediaQuery.of(context).size;
+  var media = MediaQuery.of(context).size;
 
     return Scaffold(
-      body: SingleChildScrollView(
+      
+    body: Stack( // Use a Stack widget to position the image behind the content
+    children: [
+      // Add the background image as the first child
+      Image.asset(
+        "assets/img/fondologin.png",
+        width: double.infinity,
+        height: double.infinity,
+        fit: BoxFit.cover, 
+      ),
+
+      SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 25),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const SizedBox(
-                height: 64,
+                height: 120,
+              ),
+              Image.asset(
+                  "assets/img/app-logo.png",
+                  width: media.width*0.70,
+                ),
+              const SizedBox(
+                height: 20,
               ),
               Text(
                 "Iniciar Sesión",
                 style: TextStyle(
-                    color: TColor.primaryText,
+                    color: TColor.primary,
                     fontSize: 30,
                     fontWeight: FontWeight.w800),
               ),
               Text(
-                "Add your details to login",
+                "Ingresa tus datos",
                 style: TextStyle(
                     color: TColor.secondaryText,
                     fontSize: 14,
                     fontWeight: FontWeight.w500),
               ),
               const SizedBox(
-                height: 25,
+                height: 20,
               ),
+              const SizedBox(
+                height: 50,
+              ),
+              Row(
+                
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Correo Electrónico",
+                      style: TextStyle(
+                        color: TColor.primaryText,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                            ],
+                ),
               RoundTextfield(
-                hintText: "Your Email",
+                hintText: "Tu correo",
                 controller: txtEmail,
                 keyboardType: TextInputType.emailAddress,
               ),
               const SizedBox(
                 height: 25,
               ),
+              Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Contraseña",
+                      style: TextStyle(
+                        color: TColor.primaryText,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                            ],
+                ),
               RoundTextfield(
-                hintText: "Password",
+                hintText: "Contraseña",
                 controller: txtPassword,
                 obscureText: true,
               ),
               const SizedBox(
-                height: 25,
-              ),
-              RoundButton(
-                  title: "Iniciar Sesión",
-                  onPressed: () {
-                    //btnLogin();
-                    
-                  }),
-              const SizedBox(
-                height: 4,
+                height: 10,
               ),
               TextButton(
                 onPressed: () {
@@ -83,44 +120,32 @@ class _LoginViewState extends State<LoginView> {
                     ),
                   );
                 },
-                child: Text(
-                  "Forgot your password?",
-                  style: TextStyle(
-                      color: TColor.secondaryText,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text(
+                      "¿Olvidaste tu contraseña?",
+                      style: TextStyle(
+                        color: TColor.primary,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(
-                height: 30,
+                height: 15,
               ),
-              Text(
-                "or Login With",
-                style: TextStyle(
-                    color: TColor.secondaryText,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500),
-              ),
+              RoundButton(
+                  title: "Iniciar Sesión",
+                  onPressed: () {
+                    Navigator.push(context,  MaterialPageRoute(
+            builder: (context) => const MainTabView(),),);
+                    //btnLogin();
+                  }),
               const SizedBox(
                 height: 30,
-              ),
-              RoundIconButton(
-                icon: "assets/img/facebook_logo.png",
-                title: "Login with Facebook",
-                color: const Color(0xff367FC0),
-                onPressed: () {},
-              ),
-              const SizedBox(
-                height: 25,
-              ),
-              RoundIconButton(
-                icon: "assets/img/google_logo.png",
-                title: "Login with Google",
-                color: const Color(0xffDD4B39),
-                onPressed: () {},
-              ),
-              const SizedBox(
-                height: 80,
               ),
               TextButton(
                 onPressed: () {
@@ -135,19 +160,20 @@ class _LoginViewState extends State<LoginView> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      "Don't have an Account? ",
+                      "¿No tienes una cuenta? ",
                       style: TextStyle(
                           color: TColor.secondaryText,
                           fontSize: 14,
                           fontWeight: FontWeight.w500),
                     ),
                     Text(
-                      "Sign Up",
+                      "Regístrate",
                       style: TextStyle(
                           color: TColor.primary,
                           fontSize: 14,
                           fontWeight: FontWeight.w700),
                     ),
+                    
                   ],
                 ),
               ),
@@ -155,8 +181,10 @@ class _LoginViewState extends State<LoginView> {
           ),
         ),
       ),
-    );
-  }
+    ],
+  ),
+  );
+}
 /*
   //TODO: Action
   void btnLogin() {
