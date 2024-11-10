@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../Carrito/cart_screen.dart';
 import '../categorias/categorias_view.dart';
 import '../../common/color_extension.dart';
 import '../../common_widget/tab_button.dart';
@@ -65,7 +66,7 @@ class _MainTabViewState extends State<MainTabView> {
                   onTap: () {
                     if (selctTab != 1) {
                       selctTab = 1;
-                      //selectPageView = const CartView();
+                      selectPageView = const CartScreen();
                     }
                     if (mounted) {
                       setState(() {});

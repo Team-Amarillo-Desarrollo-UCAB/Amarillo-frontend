@@ -1,9 +1,10 @@
+
 import 'package:flutter/material.dart';
-import 'package:godely_front/common/color_extension.dart';
-import 'package:godely_front/common_widget/round_button.dart';
-import 'package:godely_front/common_widget/round_textfield.dart';
 
 
+import '../../common/color_extension.dart';
+import '../../common_widget/round_button.dart';
+import '../../common_widget/round_textfield.dart';
 import 'login_view.dart';
 
 

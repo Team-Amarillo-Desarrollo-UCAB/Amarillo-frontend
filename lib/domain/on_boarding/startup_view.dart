@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:godely_front/view/login/welcome_view.dart';
+
+import '../login/welcome_view.dart';
 class StartupView extends StatefulWidget {
   const StartupView({super.key});
 

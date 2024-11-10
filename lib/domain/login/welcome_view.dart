@@ -1,8 +1,9 @@
-import 'package:flutter/material.dart';
-import 'package:godely_front/common/color_extension.dart';
-import 'package:godely_front/common_widget/round_button.dart';
-import 'package:godely_front/view/login/login_view.dart';
 
+import 'package:flutter/material.dart';
+
+import '../../common/color_extension.dart';
+import '../../common_widget/round_button.dart';
+import 'login_view.dart';
 import 'sing_up_view.dart';
 
 class WelcomeView extends StatefulWidget {

@@ -1,7 +1,7 @@
+import 'package:desarrollo_frontend/domain/categorias/category_items_view.dart';
 import 'package:flutter/material.dart';
-
-import '../common/color_extension.dart';
-import '../view/categorias/category_items_view.dart';
+import 'package:desarrollo_frontend/common/color_extension.dart';
+//import '../view/categorias/category_items_view.dart';
 
 class CategoryCell extends StatelessWidget {
   final Map cObj;

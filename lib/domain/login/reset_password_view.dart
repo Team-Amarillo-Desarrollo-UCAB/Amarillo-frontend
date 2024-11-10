@@ -1,5 +1,5 @@
+import 'package:desarrollo_frontend/domain/login/new_password_view.dart';
 import 'package:flutter/material.dart';
-import 'package:godely_front/view/login/new_password_view.dart';
 
 import '../../common/color_extension.dart';
 import '../../common_widget/round_button.dart';

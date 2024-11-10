@@ -1,4 +1,4 @@
-package com.amarilloteam.godely_front
+package com.example.desarrollo_frontend
 
 import io.flutter.embedding.android.FlutterActivity
 

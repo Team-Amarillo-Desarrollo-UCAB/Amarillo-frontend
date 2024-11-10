@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:godely_front/view/on_boarding/startup_view.dart';
+
+import 'domain/on_boarding/startup_view.dart';
 
 void main() {
   runApp(const MyApp());
@@ -21,4 +22,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-

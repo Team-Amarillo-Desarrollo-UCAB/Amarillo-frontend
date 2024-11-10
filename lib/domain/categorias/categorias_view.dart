@@ -1,9 +1,11 @@
+
 import 'package:flutter/material.dart';
-import 'package:godely_front/common_widget/title_only.dart';
+
 
 import '../../../common/color_extension.dart';
 import '../../../common_widget/round_textfield.dart';
 import '../../common_widget/category_cell.dart';
+import '../../common_widget/title_only.dart';
 
 class CategoryView extends StatefulWidget {
   const CategoryView({super.key});
