@@ -11,6 +11,7 @@ class ItemDetailsView extends StatefulWidget {
   State<ItemDetailsView> createState() => _ItemDetailsViewState();
 }
 
+
 class _ItemDetailsViewState extends State<ItemDetailsView> {
   double price = 15;
   int qty = 1;

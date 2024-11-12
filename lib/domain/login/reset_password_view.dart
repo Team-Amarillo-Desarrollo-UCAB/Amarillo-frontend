@@ -12,6 +12,7 @@ class ResetPasswordView extends StatefulWidget {
   State<ResetPasswordView> createState() => _ResetPasswordViewState();
 }
 
+
 class _ResetPasswordViewState extends State<ResetPasswordView> {
   TextEditingController txtEmail = TextEditingController();
 

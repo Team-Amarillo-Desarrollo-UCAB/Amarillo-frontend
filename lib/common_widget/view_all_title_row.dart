@@ -7,6 +7,7 @@ class ViewAllTitleRow extends StatelessWidget {
   final VoidCallback onView;
   const ViewAllTitleRow({super.key, required this.title, required this.onView });
 
+
   @override
   Widget build(BuildContext context) {
     return Row(

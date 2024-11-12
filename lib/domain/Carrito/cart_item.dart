@@ -12,6 +12,7 @@ class CartItem {
     required this.description,
     this.quantity = 1,
   });
+  
 
   // Función para incrementar la cantidad
   void incrementQuantity() {

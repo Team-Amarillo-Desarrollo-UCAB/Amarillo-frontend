@@ -14,6 +14,7 @@ class CartItemWidget extends StatelessWidget {
     required this.onRemove,
     required this.onRemoveItem
   });
+  
 
   @override
   Widget build(BuildContext context) {
