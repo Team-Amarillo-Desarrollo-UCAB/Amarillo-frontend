@@ -6,7 +6,6 @@ import '../../common_widget/category_cell.dart';
 import '../../common_widget/most_popular_cell.dart';
 import '../../common_widget/round_textfield.dart';
 import '../../common_widget/view_all_title_row.dart';
-import '../Carrito/cart_item.dart';
 import 'popular_product.dart';
 import 'popular_product_widget.dart';
 
@@ -20,7 +19,6 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   TextEditingController txtSearch = TextEditingController();
-  List<CartItem> globalCartItems = [];
 
 
 
