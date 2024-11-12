@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 
 import '../../common/color_extension.dart';
@@ -5,6 +6,9 @@ import '../../common_widget/category_cell.dart';
 import '../../common_widget/most_popular_cell.dart';
 import '../../common_widget/round_textfield.dart';
 import '../../common_widget/view_all_title_row.dart';
+import '../Carrito/cart_item.dart';
+import 'popular_product.dart';
+import 'popular_product_widget.dart';
 
 
 class HomeView extends StatefulWidget {
@@ -16,6 +20,15 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   TextEditingController txtSearch = TextEditingController();
+  List<CartItem> globalCartItems = [];
+
+
+
+  void onAdd(Product product) {
+  }
+
+  // Actualizar el estado si es necesari
+
 
   List catArr = [
     {"image": "assets/img/comida.png", "name": "Comida"},
@@ -36,6 +49,26 @@ class _HomeViewState extends State<HomeView> {
       "name": "Cesta Basica",
       "price": "102,90",
     },
+  ];
+   final List _product = [
+    Product(
+      image: const NetworkImage('https://web.superboom.net/web/image/product.product/34120/image_128'),
+      name: 'Harina Pan',
+      price: 10.5,
+      description: '1 kg',
+    ),
+    Product(
+      image: const NetworkImage('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQgUqCgTNTnh9nIX_FnzrDfssfSaGMb9PVeMQ&s'),
+      name: 'Nestle - Limón',
+      price: 1.5,
+      description: '120 gr',
+    ),
+    Product(
+      image: const NetworkImage('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQgUqCgTNTnh9nIX_FnzrDfssfSaGMb9PVeMQ&s'),
+      name: 'Nestle - Durazno',
+      price: 1.5,
+      description: '120 gr',
+    ),
   ];
 
 
@@ -180,6 +213,20 @@ class _HomeViewState extends State<HomeView> {
                 child: ViewAllTitleRow(
                   title: "Productos Populares",
                   onView: () {},
+                ),
+              ),
+              SizedBox(
+                height: 200,
+                child: ListView.builder(
+                  padding: const EdgeInsets.symmetric(horizontal: 15),
+                  itemCount: _product.length,
+                  itemBuilder: (context, index) {
+                    final product = _product[index];
+                    return ProductCard(
+                      product: product,
+                      onAdd: () => onAdd(product), // Llamada a la función onAdd
+                    );
+                  },
                 ),
               ),
             ],
