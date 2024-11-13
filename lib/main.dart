@@ -1,20 +1,24 @@
 import 'package:flutter/material.dart';
 
+import 'domain/on_boarding/startup_view.dart';
+
 void main() {
-  runApp(const MainApp());
+  runApp(const MyApp());
 }
 
-class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: Text('Hello World!'),
-        ),
+    return MaterialApp(
+      title: 'GoDely',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        fontFamily: "Metropolis",
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
+      home: const StartupView(),
     );
   }
 }
