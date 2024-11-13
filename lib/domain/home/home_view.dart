@@ -1,5 +1,5 @@
-
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 import '../../common/color_extension.dart';
 import '../../common_widget/category_cell.dart';
@@ -8,7 +8,7 @@ import '../../common_widget/round_textfield.dart';
 import '../../common_widget/view_all_title_row.dart';
 import 'popular_product.dart';
 import 'popular_product_widget.dart';
-
+import '../../infrastructure/product_service.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -19,14 +19,29 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   TextEditingController txtSearch = TextEditingController();
+  List<Product> _product = []; // Cambiar _product a una lista vacía inicialmente
+  final ProductService _productService = ProductService('http://10.0.2.2:3000');
 
-
-
-  void onAdd(Product product) {
+  @override
+  void initState() {
+    super.initState();
+    _fetchProducts(); // Llamar al método de carga de productos cuando se inicia el widget
   }
 
-  // Actualizar el estado si es necesari
+  Future<void> _fetchProducts() async {
+    try {
+      List<Product> products = await _productService.getProducts();
+      setState(() {
+        _product = products;
+      });
+    } catch (error) {
+      print('Error al obtener productos: $error');
+    }
+  }
 
+  void onAdd(Product product) {
+    // Lógica para añadir producto al carrito o realizar otra acción
+  }
 
   List catArr = [
     {"image": "assets/img/comida.png", "name": "Comida"},
@@ -48,27 +63,6 @@ class _HomeViewState extends State<HomeView> {
       "price": "102,90",
     },
   ];
-   final List _product = [
-    Product(
-      image: const NetworkImage('https://web.superboom.net/web/image/product.product/34120/image_128'),
-      name: 'Harina Pan',
-      price: 10.5,
-      description: '1 kg',
-    ),
-    Product(
-      image: const NetworkImage('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQgUqCgTNTnh9nIX_FnzrDfssfSaGMb9PVeMQ&s'),
-      name: 'Nestle - Limón',
-      price: 1.5,
-      description: '120 gr',
-    ),
-    Product(
-      image: const NetworkImage('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQgUqCgTNTnh9nIX_FnzrDfssfSaGMb9PVeMQ&s'),
-      name: 'Nestle - Durazno',
-      price: 1.5,
-      description: '120 gr',
-    ),
-  ];
-
 
   @override
   Widget build(BuildContext context) {
@@ -78,60 +72,50 @@ class _HomeViewState extends State<HomeView> {
           padding: const EdgeInsets.symmetric(vertical: 20),
           child: Column(
             children: [
-              const SizedBox(
-                height: 46,
-              ),
+              const SizedBox(height: 46),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: 
-                Column(
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         ClipOval(
-                              child: Image.asset(
-                                'assets/img/perfil.png',
-                                width: 50,
-                                height: 50,
-                                fit: BoxFit.cover, 
-                              ),
-                            ),
-                        const SizedBox(
-                          width: 10,
+                          child: Image.asset(
+                            'assets/img/perfil.png',
+                            width: 50,
+                            height: 50,
+                            fit: BoxFit.cover,
+                          ),
                         ),
+                        const SizedBox(width: 10),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                        Text(
-                          // "Good morning ${ServiceCall.userPayload[KKey.name] ?? ""}!",
-                          "¡HOLA CARLOS!",
-                          style: TextStyle(
-                              color: TColor.primary,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600),
+                          children: [
+                            Text(
+                              "¡HOLA CARLOS!",
+                              style: TextStyle(
+                                color: TColor.primary,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            Text(
+                              "Sábana Grande, Caracas",
+                              style: TextStyle(
+                                color: TColor.secondaryText,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
                         ),
-                        Text(
-                          "Sábana Grande, Caracas",
-                          style: TextStyle(
-                              color: TColor.secondaryText,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500),
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        )
                       ],
                     ),
                   ],
                 ),
-                  ],
-            ),
-          ),
-              const SizedBox(
-                height: 20,
               ),
+              const SizedBox(height: 20),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: RoundTextfield(
@@ -149,17 +133,14 @@ class _HomeViewState extends State<HomeView> {
                   ),
                 ),
               ),
-              const SizedBox(
-                height: 20,
-              ),
-              
+              const SizedBox(height: 20),
               ClipRRect(
-                borderRadius: BorderRadius.circular(10), // Adjust the radius as needed
+                borderRadius: BorderRadius.circular(10),
                 child: Image.asset(
                   'assets/img/oferta.png',
                   width: 400,
-                height: 180,
-                fit: BoxFit.cover,
+                  height: 180,
+                  fit: BoxFit.cover,
                 ),
               ),
               Padding(
@@ -175,13 +156,10 @@ class _HomeViewState extends State<HomeView> {
                   scrollDirection: Axis.horizontal,
                   padding: const EdgeInsets.symmetric(horizontal: 15),
                   itemCount: catArr.length,
-                  itemBuilder: ((context, index) {
+                  itemBuilder: (context, index) {
                     var cObj = catArr[index] as Map? ?? {};
-                    return CategoryCell(
-                      cObj: cObj,
-                      onTap: () {},
-                    );
-                  }),
+                    return CategoryCell(cObj: cObj, onTap: () {});
+                  },
                 ),
               ),
               Padding(
@@ -197,13 +175,10 @@ class _HomeViewState extends State<HomeView> {
                   scrollDirection: Axis.horizontal,
                   padding: const EdgeInsets.symmetric(horizontal: 15),
                   itemCount: mostPopArr.length,
-                  itemBuilder: ((context, index) {
+                  itemBuilder: (context, index) {
                     var mObj = mostPopArr[index] as Map? ?? {};
-                    return MostPopularCell(
-                      mObj: mObj,
-                      onTap: () {},
-                    );
-                  }),
+                    return MostPopularCell(mObj: mObj, onTap: () {});
+                  },
                 ),
               ),
               Padding(
@@ -222,7 +197,7 @@ class _HomeViewState extends State<HomeView> {
                     final product = _product[index];
                     return ProductCard(
                       product: product,
-                      onAdd: () => onAdd(product), // Llamada a la función onAdd
+                      onAdd: () => onAdd(product),
                     );
                   },
                 ),

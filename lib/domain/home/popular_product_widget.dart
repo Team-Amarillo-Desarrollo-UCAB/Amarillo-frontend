@@ -5,7 +5,6 @@ import '../home/popular_product.dart';
 class ProductCard extends StatelessWidget {
   final Product product;
   final VoidCallback onAdd;
-
   const ProductCard({
     super.key, 
     required this.product,
