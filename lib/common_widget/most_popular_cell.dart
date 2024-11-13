@@ -7,6 +7,7 @@ class MostPopularCell extends StatelessWidget {
   final VoidCallback onTap;
   const MostPopularCell({super.key, required this.mObj, required this.onTap});
 
+
   @override
   Widget build(BuildContext context) {
     return Container(

@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 
+
 class TColor {
   static Color get primary => const Color(0xffFC6011);
   static Color get secondary => const Color.fromARGB(255, 252, 201, 17);

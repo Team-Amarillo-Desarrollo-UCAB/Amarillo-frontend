@@ -10,6 +10,7 @@ import 'sing_up_view.dart';
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
 
+
   @override
   State<LoginView> createState() => _LoginViewState();
 }

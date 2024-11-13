@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../common/color_extension.dart';
 
+
 class TitleOnly extends StatelessWidget {
   final String title;
   final VoidCallback onView;

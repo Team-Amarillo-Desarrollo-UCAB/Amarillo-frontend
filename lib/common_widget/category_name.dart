@@ -10,6 +10,7 @@ class CategoryName extends StatelessWidget {
   final VoidCallback onPressed;
   const CategoryName({super.key, required this.cObj, required this.onTap, required this.onPressed,this.type = RoundButtonType.bgPrimary});
 
+
   @override
   Widget build(BuildContext context) {
     return InkWell(

@@ -6,6 +6,8 @@ import '../../common_widget/category_cell.dart';
 import '../../common_widget/most_popular_cell.dart';
 import '../../common_widget/round_textfield.dart';
 import '../../common_widget/view_all_title_row.dart';
+import '../Carrito/cart_item.dart';
+import '../Carrito/cart_service.dart';
 import 'popular_product.dart';
 import 'popular_product_widget.dart';
 
@@ -19,13 +21,28 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   TextEditingController txtSearch = TextEditingController();
+  final CartService _cartService = CartService();
 
 
 
-  void onAdd(Product product) {
+  void onAdd(CartItem item) async {
+  await _cartService.loadCartItems(); // Carga los elementos del carrito
+  bool isProductInCart = _cartService.cartItems.any((cartItem) => cartItem.name == item.name);// Verifica si el producto ya está en el carrito
+  if (isProductInCart) {
+    CartItem existingItem = _cartService.cartItems.firstWhere((cartItem) => cartItem.name == item.name);
+    existingItem.incrementQuantity();
+  } else {// Si el producto no está en el carrito, lo añade
+    _cartService.cartItems.add(item);
   }
+  await _cartService.saveCartItems(); // Guarda los cambios en el carrito
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text(isProductInCart ? '${item.name} cantidad incrementada' : '${item.name} añadido al carrito'),
+      duration: const Duration(seconds: 2), 
+    ),
+  );
+}
 
-  // Actualizar el estado si es necesari
 
 
   List catArr = [
@@ -48,6 +65,7 @@ class _HomeViewState extends State<HomeView> {
       "price": "102,90",
     },
   ];
+
    final List _product = [
     Product(
       image: const NetworkImage('https://web.superboom.net/web/image/product.product/34120/image_128'),
@@ -222,7 +240,12 @@ class _HomeViewState extends State<HomeView> {
                     final product = _product[index];
                     return ProductCard(
                       product: product,
-                      onAdd: () => onAdd(product), // Llamada a la función onAdd
+                      onAdd: () => onAdd(CartItem(
+                        imageUrl: product.image,
+                        name: product.name,
+                        price: product.price,
+                        description: product.description,
+                      )), // Llamada a la función onAdd
                     );
                   },
                 ),

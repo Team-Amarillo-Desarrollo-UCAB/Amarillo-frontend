@@ -11,6 +11,7 @@ class CategoryItemsView extends StatefulWidget {
   State<CategoryItemsView> createState() => _MenuItemsViewState();
 }
 
+
 class _MenuItemsViewState extends State<CategoryItemsView> {
   TextEditingController txtSearch = TextEditingController();
 

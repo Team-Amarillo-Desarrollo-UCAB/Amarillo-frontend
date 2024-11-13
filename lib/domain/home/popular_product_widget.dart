@@ -12,6 +12,7 @@ class ProductCard extends StatelessWidget {
     required this.onAdd,
   });
 
+
   @override
   Widget build(BuildContext context) {
     return Card(
