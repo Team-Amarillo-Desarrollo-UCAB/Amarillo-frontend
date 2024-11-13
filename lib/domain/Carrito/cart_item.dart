@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class CartItem {
   final dynamic imageUrl;
   final String name;
@@ -12,6 +14,7 @@ class CartItem {
     required this.description,
     this.quantity = 1,
   });
+  
 
   // Función para incrementar la cantidad
   void incrementQuantity() {
@@ -28,4 +31,25 @@ class CartItem {
   void eliminateQuantity() {
     quantity = 0;
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'imageUrl': imageUrl.url,
+      'name': name,
+      'price': price,
+      'description': description,
+      'quantity': quantity,
+    };
+  }
+
+  factory CartItem.fromJson(Map<String, dynamic> json) {
+    return CartItem(
+      imageUrl: NetworkImage(json['imageUrl']),
+      name: json['name'],
+      price: json['price'],
+      description: json['description'],
+      quantity: json['quantity'],
+    );
+  }
 }
+

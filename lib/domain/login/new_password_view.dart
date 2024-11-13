@@ -8,6 +8,7 @@ class NewPasswordView extends StatefulWidget {
   // final Map nObj;
   // const NewPasswordView({super.key, required this.nObj});
 
+
   @override
   State<NewPasswordView> createState() => _NewPasswordViewState();
 }
