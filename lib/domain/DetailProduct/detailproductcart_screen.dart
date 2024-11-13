@@ -1,12 +1,10 @@
-import 'package:desarrollo_frontend/domain/home/popular_product.dart';
+import 'package:desarrollo_frontend/domain/Carrito/cart_item.dart';
 import 'package:flutter/material.dart';
 
-class DetailProductScreen extends StatelessWidget {
-  final Product product;
-  final VoidCallback onAdd;
+class DetailProductCartScreen extends StatelessWidget {
+  final CartItem product; // Recibe un mapa con los datos del producto
 
-  const DetailProductScreen(
-      {super.key, required this.product, required this.onAdd});
+  const DetailProductCartScreen({super.key, required this.product});
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +24,7 @@ class DetailProductScreen extends StatelessWidget {
             ),
           ),
           CircleAvatar(
-              backgroundImage: product.image as ImageProvider<Object>,
+              backgroundImage: product.imageUrl as ImageProvider<Object>,
               radius: 80),
           // Muestra la imagen del producto
           const SizedBox(height: 16),
@@ -64,24 +62,6 @@ class DetailProductScreen extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 16),
-          ElevatedButton(
-            onPressed: onAdd,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.orange,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-            ),
-            child: const Text(
-              'Agregar al carrito',
-              style: TextStyle(
-                fontFamily: 'Inter',
-                fontWeight: FontWeight.w900,
-                fontSize: 15,
-                color: Colors.white,
-              ),
-            ),
-          ),
           const SizedBox.shrink(),
         ],
       ),
