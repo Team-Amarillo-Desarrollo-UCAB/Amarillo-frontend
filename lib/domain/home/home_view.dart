@@ -6,6 +6,7 @@ import '../../common_widget/category_cell.dart';
 import '../../common_widget/most_popular_cell.dart';
 import '../../common_widget/round_textfield.dart';
 import '../../common_widget/view_all_title_row.dart';
+import '../../infrastructure/product_service.dart';
 import '../Carrito/cart_item.dart';
 import '../Carrito/cart_service.dart';
 import 'popular_product.dart';
@@ -21,9 +22,26 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   TextEditingController txtSearch = TextEditingController();
+  List<Product> _product = []; 
   final CartService _cartService = CartService();
+  final ProductService _productService = ProductService('http://10.0.2.2:3000');
 
+  @override
+  void initState() {
+    super.initState();
+    _fetchProducts(); // Llamar al método de carga de productos cuando se inicia el widget
+  }
 
+  Future<void> _fetchProducts() async {
+    try {
+      List<Product> products = await _productService.getProducts();
+      setState(() {
+        _product = products;
+      });
+    } catch (error) {
+      print('Error al obtener productos: $error');
+    }
+  }
 
   void onAdd(CartItem item) async {
   await _cartService.loadCartItems(); // Carga los elementos del carrito
@@ -64,27 +82,6 @@ class _HomeViewState extends State<HomeView> {
       "name": "Cesta Basica",
       "price": "102,90",
     },
-  ];
-
-   final List _product = [
-    Product(
-      image: const NetworkImage('https://web.superboom.net/web/image/product.product/34120/image_128'),
-      name: 'Harina Pan',
-      price: 10.5,
-      description: '1 kg',
-    ),
-    Product(
-      image: const NetworkImage('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQgUqCgTNTnh9nIX_FnzrDfssfSaGMb9PVeMQ&s'),
-      name: 'Nestle - Limón',
-      price: 1.5,
-      description: '120 gr',
-    ),
-    Product(
-      image: const NetworkImage('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQgUqCgTNTnh9nIX_FnzrDfssfSaGMb9PVeMQ&s'),
-      name: 'Nestle - Durazno',
-      price: 1.5,
-      description: '120 gr',
-    ),
   ];
 
 
