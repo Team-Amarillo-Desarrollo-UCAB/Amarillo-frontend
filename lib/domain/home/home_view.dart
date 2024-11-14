@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 import '../../common/color_extension.dart';
@@ -12,7 +11,6 @@ import '../Carrito/cart_service.dart';
 import 'popular_product.dart';
 import 'popular_product_widget.dart';
 
-
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
 
@@ -22,9 +20,10 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   TextEditingController txtSearch = TextEditingController();
-  List<Product> _product = []; 
+  List<Product> _product = [];
   final CartService _cartService = CartService();
-  final ProductService _productService = ProductService('http://10.0.2.2:3000');
+  final ProductService _productService =
+      ProductService('https://amarillo-backend-production.up.railway.app');
 
   @override
   void initState() {
@@ -44,24 +43,28 @@ class _HomeViewState extends State<HomeView> {
   }
 
   void onAdd(CartItem item) async {
-  await _cartService.loadCartItems(); // Carga los elementos del carrito
-  bool isProductInCart = _cartService.cartItems.any((cartItem) => cartItem.name == item.name);// Verifica si el producto ya está en el carrito
-  if (isProductInCart) {
-    CartItem existingItem = _cartService.cartItems.firstWhere((cartItem) => cartItem.name == item.name);
-    existingItem.incrementQuantity();
-  } else {// Si el producto no está en el carrito, lo añade
-    _cartService.cartItems.add(item);
+    await _cartService.loadCartItems(); // Carga los elementos del carrito
+    bool isProductInCart = _cartService.cartItems.any((cartItem) =>
+        cartItem.name ==
+        item.name); // Verifica si el producto ya está en el carrito
+    if (isProductInCart) {
+      CartItem existingItem = _cartService.cartItems
+          .firstWhere((cartItem) => cartItem.name == item.name);
+      existingItem.incrementQuantity();
+    } else {
+      // Si el producto no está en el carrito, lo añade
+      _cartService.cartItems.add(item);
+    }
+    await _cartService.saveCartItems(); // Guarda los cambios en el carrito
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(isProductInCart
+            ? '${item.name} cantidad incrementada'
+            : '${item.name} añadido al carrito'),
+        duration: const Duration(seconds: 2),
+      ),
+    );
   }
-  await _cartService.saveCartItems(); // Guarda los cambios en el carrito
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      content: Text(isProductInCart ? '${item.name} cantidad incrementada' : '${item.name} añadido al carrito'),
-      duration: const Duration(seconds: 2), 
-    ),
-  );
-}
-
-
 
   List catArr = [
     {"image": "assets/img/comida.png", "name": "Comida"},
@@ -84,7 +87,6 @@ class _HomeViewState extends State<HomeView> {
     },
   ];
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -98,52 +100,51 @@ class _HomeViewState extends State<HomeView> {
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: 
-                Column(
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         ClipOval(
-                              child: Image.asset(
-                                'assets/img/perfil.png',
-                                width: 50,
-                                height: 50,
-                                fit: BoxFit.cover, 
-                              ),
-                            ),
+                          child: Image.asset(
+                            'assets/img/perfil.png',
+                            width: 50,
+                            height: 50,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
                         const SizedBox(
                           width: 10,
                         ),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                        Text(
-                          // "Good morning ${ServiceCall.userPayload[KKey.name] ?? ""}!",
-                          "¡HOLA CARLOS!",
-                          style: TextStyle(
-                              color: TColor.primary,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600),
+                          children: [
+                            Text(
+                              // "Good morning ${ServiceCall.userPayload[KKey.name] ?? ""}!",
+                              "¡HOLA CARLOS!",
+                              style: TextStyle(
+                                  color: TColor.primary,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600),
+                            ),
+                            Text(
+                              "Sábana Grande, Caracas",
+                              style: TextStyle(
+                                  color: TColor.secondaryText,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500),
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            )
+                          ],
                         ),
-                        Text(
-                          "Sábana Grande, Caracas",
-                          style: TextStyle(
-                              color: TColor.secondaryText,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500),
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        )
                       ],
                     ),
                   ],
                 ),
-                  ],
-            ),
-          ),
+              ),
               const SizedBox(
                 height: 20,
               ),
@@ -167,14 +168,14 @@ class _HomeViewState extends State<HomeView> {
               const SizedBox(
                 height: 20,
               ),
-              
               ClipRRect(
-                borderRadius: BorderRadius.circular(10), // Adjust the radius as needed
+                borderRadius:
+                    BorderRadius.circular(10), // Adjust the radius as needed
                 child: Image.asset(
                   'assets/img/oferta.png',
                   width: 400,
-                height: 180,
-                fit: BoxFit.cover,
+                  height: 180,
+                  fit: BoxFit.cover,
                 ),
               ),
               Padding(
@@ -241,7 +242,7 @@ class _HomeViewState extends State<HomeView> {
                         imageUrl: product.image,
                         name: product.name,
                         price: product.price,
-                        description: product.description,
+                        description: product.peso,
                       )), // Llamada a la función onAdd
                     );
                   },
