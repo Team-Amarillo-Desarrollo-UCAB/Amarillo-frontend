@@ -242,13 +242,7 @@ class _HomeViewState extends State<HomeView> {
                         name: product.name,
                         price: product.price,
                         description: product.description,
-                      )), // Llamada a la función onAdd
-                      onAdd: () => onAdd(CartItem(
-                        imageUrl: product.image,
-                        name: product.name,
-                        price: product.price,
-                        description: product.description,
-                      )), // Llamada a la función onAdd
+                      )),  // Llamada a la función onAdd
                     );
                   },
                 ),
