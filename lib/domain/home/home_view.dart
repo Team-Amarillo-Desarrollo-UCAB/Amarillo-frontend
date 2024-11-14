@@ -23,7 +23,7 @@ class _HomeViewState extends State<HomeView> {
   List<Product> _product = [];
   final CartService _cartService = CartService();
   final ProductService _productService =
-      ProductService('https://amarillo-backend-production.up.railway.app');
+      ProductService('http://localhost:3000');
 
   @override
   void initState() {
