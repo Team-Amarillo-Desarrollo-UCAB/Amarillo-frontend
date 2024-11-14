@@ -8,6 +8,7 @@ class CategoryCell extends StatelessWidget {
   final VoidCallback onTap;
   const CategoryCell({super.key, required this.cObj, required this.onTap });
 
+
   @override
   Widget build(BuildContext context) {
     return Container(

@@ -15,6 +15,7 @@ class _StartupViewState extends State<StartupView> {
     goWelcomePage();
   }
 
+
   void goWelcomePage() async {
 
       await Future.delayed( const Duration(seconds: 3) );

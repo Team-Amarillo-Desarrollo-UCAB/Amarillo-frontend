@@ -10,6 +10,7 @@ import '../../common_widget/title_only.dart';
 class CategoryView extends StatefulWidget {
   const CategoryView({super.key});
 
+
   @override
   State<CategoryView> createState() => _MenuViewState();
 }
