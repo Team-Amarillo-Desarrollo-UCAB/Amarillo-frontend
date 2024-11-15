@@ -138,8 +138,8 @@ class _CartScreenState extends State<CartScreen> {
                         context: context,
                         builder: (context) => AlertDialog(
                           title: const Text('¡Orden creada con éxito!'),
-                          content: const Text(
-                              'Tu pedido ha sido procesado. Pronto recibirás una confirmación.'),
+                          content: Text(
+                              'Tu pedido ha sido procesado. ID de la orden: ${_cartService.idOrder}. Pronto recibirás una confirmación.'),
                           actions: [
                             TextButton(
                               onPressed: () {
