@@ -56,6 +56,14 @@ class _CartScreenState extends State<CartScreen> {
     });
   }
 
+  void _clearCart() {
+    setState(() {
+      _cartItems.clear();
+      CartService().clearCartItems();
+      
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -124,11 +132,13 @@ class _CartScreenState extends State<CartScreen> {
                 const SizedBox(height: 10),
                 ElevatedButton(
                   onPressed: () {
+                    _clearCart();
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) =>
-                              CheckoutScreen(totalPrice: _totalPrice)),
+                          builder: (context) => CheckoutScreen(
+                              totalItems: _cartItems.length,
+                              totalPrice: _totalPrice)),
                     );
                   },
                   style: ElevatedButton.styleFrom(
@@ -138,7 +148,7 @@ class _CartScreenState extends State<CartScreen> {
                     ),
                   ),
                   child: const Text(
-                    'Proceder al Carrito',
+                    'Proceder a la orden',
                     style: TextStyle(
                       fontFamily: 'Inter',
                       fontWeight: FontWeight.w900,

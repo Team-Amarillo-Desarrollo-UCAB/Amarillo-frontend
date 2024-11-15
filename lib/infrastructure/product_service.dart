@@ -9,28 +9,28 @@ class ProductService {
 
   ProductService(this.baseUrl);
 
-Future<List<Product>> getProducts() async {
-  final response = await http.get(Uri.parse('$baseUrl/product/many'));
+  Future<List<Product>> getProducts() async {
+    final response = await http.get(Uri.parse('$baseUrl/product/many'));
 
-  if (response.statusCode == 200) {
-    final Map<String, dynamic> data = json.decode(response.body);
-    
-    // Convertir el Map a una List de Mapas (cada uno representa un producto)
-    final productsList = data.values.toList();
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
 
-    // Mapear cada producto de la lista a una instancia de Product
-    return productsList.map((json) {
-      final productData = ProductData.fromJson(json);
-      return Product(
-        image: NetworkImage(productData.imageUrl), // Asegúrate de que `imageUrl` esté presente en `ProductData`
-        name: productData.name,
-        price: productData.price,
-        description: '${productData.quantity} ${productData.unitMeasure}',
-      );
-    }).toList();
-  } else {
-    throw Exception('Error al obtener la lista de productos');
+      // Convertir el Map a una List de Mapas (cada uno representa un producto)
+      final productsList = data.values.toList();
+
+      // Mapear cada producto de la lista a una instancia de Product
+      return productsList.map((json) {
+        final productData = ProductData.fromJson(json);
+        return Product(
+            image: NetworkImage(productData
+                .imageUrl), // Asegúrate de que `imageUrl` esté presente en `ProductData`
+            name: productData.name,
+            price: productData.price,
+            description: productData.description,
+            peso: '${productData.quantity} ${productData.unitMeasure}');
+      }).toList();
+    } else {
+      throw Exception('Error al obtener la lista de productos');
+    }
   }
-}
-
 }

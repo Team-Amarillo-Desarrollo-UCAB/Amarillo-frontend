@@ -62,7 +62,7 @@ class ProductCard extends StatelessWidget {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(product.description,
+                              Text(product.peso,
                                   style: const TextStyle(fontSize: 16)),
                               Row(
                                 mainAxisSize: MainAxisSize.min,
