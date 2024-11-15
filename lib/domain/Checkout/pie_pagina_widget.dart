@@ -15,7 +15,7 @@ class ResumenPedido extends StatelessWidget {
     return Container(
         padding: const EdgeInsets.all(1),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -40,26 +40,7 @@ class ResumenPedido extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 3),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                  onPressed: () {},
-                  style:
-                      ElevatedButton.styleFrom(backgroundColor: Colors.orange),
-                  child: const Text(
-                    'Proceder a la orden',
-                    style: TextStyle(
-                      fontFamily: 'Inter',
-                      fontWeight: FontWeight.w600,
-                      fontSize: 12,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ],
-            ),
+
           ],
         ));
   }

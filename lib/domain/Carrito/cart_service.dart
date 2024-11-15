@@ -6,16 +6,17 @@ import 'package:http/http.dart' as http;
 class CartService {
   static final CartService _instance = CartService._internal();
   factory CartService() => _instance;
+  
 
   CartService._internal(); // Constructor privado usando singleton
 
   List<CartItem> _cartItems = [];
   final List<CartItem> initialCartItems = [];
-
+  
   List<CartItem> get cartItems => _cartItems;
 
   String? _idOrder; // Atributo para almacenar el id de la orden
-
+  List<Map<String, dynamic>>? orderItems;
   String? get idOrder => _idOrder; // Getter para obtener el id de la orden
 
   Future<void> loadCartItems() async {
@@ -52,7 +53,7 @@ class CartService {
   }
 
   Future<void> createOrder(List<CartItem> cartItems) async {
-    final List<Map<String, dynamic>> orderItems = cartItems
+    orderItems = cartItems
         .map((item) => {
               'id_producto': item.id_product,
               'nombre_producto': item.name,
