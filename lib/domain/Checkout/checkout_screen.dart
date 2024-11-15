@@ -6,9 +6,10 @@ import 'package:desarrollo_frontend/domain/Checkout/pie_pagina_widget.dart';
 import 'package:flutter/material.dart';
 
 class CheckoutScreen extends StatefulWidget {
+  final int totalItems;
   final double totalPrice;
-
-  const CheckoutScreen({super.key, required this.totalPrice});
+  const CheckoutScreen(
+      {super.key, required this.totalItems, required this.totalPrice});
 
   @override
   CheckoutScreenState createState() => CheckoutScreenState();
@@ -101,7 +102,8 @@ class CheckoutScreenState extends State<CheckoutScreen> {
         ),
       ),
       bottomNavigationBar: BottomAppBar(
-        child: ResumenPedido(totalItems: 4, totalPrice: widget.totalPrice),
+        child: ResumenPedido(
+            totalItems: widget.totalItems, totalPrice: widget.totalPrice),
       ),
     );
   }

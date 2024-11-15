@@ -1,6 +1,8 @@
-import 'package:desarrollo_frontend/domain/categorias/category_items_view.dart';
+
 import 'package:flutter/material.dart';
 import 'package:desarrollo_frontend/common/color_extension.dart';
+
+import '../domain/categorias/category_items_view.dart';
 //import '../view/categorias/category_items_view.dart';
 
 class CategoryCell extends StatelessWidget {
@@ -17,7 +19,7 @@ class CategoryCell extends StatelessWidget {
         onTap: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const CategoryItemsView()),
+            MaterialPageRoute(builder: (context) => const ProductListView()),
           );
         },
         child: Column(
