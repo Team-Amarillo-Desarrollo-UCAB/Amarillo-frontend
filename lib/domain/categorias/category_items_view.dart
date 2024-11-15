@@ -25,8 +25,8 @@ class _ProductListViewState extends State<ProductListView> {
   // Lista de productos que se llena desde el backend
   List<Product> _product = [];
   final CartService _cartService = CartService();
-  final ProductService _productService = ProductService('http://localhost:3000');
-  final ProductServiceSearch _productServiceSearch = ProductServiceSearch('http://localhost:3000');
+  final ProductService _productService = ProductService('https://amarillo-backend-production.up.railway.app');
+  final ProductServiceSearch _productServiceSearch = ProductServiceSearch('https://amarillo-backend-production.up.railway.app');
 
   @override
   void initState() {
