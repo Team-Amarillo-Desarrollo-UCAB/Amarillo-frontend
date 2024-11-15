@@ -24,7 +24,7 @@ class _HomeViewState extends State<HomeView> {
   TextEditingController txtSearch = TextEditingController();
   List<Product> _product = []; 
   final CartService _cartService = CartService();
-  final ProductService _productService = ProductService('http://10.0.2.2:3000');
+  final ProductService _productService = ProductService('https://amarillo-backend-production.up.railway.app');
 
   @override
   void initState() {
