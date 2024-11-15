@@ -10,7 +10,8 @@ class ProductServiceSearch {
   ProductServiceSearch(this.baseUrl);
 
   Future<Product> getProductByName(String productName) async {
-    final response = await http.get(Uri.parse('$baseUrl/product/one/by/name?name=$productName'));
+    final response = await http
+        .get(Uri.parse('$baseUrl/product/one/by/name?name=$productName'));
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(response.body);
@@ -19,7 +20,8 @@ class ProductServiceSearch {
       final productData = ProductData.fromJson(data);
 
       return Product(
-        image: NetworkImage(productData.imageUrl), 
+        id_product: productData.id_product,
+        image: NetworkImage(productData.imageUrl),
         name: productData.name,
         price: productData.price,
         description: productData.description,

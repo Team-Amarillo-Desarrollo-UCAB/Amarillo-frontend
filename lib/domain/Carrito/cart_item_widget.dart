@@ -67,7 +67,7 @@ class CartItemWidget extends StatelessWidget {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(item.description,
+                              Text(item.peso,
                                   style: const TextStyle(fontSize: 16)),
                               Row(
                                 mainAxisSize: MainAxisSize.min,

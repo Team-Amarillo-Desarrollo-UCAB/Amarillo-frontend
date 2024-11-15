@@ -22,7 +22,8 @@ class _HomeViewState extends State<HomeView> {
   TextEditingController txtSearch = TextEditingController();
   List<Product> _product = [];
   final CartService _cartService = CartService();
-  final ProductService _productService = ProductService('https://amarillo-backend-production.up.railway.app');
+  final ProductService _productService =
+      ProductService('https://amarillo-backend-production.up.railway.app');
 
   @override
   void initState() {
@@ -238,11 +239,12 @@ class _HomeViewState extends State<HomeView> {
                     return ProductCard(
                       product: product,
                       onAdd: () => onAdd(CartItem(
-                        imageUrl: product.image,
-                        name: product.name,
-                        price: product.price,
-                        description: product.peso,
-                      )), // Llamada a la función onAdd
+                          id_product: product.id_product,
+                          imageUrl: product.image,
+                          name: product.name,
+                          price: product.price,
+                          description: product.description,
+                          peso: product.peso)), // Llamada a la función onAdd
                     );
                   },
                 ),

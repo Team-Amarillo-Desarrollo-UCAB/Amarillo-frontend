@@ -1,4 +1,5 @@
 class ProductData {
+  final String id_product;
   final String imageUrl;
   final String name;
   final String description;
@@ -7,6 +8,7 @@ class ProductData {
   final double quantity;
 
   ProductData({
+    required this.id_product,
     required this.imageUrl,
     required this.name,
     required this.description,
@@ -17,7 +19,9 @@ class ProductData {
 
   factory ProductData.fromJson(Map<String, dynamic> json) {
     return ProductData(
-      imageUrl: json['image'] ?? 'https://t4.ftcdn.net/jpg/04/99/93/31/360_F_499933117_ZAUBfv3P1HEOsZDrnkbNCt4jc3AodArl.jpg',
+      id_product: json['id_product'] ?? 'no tengo id xd',
+      imageUrl: json['image'] ??
+          'https://t4.ftcdn.net/jpg/04/99/93/31/360_F_499933117_ZAUBfv3P1HEOsZDrnkbNCt4jc3AodArl.jpg',
       name: json['nombre'] ?? 'Nombre no disponible',
       description: json['descripcion'] ?? '',
       price: double.parse(json['precio'] ?? '0'),
