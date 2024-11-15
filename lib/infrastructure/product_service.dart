@@ -22,6 +22,7 @@ class ProductService {
       return productsList.map((json) {
         final productData = ProductData.fromJson(json);
         return Product(
+            id_product: productData.id_product,
             image: NetworkImage(productData
                 .imageUrl), // Asegúrate de que `imageUrl` esté presente en `ProductData`
             name: productData.name,

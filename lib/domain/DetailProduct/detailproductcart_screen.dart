@@ -59,6 +59,15 @@ class DetailProductCartScreen extends StatelessWidget {
                   color: Colors.green,
                 ),
               ),
+              const SizedBox(width: 10),
+              Text(
+                product.peso,
+                style: const TextStyle(
+                  fontFamily: 'Inter',
+                  fontWeight: FontWeight.w900,
+                  fontSize: 18,
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 16),
