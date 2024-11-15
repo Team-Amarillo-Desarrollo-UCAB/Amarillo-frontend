@@ -1,17 +1,13 @@
-import '../Carrito/cart_item.dart';
+import 'order_item.dart';
 
 class Order {
   final String orderId;
-  final List<CartItem> items;
-  final String status;
+  final List<OrderItem> items;
+  final String status = "Procesando la orden";
 
   Order({
     required this.orderId,
-    required this.items,
-    required this.status,
+    required this.items
   });
 
-  double get total {
-    return items.fold(0, (sum, item) => sum + (item.price * item.quantity));
-  }
 }

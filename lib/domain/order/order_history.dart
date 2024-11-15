@@ -2,51 +2,10 @@ import 'package:desarrollo_frontend/common/color_extension.dart';
 import 'package:desarrollo_frontend/common_widget/round_button.dart';
 import 'package:flutter/material.dart';
 import '../Carrito/cart_item.dart';
-import 'order.dart'; // Importa la nueva clase Order
+import 'order.dart'; 
 
 class OrderHistoryScreen extends StatelessWidget {
-  final List<Order> orders = [
-    Order(
-      orderId: "12990234",
-      status: "En Camino",
-      items: [
-        CartItem(
-          name: "Nestle Koko Krunch Breakfast Cereal",
-          price: 50.0,
-          quantity: 2,
-          imageUrl: "https://via.placeholder.com/150",
-          description: "A delicious breakfast cereal",
-        ),
-        CartItem(
-          name: "Fresh Refined Sugar",
-          price: 20.0,
-          quantity: 2,
-          imageUrl: "https://via.placeholder.com/150",
-          description: "Sugar for daily use",
-        ),
-      ],
-    ),
-    Order(
-      orderId: "167868237",
-      status: "Procesando la orden",
-      items: [
-        CartItem(
-          name: "Peanut Butter",
-          price: 80.0,
-          quantity: 2,
-          imageUrl: "https://via.placeholder.com/150",
-          description: "Smooth and creamy peanut butter",
-        ),
-        CartItem(
-          name: "Mozarella Cheese",
-          price: 120.0,
-          quantity: 1,
-          imageUrl: "https://via.placeholder.com/150",
-          description: "Cheese for pizzas and more",
-        ),
-      ],
-    ),
-  ];
+  final List<Order> orders = []; 
 
   OrderHistoryScreen({super.key});
 
