@@ -11,6 +11,8 @@ import '../../common_widget/round_button.dart';
 import '../Carrito/cart_item.dart';
 import '../Carrito/cart_service.dart';
 import '../main_tabview/main_tabview.dart';
+import '../order/order.dart';
+import '../order/order_repository.dart';
 
 class CheckoutScreen extends StatefulWidget {
   final int totalItems;
@@ -25,6 +27,7 @@ class CheckoutScreen extends StatefulWidget {
 }
 
 class CheckoutScreenState extends State<CheckoutScreen> {
+  OrderRepository orderRepository = OrderRepository();
   final List<Direccion> direcciones = [
     Direccion(
       nombre: 'Home "Fiscal"',
@@ -34,7 +37,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
   ];
   void _clearCart() {
     setState(() {
-      widget.listCartItems.clear(); // Use widget.cartService
+      widget.listCartItems.clear(); 
       widget.cartService.clearCartItems();
     });
   }
@@ -139,15 +142,19 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                           actions: [
                             TextButton(
                               onPressed: () {
+                                // orderRepository.addOrder(Order(
+                                //   orderId: widget.cartService.idOrder,
+                                //   items: widget.cartService.orderItems,
+                                // ));
                                 _clearCart();
                                 Navigator.of(context)
                                     .pop(); 
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => MainTabView(
+                                    builder: (context) => MainTabView()//OrderHistoryScreen(orderRepository: orderRepository,
                                     ),
-                                  ),
+                                  
                                 );
                               },
                               child: const Text('Continuar'),
