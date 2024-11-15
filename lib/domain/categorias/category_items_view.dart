@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import '../../infrastructure/product_service.dart';
 import '../../infrastructure/product_service_search.dart';
@@ -6,7 +5,6 @@ import '../Carrito/cart_item.dart';
 import '../Carrito/cart_service.dart';
 import '../home/popular_product.dart';
 import '../home/popular_product_widget.dart';
-
 
 class ProductListView extends StatefulWidget {
   const ProductListView({super.key});
@@ -17,7 +15,7 @@ class ProductListView extends StatefulWidget {
 
 class _ProductListViewState extends State<ProductListView> {
   TextEditingController txtSearch = TextEditingController();
-  
+
   // Declaramos las categorías para las etiquetas
   List<String> categories = ['Todos', 'Comida', 'Infantil', 'Completa'];
   String selectedCategory = 'Todos'; // Categoría seleccionada por defecto
@@ -25,8 +23,10 @@ class _ProductListViewState extends State<ProductListView> {
   // Lista de productos que se llena desde el backend
   List<Product> _product = [];
   final CartService _cartService = CartService();
-  final ProductService _productService = ProductService('https://amarillo-backend-production.up.railway.app');
-  final ProductServiceSearch _productServiceSearch = ProductServiceSearch('https://amarillo-backend-production.up.railway.app');
+  final ProductService _productService =
+      ProductService('https://amarillo-backend-production.up.railway.app');
+  final ProductServiceSearch _productServiceSearch = ProductServiceSearch(
+      'https://amarillo-backend-production.up.railway.app');
 
   @override
   void initState() {
@@ -47,7 +47,8 @@ class _ProductListViewState extends State<ProductListView> {
 
   Future<void> _searchProductByName(String productName) async {
     try {
-      Product product = await _productServiceSearch.getProductByName(productName);
+      Product product =
+          await _productServiceSearch.getProductByName(productName);
       setState(() {
         _product = [product];
       });
@@ -56,7 +57,7 @@ class _ProductListViewState extends State<ProductListView> {
     }
   }
 
-   void onAdd(CartItem item) async {
+  void onAdd(CartItem item) async {
     await _cartService.loadCartItems(); // Carga los elementos del carrito
     bool isProductInCart = _cartService.cartItems.any((cartItem) =>
         cartItem.name ==
@@ -126,7 +127,8 @@ class _ProductListViewState extends State<ProductListView> {
                   fillColor: Colors.orange.withOpacity(0.1),
                 ),
                 onSubmitted: (value) {
-                  _searchProductByName(value);},
+                  _searchProductByName(value);
+                },
                 onChanged: (value) {
                   if (value.isEmpty) {
                     _fetchProducts();
@@ -176,18 +178,20 @@ class _ProductListViewState extends State<ProductListView> {
                   ? const Center(child: CircularProgressIndicator())
                   : ListView.builder(
                       shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(), // Para evitar el scroll dentro del ListView
+                      physics:
+                          const NeverScrollableScrollPhysics(), // Para evitar el scroll dentro del ListView
                       itemCount: _product.length,
                       itemBuilder: (context, index) {
                         final product = _product[index];
                         return ProductCard(
                           product: product,
                           onAdd: () => onAdd(CartItem(
-                        imageUrl: product.image,
-                        name: product.name,
-                        price: product.price,
-                        description: product.peso,
-                      )),
+                              id_product: product.id_product,
+                              imageUrl: product.image,
+                              name: product.name,
+                              price: product.price,
+                              description: product.description,
+                              peso: product.peso)),
                         );
                       },
                     ),

@@ -60,7 +60,6 @@ class _CartScreenState extends State<CartScreen> {
     setState(() {
       _cartItems.clear();
       CartService().clearCartItems();
-      
     });
   }
 
@@ -131,15 +130,56 @@ class _CartScreenState extends State<CartScreen> {
                 ),
                 const SizedBox(height: 10),
                 ElevatedButton(
-                  onPressed: () {
-                    _clearCart();
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => CheckoutScreen(
-                              totalItems: _cartItems.length,
-                              totalPrice: _totalPrice)),
-                    );
+                  onPressed: () async {
+                    try {
+                      await _cartService.createOrder(_cartItems);
+                      // Mostrar un diálogo de confirmación
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: const Text('¡Orden creada con éxito!'),
+                          content: const Text(
+                              'Tu pedido ha sido procesado. Pronto recibirás una confirmación.'),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                _clearCart();
+                                Navigator.of(context)
+                                    .pop(); // Cerrar el diálogo
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => CheckoutScreen(
+                                      totalItems: _cartItems.length,
+                                      totalPrice: _totalPrice,
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: const Text('Continuar'),
+                            ),
+                          ],
+                        ),
+                      );
+                    } catch (error) {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: const Text('Error al crear la orden'),
+                          content: const Text(
+                              'Ha ocurrido un error al procesar tu pedido. Por favor, inténtalo de nuevo más tarde.'),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context)
+                                    .pop(); // Cerrar el diálogo
+                              },
+                              child: const Text('Aceptar'),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.orange,

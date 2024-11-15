@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'cart_item.dart';
+import 'package:http/http.dart' as http;
 
 class CartService {
   static final CartService _instance = CartService._internal();
@@ -9,8 +10,7 @@ class CartService {
   CartService._internal(); // Constructor privado usando singleton
 
   List<CartItem> _cartItems = [];
-  final List<CartItem> initialCartItems = [
-  ];
+  final List<CartItem> initialCartItems = [];
 
   List<CartItem> get cartItems => _cartItems;
 
@@ -23,7 +23,8 @@ class CartService {
       _cartItems = List<CartItem>.from(initialCartItems);
     } else {
       final List<dynamic> jsonItems = jsonDecode(cartItemsString);
-      _cartItems = jsonItems.map((jsonItem) => CartItem.fromJson(jsonItem)).toList();
+      _cartItems =
+          jsonItems.map((jsonItem) => CartItem.fromJson(jsonItem)).toList();
     }
   }
 
@@ -40,8 +41,33 @@ class CartService {
 
   Future<void> clearCartItems() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('cart_items');  // Elimina los datos del carrito en SharedPreferences
+    await prefs.remove(
+        'cart_items'); // Elimina los datos del carrito en SharedPreferences
     _cartItems = List<CartItem>.from(initialCartItems);
-    saveCartItems();  // Restaura el carrito a su estado inicial
+    saveCartItems(); // Restaura el carrito a su estado inicial
+  }
+
+  Future<void> createOrder(List<CartItem> cartItems) async {
+    final List<Map<String, dynamic>> orderItems = cartItems
+        .map((item) => {
+              'id_producto': item.id_product,
+              'nombre_producto': item.name,
+              'cantidad_producto': item.quantity,
+            })
+        .toList();
+
+    final body = jsonEncode({
+      'entry': orderItems,
+    });
+
+    final Uri url = Uri.parse(
+        'https://amarillo-backend-production.up.railway.app/order/create');
+
+    final response = await http
+        .post(url, body: body, headers: {'Content-Type': 'application/json'});
+
+    if (response.statusCode != 201) {
+      throw Exception('Error al crear la orden: ${response.statusCode}');
+    }
   }
 }
