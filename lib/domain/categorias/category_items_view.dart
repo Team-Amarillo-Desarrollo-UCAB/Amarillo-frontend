@@ -46,9 +46,15 @@ class _ProductListViewState extends State<ProductListView> {
   }
 
   Future<void> _searchProductByName(String productName) async {
+    // Formateamos el nombre a título de caso
+    String formattedProductName = productName
+        .toLowerCase()
+        .split(' ')
+        .map((word) => word[0].toUpperCase() + word.substring(1))
+        .join(' ');
     try {
       Product product =
-          await _productServiceSearch.getProductByName(productName);
+          await _productServiceSearch.getProductByName(formattedProductName);
       setState(() {
         _product = [product];
       });

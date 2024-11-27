@@ -1,3 +1,4 @@
+import 'package:desarrollo_frontend/domain/categorias/category_items_view.dart';
 import 'package:flutter/material.dart';
 
 import '../../common/color_extension.dart';
@@ -226,7 +227,12 @@ class _HomeViewState extends State<HomeView> {
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: ViewAllTitleRow(
                   title: "Productos Populares",
-                  onView: () {},
+                  onView: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ProductListView()));
+                  },
                 ),
               ),
               SizedBox(

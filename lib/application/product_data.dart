@@ -19,7 +19,7 @@ class ProductData {
 
   factory ProductData.fromJson(Map<String, dynamic> json) {
     return ProductData(
-      id_product: json['id_product'] ?? 'no tengo id xd',
+      id_product: json['id_product'] ?? 'Id no existe',
       imageUrl: json['image'] ??
           'https://t4.ftcdn.net/jpg/04/99/93/31/360_F_499933117_ZAUBfv3P1HEOsZDrnkbNCt4jc3AodArl.jpg',
       name: json['nombre'] ?? 'Nombre no disponible',
