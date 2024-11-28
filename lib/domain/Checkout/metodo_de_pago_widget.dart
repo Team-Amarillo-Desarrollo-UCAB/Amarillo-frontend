@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class MetodosDePago extends StatefulWidget {
-  const MetodosDePago({super.key});
+  final Function(String) onSelectedMethod;
+  const MetodosDePago({super.key, required this.onSelectedMethod});
   @override
   MetodosDePagoState createState() => MetodosDePagoState();
 }
@@ -34,7 +35,9 @@ class MetodosDePagoState extends State<MetodosDePago> {
           groupValue: _selectedMethod,
           onChanged: (value) {
             setState(() {
-              _selectedMethod = value;
+              _selectedMethod = value as String;
+              // Notificar al widget padre
+              widget.onSelectedMethod(_selectedMethod!);
             });
           },
           activeColor: Colors.orange,

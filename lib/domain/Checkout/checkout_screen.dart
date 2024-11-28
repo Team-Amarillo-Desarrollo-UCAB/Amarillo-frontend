@@ -2,6 +2,7 @@ import 'package:desarrollo_frontend/domain/Checkout/direccion.dart';
 import 'package:desarrollo_frontend/domain/Checkout/direcciones_screen.dart';
 import 'package:desarrollo_frontend/domain/Checkout/fecha_hora_widget.dart';
 import 'package:desarrollo_frontend/domain/Checkout/metodo_de_pago_widget.dart';
+import 'package:desarrollo_frontend/domain/Checkout/payment_method_screen.dart';
 import 'package:desarrollo_frontend/domain/Checkout/pie_pagina_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -115,7 +116,9 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                 ),
               ),
             ),
-            const MetodosDePago(),
+            MetodosDePago(onSelectedMethod: (method) {
+              // Lógica para seleccionar el método de pago
+            }),
             const SizedBox(height: 10),
           ],
         ),
@@ -155,7 +158,10 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) =>
-                                            MainTabView() //OrderHistoryScreen(orderRepository: orderRepository,
+                                            RegisterPaymentPage(
+                                              totalItems: widget.totalItems,
+                                              totalPrice: widget.totalPrice,
+                                            ) //OrderHistoryScreen(orderRepository: orderRepository,
                                         ),
                                   );
                                 },
