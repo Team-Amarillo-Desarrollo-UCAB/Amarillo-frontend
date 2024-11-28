@@ -2,16 +2,13 @@ import 'package:desarrollo_frontend/domain/Checkout/direccion.dart';
 import 'package:desarrollo_frontend/domain/Checkout/direcciones_screen.dart';
 import 'package:desarrollo_frontend/domain/Checkout/fecha_hora_widget.dart';
 import 'package:desarrollo_frontend/domain/Checkout/metodo_de_pago_widget.dart';
+import 'package:desarrollo_frontend/domain/Checkout/payment_method_screen.dart';
 import 'package:desarrollo_frontend/domain/Checkout/pie_pagina_widget.dart';
-import 'package:desarrollo_frontend/domain/home/home_view.dart';
-import 'package:desarrollo_frontend/domain/order/order_history.dart';
 import 'package:flutter/material.dart';
 
 import '../../common_widget/round_button.dart';
 import '../Carrito/cart_item.dart';
 import '../Carrito/cart_service.dart';
-import '../main_tabview/main_tabview.dart';
-import '../order/order.dart';
 import '../order/order_repository.dart';
 
 class CheckoutScreen extends StatefulWidget {
@@ -113,7 +110,9 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                 ),
               ),
             ),
-            const MetodosDePago(),
+            MetodosDePago(onSelectedMethod: (method) {
+              // Lógica para seleccionar el método de pago
+            }),
             const SizedBox(height: 10),
           ],
         ),
@@ -152,7 +151,10 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => MainTabView()//OrderHistoryScreen(orderRepository: orderRepository,
+                                    builder: (context) => RegisterPaymentPage(
+                                      totalItems: widget.totalItems,
+                                      totalPrice: widget.totalPrice,
+                                    )//OrderHistoryScreen(orderRepository: orderRepository,
                                     ),
                                   
                                 );
