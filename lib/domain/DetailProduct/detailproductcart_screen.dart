@@ -28,14 +28,7 @@ class DetailProductCartScreen extends StatelessWidget {
               radius: 80),
           // Muestra la imagen del producto
           const SizedBox(height: 16),
-          Text(
-            product.description,
-            style: const TextStyle(
-                fontFamily: 'Inter',
-                fontWeight: FontWeight.w900,
-                fontSize: 15,
-                color: Colors.grey),
-          ),
+          _buildDescription(product.description),
           const SizedBox(height: 16),
           Row(
             mainAxisAlignment:
@@ -73,6 +66,62 @@ class DetailProductCartScreen extends StatelessWidget {
           const SizedBox(height: 16),
           const SizedBox.shrink(),
         ],
+      ),
+    );
+  }
+}
+
+Widget _buildDescription(dynamic description) {
+  if (description is String) {
+    return Text(
+      description,
+      style: const TextStyle(
+        fontFamily: 'Inter',
+        fontWeight: FontWeight.w900,
+        fontSize: 15,
+        color: Colors.grey,
+      ),
+    );
+  } else if (description is List<dynamic>) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 16.0, right: 16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Descripción:',
+            style: TextStyle(
+              fontFamily: 'Inter',
+              fontWeight: FontWeight.w900,
+              fontSize: 18,
+            ),
+          ),
+          const SizedBox(height: 16),
+          Column(
+            children: description.map((detailItem) {
+              return Text(
+                detailItem,
+                style: const TextStyle(
+                  fontFamily: 'Inter',
+                  fontWeight: FontWeight.w900,
+                  fontSize: 15,
+                  color: Colors.grey,
+                ),
+              );
+            }).toList(),
+          ),
+        ],
+      ),
+    );
+  } else {
+    // Handle unexpected data type (optional)
+    return const Text(
+      'Descripción no disponible',
+      style: TextStyle(
+        fontFamily: 'Inter',
+        fontWeight: FontWeight.w900,
+        fontSize: 15,
+        color: Colors.grey,
       ),
     );
   }

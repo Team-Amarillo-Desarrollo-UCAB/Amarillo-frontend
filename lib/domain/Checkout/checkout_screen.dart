@@ -3,15 +3,12 @@ import 'package:desarrollo_frontend/domain/Checkout/direcciones_screen.dart';
 import 'package:desarrollo_frontend/domain/Checkout/fecha_hora_widget.dart';
 import 'package:desarrollo_frontend/domain/Checkout/metodo_de_pago_widget.dart';
 import 'package:desarrollo_frontend/domain/Checkout/pie_pagina_widget.dart';
-import 'package:desarrollo_frontend/domain/home/home_view.dart';
-import 'package:desarrollo_frontend/domain/order/order_history.dart';
 import 'package:flutter/material.dart';
 
 import '../../common_widget/round_button.dart';
 import '../Carrito/cart_item.dart';
 import '../Carrito/cart_service.dart';
 import '../main_tabview/main_tabview.dart';
-import '../order/order.dart';
 import '../order/order_repository.dart';
 
 class CheckoutScreen extends StatefulWidget {
@@ -20,7 +17,11 @@ class CheckoutScreen extends StatefulWidget {
   final List<CartItem> listCartItems;
   final CartService cartService;
   const CheckoutScreen(
-      {super.key, required this.totalItems, required this.totalPrice, required this.listCartItems, required this.cartService});
+      {super.key,
+      required this.totalItems,
+      required this.totalPrice,
+      required this.listCartItems,
+      required this.cartService});
 
   @override
   CheckoutScreenState createState() => CheckoutScreenState();
@@ -37,10 +38,11 @@ class CheckoutScreenState extends State<CheckoutScreen> {
   ];
   void _clearCart() {
     setState(() {
-      widget.listCartItems.clear(); 
+      widget.listCartItems.clear();
       widget.cartService.clearCartItems();
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -98,7 +100,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                   fontSize: 16,
                 ),
               ),
-            ), 
+            ),
             const FechaHoraSelector(),
             const SizedBox(height: 10),
             const Divider(),
@@ -124,64 +126,64 @@ class CheckoutScreenState extends State<CheckoutScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             ResumenPedido(
-              totalItems: widget.totalItems, totalPrice: widget.totalPrice),
+                totalItems: widget.totalItems, totalPrice: widget.totalPrice),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 RoundButton(
-                  title: "Confirmar Pedido",
-                  onPressed: () async {
-                    try {
-                      await widget.cartService.createOrder(widget.listCartItems);
-                      showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          title: const Text('¡Orden creada con éxito!'),
-                          content: Text(
-                              'Tu pedido ha sido procesado. ID de la orden: ${widget.cartService.idOrder}. Pronto recibirás una confirmación.'),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                // orderRepository.addOrder(Order(
-                                //   orderId: widget.cartService.idOrder,
-                                //   items: widget.cartService.orderItems,
-                                // ));
-                                _clearCart();
-                                Navigator.of(context)
-                                    .pop(); 
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => MainTabView()//OrderHistoryScreen(orderRepository: orderRepository,
-                                    ),
-                                  
-                                );
-                              },
-                              child: const Text('Continuar'),
-                            ),
-                          ],
-                        ),
-                      );
-                    } catch (error) {
-                      showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          title: const Text('Error al crear la orden'),
-                          content: const Text(
-                              'Ha ocurrido un error al procesar tu pedido. Por favor, inténtalo de nuevo más tarde.'),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context)
-                                    .pop(); // Cerrar el diálogo
-                              },
-                              child: const Text('Aceptar'),
-                            ),
-                          ],
-                        ),
-                      );
-                    }
-                  }),
+                    title: "Confirmar Pedido",
+                    onPressed: () async {
+                      try {
+                        await widget.cartService
+                            .createOrder(widget.listCartItems);
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: const Text('¡Orden creada con éxito!'),
+                            content: Text(
+                                'Tu pedido ha sido procesado. ID de la orden: ${widget.cartService.idOrder}. Pronto recibirás una confirmación.'),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  // orderRepository.addOrder(Order(
+                                  //   orderId: widget.cartService.idOrder,
+                                  //   items: widget.cartService.orderItems,
+                                  // ));
+                                  _clearCart();
+                                  Navigator.of(context).pop();
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            MainTabView() //OrderHistoryScreen(orderRepository: orderRepository,
+                                        ),
+                                  );
+                                },
+                                child: const Text('Continuar'),
+                              ),
+                            ],
+                          ),
+                        );
+                      } catch (error) {
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: const Text('Error al crear la orden'),
+                            content: const Text(
+                                'Ha ocurrido un error al procesar tu pedido. Por favor, inténtalo de nuevo más tarde.'),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context)
+                                      .pop(); // Cerrar el diálogo
+                                },
+                                child: const Text('Aceptar'),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+                    }),
               ],
             ),
           ],

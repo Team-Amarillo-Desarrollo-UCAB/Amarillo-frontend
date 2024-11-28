@@ -1,3 +1,4 @@
+import 'package:desarrollo_frontend/domain/Combo/combo_view.dart';
 import 'package:desarrollo_frontend/domain/categorias/category_items_view.dart';
 import 'package:flutter/material.dart';
 
@@ -205,7 +206,10 @@ class _HomeViewState extends State<HomeView> {
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: ViewAllTitleRow(
                   title: "Oferta de Combos",
-                  onView: () {},
+                  onView: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => ComboView()));
+                  },
                 ),
               ),
               SizedBox(

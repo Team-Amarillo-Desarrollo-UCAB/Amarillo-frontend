@@ -5,7 +5,7 @@ class CartItem {
   final dynamic imageUrl;
   final String name;
   final double price;
-  final String description;
+  final dynamic description;
   final String peso;
   int quantity;
 

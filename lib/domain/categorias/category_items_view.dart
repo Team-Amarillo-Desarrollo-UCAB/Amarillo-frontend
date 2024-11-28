@@ -1,3 +1,5 @@
+import 'package:desarrollo_frontend/domain/Carrito/cart_screen.dart';
+import 'package:desarrollo_frontend/domain/main_tabview/main_tabview.dart';
 import 'package:flutter/material.dart';
 import '../../infrastructure/product_service.dart';
 import '../../infrastructure/product_service_search.dart';
@@ -90,34 +92,35 @@ class _ProductListViewState extends State<ProductListView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.grey[200],
+        centerTitle: true,
+        title: const Text('Productos',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => const MainTabView()));
+            }),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.shopping_cart, color: Colors.orange),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const CartScreen()),
+              );
+            },
+          ),
+        ],
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 46), // Espaciado superior
-              Row(
-                children: [
-                  IconButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    icon: const Icon(Icons.arrow_back),
-                  ),
-                  const Expanded(
-                    child: Center(
-                      child: Text(
-                        "Productos",
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
               const SizedBox(height: 20),
               // Buscador
               TextField(

@@ -1,6 +1,4 @@
-
 import 'package:flutter/material.dart';
-
 
 import '../../../common/color_extension.dart';
 import '../../../common_widget/round_textfield.dart';
@@ -9,7 +7,6 @@ import '../../common_widget/title_only.dart';
 
 class CategoryView extends StatefulWidget {
   const CategoryView({super.key});
-
 
   @override
   State<CategoryView> createState() => _MenuViewState();
@@ -81,53 +78,50 @@ class _MenuViewState extends State<CategoryView> {
                       ),
                     ),
                   ),
-                  
                   const SizedBox(
                     height: 30,
                   ),
-
                   ClipRRect(
-                    borderRadius: BorderRadius.circular(10), // Adjust the radius as needed
+                    borderRadius: BorderRadius.circular(
+                        10), // Adjust the radius as needed
                     child: Image.asset(
                       'assets/img/oferta2.png',
                       width: 400,
                       height: 180,
-                    fit: BoxFit.cover,
+                      fit: BoxFit.cover,
                     ),
                   ),
                   const SizedBox(
                     height: 30,
                   ),
-                Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: TitleOnly(
-                  title: "Todas las categorías",
-                  onView: () {},
-                ),
-              ),
-                const SizedBox(
-                  height: 30,
-                ),
-                SizedBox(
-                height: 120,
-                
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.symmetric(horizontal: 15),
-                  itemCount: catArr.length,
-                  itemBuilder: ((context, index) {
-                    var cObj = catArr[index] as Map? ?? {};
-                    return CategoryCell(
-                      cObj: cObj,
-                      onTap: () {},
-                    );
-                  }),
-                ),
-              ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: TitleOnly(
+                      title: "Todas las categorías",
+                      onView: () {},
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 30,
+                  ),
+                  SizedBox(
+                    height: 120,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      padding: const EdgeInsets.symmetric(horizontal: 15),
+                      itemCount: catArr.length,
+                      itemBuilder: ((context, index) {
+                        var cObj = catArr[index] as Map? ?? {};
+                        return CategoryCell(
+                          cObj: cObj,
+                          onTap: () {},
+                        );
+                      }),
+                    ),
+                  ),
                 ],
               ),
             ),
-            
           ),
         ],
       ),
