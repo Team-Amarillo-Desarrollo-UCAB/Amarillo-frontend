@@ -5,11 +5,9 @@ import 'package:desarrollo_frontend/domain/Checkout/metodo_de_pago_widget.dart';
 import 'package:desarrollo_frontend/domain/Checkout/payment_method_screen.dart';
 import 'package:desarrollo_frontend/domain/Checkout/pie_pagina_widget.dart';
 import 'package:flutter/material.dart';
-
 import '../../common_widget/round_button.dart';
 import '../Carrito/cart_item.dart';
 import '../Carrito/cart_service.dart';
-import '../main_tabview/main_tabview.dart';
 import '../order/order_repository.dart';
 
 class CheckoutScreen extends StatefulWidget {
