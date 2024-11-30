@@ -16,7 +16,7 @@ class ProductListView extends StatefulWidget {
 }
 
 class _ProductListViewState extends State<ProductListView> {
-  TextEditingController txtSearch = TextEditingController();
+  TextEditingController _searchController = TextEditingController();
 
   // Declaramos las categorías para las etiquetas
   List<String> categories = ['Todos', 'Comida', 'Infantil', 'Completa'];
@@ -24,6 +24,11 @@ class _ProductListViewState extends State<ProductListView> {
 
   // Lista de productos que se llena desde el backend
   List<Product> _product = [];
+  int _page = 1;
+  bool _isLoading = false;
+  bool _hasMore = true;
+  bool _isSearching = false;
+
   final CartService _cartService = CartService();
   final ProductService _productService =
       ProductService('https://amarillo-backend-production.up.railway.app');
@@ -33,27 +38,53 @@ class _ProductListViewState extends State<ProductListView> {
   @override
   void initState() {
     super.initState();
-    _fetchProducts(); // Llamada al backend para cargar productos al iniciar el widget
+    _loadMoreProducts(); // Llamada al backend para cargar productos al iniciar el widget
+    _searchController.addListener(_onSearchChanged);
   }
 
-  Future<void> _fetchProducts() async {
+  @override
+  void dispose() {
+    _searchController.removeListener(_onSearchChanged);
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _loadMoreProducts() async {
+    if (_isLoading || !_hasMore) return;
+    setState(() {
+      _isLoading = true;
+    });
     try {
-      List<Product> products = await _productService.getProducts();
+      List<Product> newProducts = await _productService.getProducts(_page);
       setState(() {
-        _product = products;
+        if (newProducts.isEmpty) {
+          _hasMore = false;
+        } else {
+          _product.addAll(newProducts);
+          _page++;
+        }
       });
     } catch (error) {
       print('Error al obtener productos: $error');
     }
+
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   Future<void> _searchProductByName(String productName) async {
+    setState(() {
+      _isSearching = true;
+    });
+
     // Formateamos el nombre a título de caso
     String formattedProductName = productName
         .toLowerCase()
         .split(' ')
         .map((word) => word[0].toUpperCase() + word.substring(1))
         .join(' ');
+
     try {
       Product product =
           await _productServiceSearch.getProductByName(formattedProductName);
@@ -63,6 +94,24 @@ class _ProductListViewState extends State<ProductListView> {
     } catch (error) {
       print('Error al buscar producto: $error');
     }
+  }
+
+  void _onSearchChanged() {
+    if (_searchController.text.isNotEmpty) {
+      _searchProductByName(_searchController.text);
+    } else {
+      _resetSearch();
+    }
+  }
+
+  void _resetSearch() {
+    setState(() {
+      _isSearching = false;
+      _product.clear();
+      _page = 1;
+      _hasMore = true;
+      _loadMoreProducts();
+    });
   }
 
   void onAdd(CartItem item) async {
@@ -115,96 +164,106 @@ class _ProductListViewState extends State<ProductListView> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 20),
-              // Buscador
-              TextField(
-                controller: txtSearch,
-                decoration: InputDecoration(
-                  hintText: "Productos, Categorías...",
-                  prefixIcon: const Icon(Icons.search, color: Colors.orange),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30),
-                    borderSide: BorderSide.none,
+      body: NotificationListener<ScrollNotification>(
+        onNotification: (ScrollNotification) {
+          if (ScrollNotification.metrics.pixels ==
+                  ScrollNotification.metrics.maxScrollExtent &&
+              !_isSearching) {
+            _loadMoreProducts();
+          }
+          return true;
+        },
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 20),
+                // Buscador
+                TextField(
+                  controller: _searchController,
+                  decoration: InputDecoration(
+                    hintText: "Productos, Categorías...",
+                    prefixIcon: const Icon(Icons.search, color: Colors.orange),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30),
+                      borderSide: BorderSide.none,
+                    ),
+                    filled: true,
+                    fillColor: Colors.orange.withOpacity(0.1),
                   ),
-                  filled: true,
-                  fillColor: Colors.orange.withOpacity(0.1),
-                ),
-                onSubmitted: (value) {
-                  _searchProductByName(value);
-                },
-                onChanged: (value) {
-                  if (value.isEmpty) {
-                    _fetchProducts();
-                  }
-                },
-              ),
-              const SizedBox(height: 15),
-              // Etiquetas de categorías
-              SizedBox(
-                height: 40,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: categories.length,
-                  itemBuilder: (context, index) {
-                    String category = categories[index];
-                    bool isSelected = category == selectedCategory;
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 8.0),
-                      child: ChoiceChip(
-                        label: Text(category),
-                        selected: isSelected,
-                        selectedColor: Colors.orange,
-                        backgroundColor: Colors.orange.withOpacity(0.2),
-                        onSelected: (bool selected) {
-                          setState(() {
-                            selectedCategory = category;
-                          });
-                          // Aquí puedes agregar la lógica de filtrado
-                        },
-                      ),
-                    );
+                  onSubmitted: (value) {
+                    _searchProductByName(value);
+                  },
+                  onChanged: (value) {
+                    if (value.isEmpty) {
+                      _loadMoreProducts();
+                    }
                   },
                 ),
-              ),
-              const SizedBox(height: 15),
-              // Número de resultados
-              Text(
-                "${_product.length} Resultados",
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+                const SizedBox(height: 15),
+                // Etiquetas de categorías
+                SizedBox(
+                  height: 40,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: categories.length,
+                    itemBuilder: (context, index) {
+                      String category = categories[index];
+                      bool isSelected = category == selectedCategory;
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 8.0),
+                        child: ChoiceChip(
+                          label: Text(category),
+                          selected: isSelected,
+                          selectedColor: Colors.orange,
+                          backgroundColor: Colors.orange.withOpacity(0.2),
+                          onSelected: (bool selected) {
+                            setState(() {
+                              selectedCategory = category;
+                            });
+                            // Aquí puedes agregar la lógica de filtrado
+                          },
+                        ),
+                      );
+                    },
+                  ),
                 ),
-              ),
-              const SizedBox(height: 10),
-              // Lista de Productos obtenidos del backend
-              _product.isEmpty
-                  ? const Center(child: CircularProgressIndicator())
-                  : ListView.builder(
-                      shrinkWrap: true,
-                      physics:
-                          const NeverScrollableScrollPhysics(), // Para evitar el scroll dentro del ListView
-                      itemCount: _product.length,
-                      itemBuilder: (context, index) {
-                        final product = _product[index];
-                        return ProductCard(
-                          product: product,
-                          onAdd: () => onAdd(CartItem(
-                              id_product: product.id_product,
-                              imageUrl: product.image,
-                              name: product.name,
-                              price: product.price,
-                              description: product.description,
-                              peso: product.peso)),
-                        );
-                      },
-                    ),
-            ],
+                const SizedBox(height: 15),
+                // Número de resultados
+                Text(
+                  "${_product.length} Resultados",
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                // Lista de Productos obtenidos del backend
+                _product.isEmpty
+                    ? const Center(child: CircularProgressIndicator())
+                    : ListView.builder(
+                        shrinkWrap: true,
+                        physics:
+                            const NeverScrollableScrollPhysics(), // Para evitar el scroll dentro del ListView
+                        itemCount: _product.length,
+                        itemBuilder: (context, index) {
+                          final product = _product[index];
+                          return ProductCard(
+                            product: product,
+                            onAdd: () => onAdd(CartItem(
+                                id_product: product.id_product,
+                                imageUrl: product.image,
+                                name: product.name,
+                                price: product.price,
+                                description: product.description,
+                                peso: product.peso)),
+                          );
+                        },
+                      ),
+              ],
+            ),
           ),
         ),
       ),

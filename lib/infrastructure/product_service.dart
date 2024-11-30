@@ -9,8 +9,9 @@ class ProductService {
 
   ProductService(this.baseUrl);
 
-  Future<List<Product>> getProducts() async {
-    final response = await http.get(Uri.parse('$baseUrl/product/many'));
+  Future<List<Product>> getProducts(int page) async {
+    final response =
+        await http.get(Uri.parse('$baseUrl/product/many?page=$page'));
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(response.body);

@@ -35,7 +35,7 @@ class _HomeViewState extends State<HomeView> {
 
   Future<void> _fetchProducts() async {
     try {
-      List<Product> products = await _productService.getProducts();
+      List<Product> products = await _productService.getProducts(1);
       setState(() {
         _product = products;
       });
