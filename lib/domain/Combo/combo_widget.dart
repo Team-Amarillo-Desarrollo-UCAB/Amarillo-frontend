@@ -16,17 +16,7 @@ class ComboCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
         onTap: () {
-          showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                content: DetailComboScreen(combo: combo, onAdd: onAdd),
-              );
-            },
-          );
+          showDetailComboDialog(context, combo, onAdd);
         },
         child: Card(
             elevation: 5,

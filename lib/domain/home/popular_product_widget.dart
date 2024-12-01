@@ -16,17 +16,7 @@ class ProductCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
         onTap: () {
-          showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                content: DetailProductScreen(product: product, onAdd: onAdd),
-              );
-            },
-          );
+          showDetailProductDialog(context, product, onAdd);
         },
         child: Card(
             elevation: 5,

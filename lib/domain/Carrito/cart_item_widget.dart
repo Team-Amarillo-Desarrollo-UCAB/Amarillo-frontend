@@ -19,19 +19,7 @@ class CartItemWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
         onTap: () {
-          showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                content: DetailProductCartScreen(
-                  product: item,
-                ),
-              );
-            },
-          );
+          showDetailCartItemDialog(context, item);
         },
         child: Card(
             elevation: 5,
