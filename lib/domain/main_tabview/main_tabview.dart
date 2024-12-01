@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import '../Users/profile_screen.dart';
 import '../Carrito/cart_screen.dart';
 import '../categorias/categorias_view.dart';
 import '../../common/color_extension.dart';
@@ -95,7 +95,7 @@ class _MainTabViewState extends State<MainTabView> {
                   onTap: () {
                     if (selctTab != 4) {
                       selctTab = 4;
-                      //selectPageView = const  ProfileView();
+                      selectPageView = const  UserProfileScreen();
                     }
                     if (mounted) {
                       setState(() {});
