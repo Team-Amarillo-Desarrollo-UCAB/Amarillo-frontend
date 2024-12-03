@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'on_boarding/startup_view.dart';
+import 'common/presentation/main_tabview.dart';
+import 'common/presentation/startup_view.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,7 +20,7 @@ class MyApp extends StatelessWidget {
         fontFamily: "Metropolis",
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const StartupView(),
+      home: const MainTabView(),//StartupView(),
     );
   }
 }
