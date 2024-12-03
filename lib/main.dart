@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'domain/on_boarding/startup_view.dart';
+import 'on_boarding/startup_view.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
