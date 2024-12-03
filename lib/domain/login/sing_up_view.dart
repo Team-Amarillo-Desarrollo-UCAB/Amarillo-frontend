@@ -1,16 +1,15 @@
-
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
-
+import '../../common/base_url.dart';
 import '../../common/color_extension.dart';
 import '../../common_widget/round_button.dart';
 import '../../common_widget/round_textfield.dart';
 import 'login_view.dart';
 
-
 class SignUpView extends StatefulWidget {
   const SignUpView({super.key});
-
 
   @override
   State<SignUpView> createState() => _SignUpViewState();
@@ -19,230 +18,213 @@ class SignUpView extends StatefulWidget {
 class _SignUpViewState extends State<SignUpView> {
   TextEditingController txtName = TextEditingController();
   TextEditingController txtMobile = TextEditingController();
-  TextEditingController txtAddress = TextEditingController();
   TextEditingController txtEmail = TextEditingController();
   TextEditingController txtPassword = TextEditingController();
   TextEditingController txtConfirmPassword = TextEditingController();
+  bool _isLoading = false;
+  final String baseUrl = BaseUrl().BASE_URL;
+
+  bool _isValidEmail(String email) {
+    final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
+    return emailRegex.hasMatch(email);
+  }
+
+  Future<void> _register() async {
+    String name = txtName.text.trim();
+    String mobile = txtMobile.text.trim();
+    String email = txtEmail.text.trim();
+    String password = txtPassword.text.trim();
+    String confirmPassword = txtConfirmPassword.text.trim();
+
+    if (name.isEmpty || mobile.isEmpty || email.isEmpty || password.isEmpty || confirmPassword.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Por favor, completa todos los campos.")),
+      );
+      return;
+    }
+
+    if (!_isValidEmail(email)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Por favor, ingresa un correo válido.")),
+      );
+      return;
+    }
+
+    if (password != confirmPassword) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Las contraseñas no coinciden.")),
+      );
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/auth/register'),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          "email": email,
+          "name": name,
+          "phone": mobile,
+          "image": "", // Por ahora, vacío. Puedes añadir funcionalidad de cargar imágenes.
+          "role": "CLIENT",
+          "password": password,
+        }),
+      );
+
+      setState(() {
+        _isLoading = false;
+      });
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("¡Registro exitoso!")),
+        );
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const LoginView()),
+        );
+      } else {
+        final error = jsonDecode(response.body)["error"] ?? "Error desconocido.";
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(error)),
+        );
+      }
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Ocurrió un error: $e")),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-  var media = MediaQuery.of(context).size;
+    var media = MediaQuery.of(context).size;
+
     return Scaffold(
-      body: Stack( // Use a Stack widget to position the image behind the content
-    children: [
-      // Add the background image as the first child
-      Image.asset(
-        "assets/img/fondologin.png",
-        width: double.infinity,
-        height: double.infinity,
-        fit: BoxFit.cover, 
-      ),
-      
-      SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 25),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const SizedBox(
-                height: 80,
-              ),
-              Image.asset(
-                  "assets/img/app-logo.png",
-                  width: media.width*0.70,
-                ),
-              const SizedBox(
-                height: 30,
-              ),
-              Text(
-                "Regístrate",
-                style: TextStyle(
-                    color: TColor.primary,
-                    fontSize: 30,
-                    fontWeight: FontWeight.w800),
-              ),
-              const SizedBox(
-                height: 15,
-              ),
-              Text(
-                "Agrega tus detalles para registrarte",
-                style: TextStyle(
-                    color: TColor.secondaryText,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500),
-              ),
-              const SizedBox(
-                height: 25,
-              ),
-              RoundTextfield(
-                hintText: "Nombre",
-                controller: txtName,
-              ),
-              const SizedBox(
-                height: 25,
-              ),
-              RoundTextfield(
-                hintText: "Email",
-                controller: txtEmail,
-                keyboardType: TextInputType.emailAddress,
-              ),
-              const SizedBox(
-                height: 25,
-              ),
-              RoundTextfield(
-                hintText: "Número de teléfono",
-                controller: txtMobile,
-                keyboardType: TextInputType.phone,
-              ),
-              const SizedBox(
-                height: 25,
-              ),
-              RoundTextfield(
-                hintText: "Dirección",
-                controller: txtAddress,
-              ),
-              const SizedBox(
-                height: 25,
-              ),
-              RoundTextfield(
-                hintText: "Contraseña",
-                controller: txtPassword,
-                obscureText: true,
-              ),
-               const SizedBox(
-                height: 25,
-              ),
-              RoundTextfield(
-                hintText: "Confirma tu contraseña",
-                controller: txtConfirmPassword,
-                obscureText: true,
-              ),
-              const SizedBox(
-                height: 25,
-              ),
-              RoundButton(title: "Regístrate", onPressed: () {
-                // btnSignUp();
-                //  Navigator.push(
-                //       context,
-                //       MaterialPageRoute(
-                //         builder: (context) => const OTPView(),
-                //       ),
-                //     );
-              }),
-              const SizedBox(
-                height: 30,
-              ),
-              TextButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const LoginView(),
-                    ),
-                  );
-                },
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      "¿Ya tienes una cuenta? ",
-                      style: TextStyle(
-                          color: TColor.secondaryText,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500),
-                    ),
-                    Text(
-                      "Inicia Sesión",
-                      style: TextStyle(
-                          color: TColor.primary,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+      resizeToAvoidBottomInset: false,
+      body: Stack(
+        children: [
+          Image.asset(
+            "assets/img/fondologin.png",
+            width: media.width,
+            height: media.height,
+            fit: BoxFit.cover,
           ),
-        ),
-      ),
-    ],
-  ),
-  );
-}
-/*
-  //TODO: Action
-  void btnSignUp() {
-
-    if (txtName.text.isEmpty) {
-      mdShowAlert(Globs.appName, MSG.enterName, () {});
-      return;
-    }
-
-    if (!txtEmail.text.isEmail) {
-      mdShowAlert(Globs.appName, MSG.enterEmail, () {});
-      return;
-    }
-
-    if (txtMobile.text.isEmpty) {
-      mdShowAlert(Globs.appName, MSG.enterMobile, () {});
-      return;
-    }
-
-    if (txtAddress.text.isEmpty) {
-      mdShowAlert(Globs.appName, MSG.enterAddress, () {});
-      return;
-    }
-
-    if (txtPassword.text.length < 6) {
-      mdShowAlert(Globs.appName, MSG.enterPassword, () {});
-      return;
-    }
-
-    if (txtPassword.text != txtConfirmPassword.text) {
-      mdShowAlert(Globs.appName, MSG.enterPasswordNotMatch, () {});
-      return;
-    }
-
-    endEditing();
-
-    serviceCallSignUp({
-      "name": txtName.text,
-
-      "mobile": txtMobile.text,
-      "email": txtEmail.text,
-      "address": txtAddress.text,
-      "password": txtPassword.text,
-      "push_token": "",
-      "device_type": Platform.isAndroid ? "A" : "I"
-    });
-  }
-
-  //TODO: ServiceCall
-
-  void serviceCallSignUp(Map<String, dynamic> parameter) {
-    Globs.showHUD();
-
-    ServiceCall.post(parameter, SVKey.svSignUp,
-        withSuccess: (responseObj) async {
-      Globs.hideHUD();
-      if (responseObj[KKey.status] == "1") {
-        Globs.udSet(responseObj[KKey.payload] as Map? ?? {}, Globs.userPayload);
-        Globs.udBoolSet(true, Globs.userLogin);
-        
-        Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const OnBoardingView(),
+          SingleChildScrollView(
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                vertical: media.height * 0.03,
+                horizontal: media.width * 0.07,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(height: media.height * 0.1),
+                  Image.asset(
+                    "assets/img/app-logo.png",
+                    width: media.width * 0.7,
+                  ),
+                  SizedBox(height: media.height * 0.01),
+                  Text(
+                    "Regístrate",
+                    style: TextStyle(
+                      color: TColor.primary,
+                      fontSize: media.width * 0.08,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  SizedBox(height: media.height * 0.009),
+                  Text(
+                    "Agrega tus detalles para registrarte",
+                    style: TextStyle(
+                      color: TColor.secondaryText,
+                      fontSize: media.width * 0.04,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  SizedBox(height: media.height * 0.02),
+                  RoundTextfield(
+                    hintText: "Nombre",
+                    controller: txtName,
+                  ),
+                  SizedBox(height: media.height * 0.02),
+                  RoundTextfield(
+                    hintText: "Email",
+                    controller: txtEmail,
+                    keyboardType: TextInputType.emailAddress,
+                  ),
+                  SizedBox(height: media.height * 0.02),
+                  RoundTextfield(
+                    hintText: "Número de teléfono",
+                    controller: txtMobile,
+                    keyboardType: TextInputType.phone,
+                  ),
+                  SizedBox(height: media.height * 0.02),
+                  RoundTextfield(
+                    hintText: "Contraseña",
+                    controller: txtPassword,
+                    obscureText: true,
+                  ),
+                  SizedBox(height: media.height * 0.02),
+                  RoundTextfield(
+                    hintText: "Confirma tu contraseña",
+                    controller: txtConfirmPassword,
+                    obscureText: true,
+                  ),
+                  SizedBox(height: media.height * 0.05),
+                  _isLoading
+                      ? CircularProgressIndicator()
+                      : RoundButton(
+                          title: "Regístrate",
+                          onPressed: _register,
+                        ),
+                  SizedBox(height: media.height * 0.009),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const LoginView(),
+                        ),
+                      );
+                    },
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          "¿Ya tienes una cuenta? ",
+                          style: TextStyle(
+                            color: TColor.secondaryText,
+                            fontSize: media.width * 0.035,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        Text(
+                          "Inicia Sesión",
+                          style: TextStyle(
+                            color: TColor.primary,
+                            fontSize: media.width * 0.035,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
-            (route) => false);
-      } else {
-        mdShowAlert(Globs.appName,
-            responseObj[KKey.message] as String? ?? MSG.fail, () {});
-      }
-    }, failure: (err) async {
-      Globs.hideHUD();
-      mdShowAlert(Globs.appName, err.toString(), () {});
-    });
+          ),
+        ],
+      ),
+    );
   }
-*/
 }

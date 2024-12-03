@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'edit_profile_screen.dart';
 import 'logout_dialog.dart';
 import 'user_profile.dart';
@@ -64,8 +63,8 @@ class UserProfileScreen extends StatelessWidget {
                 title: const Text('Editar Perfil'),
                 trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                 onTap: () {
-                  //Navigator.push(context, MaterialPageRoute(
-                                       // builder: (context) => EditProfileScreen()));
+                  // Navigator.push(context, MaterialPageRoute(
+                  //                      builder: (context) => EditProfileScreen()));
                 }, // onTap
               ), 
               const Divider(

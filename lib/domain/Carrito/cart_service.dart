@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../common/base_url.dart';
 import 'cart_item.dart';
 import 'package:http/http.dart' as http;
 
@@ -65,8 +66,7 @@ class CartService {
       'entry': orderItems,
     });
 
-    final Uri url = Uri.parse(
-        'https://amarillo-backend-production.up.railway.app/order/create');
+    final Uri url = Uri.parse(BaseUrl().BASE_URL);
 
     final response = await http
         .post(url, body: body, headers: {'Content-Type': 'application/json'});

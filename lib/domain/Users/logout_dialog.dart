@@ -1,6 +1,8 @@
+import 'package:desarrollo_frontend/domain/on_boarding/startup_view.dart';
 import 'package:flutter/material.dart';
-import '../login/welcome_view.dart';
+import '../../infrastructure/session_manager.dart';
 
+final SessionManager _sessionManager = SessionManager();
 // Función para mostrar el popup de confirmación
 void showLogoutConfirmationDialog(BuildContext context) {
   showDialog(
@@ -38,10 +40,11 @@ void showLogoutConfirmationDialog(BuildContext context) {
           ), // TextButton
           // Botón "Sí, cerrar sesión"
           ElevatedButton(
-            onPressed: () {
+            onPressed: () async {
               Navigator.of(context).pop(); // Cerrar el popup
+              await _sessionManager.clearSession();
               Navigator.push(context, MaterialPageRoute(
-                                        builder: (context) =>WelcomeView())); // Navegar al login
+                                        builder: (context) =>StartupView())); // Navegar al login
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.orangeAccent,

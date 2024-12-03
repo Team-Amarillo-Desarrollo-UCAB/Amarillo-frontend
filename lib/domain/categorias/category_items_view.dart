@@ -1,6 +1,7 @@
 import 'package:desarrollo_frontend/domain/Carrito/cart_screen.dart';
 import 'package:desarrollo_frontend/domain/main_tabview/main_tabview.dart';
 import 'package:flutter/material.dart';
+import '../../common/base_url.dart';
 import '../../infrastructure/product_service.dart';
 import '../../infrastructure/product_service_search.dart';
 import '../Carrito/cart_item.dart';
@@ -22,7 +23,6 @@ class _ProductListViewState extends State<ProductListView> {
   List<String> categories = ['Todos', 'Comida', 'Infantil', 'Completa'];
   String selectedCategory = 'Todos'; // Categoría seleccionada por defecto
 
-  // Lista de productos que se llena desde el backend
   List<Product> _product = [];
   int _page = 1;
   bool _isLoading = false;
@@ -31,9 +31,9 @@ class _ProductListViewState extends State<ProductListView> {
 
   final CartService _cartService = CartService();
   final ProductService _productService =
-      ProductService('https://amarillo-backend-production.up.railway.app');
+      ProductService(BaseUrl().BASE_URL); 
   final ProductServiceSearch _productServiceSearch = ProductServiceSearch(
-      'https://amarillo-backend-production.up.railway.app');
+      BaseUrl().BASE_URL);
 
   @override
   void initState() {

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import '../../infrastructure/login_service.dart'; // Servicio de autenticación
+import '../login/welcome_view.dart'; // Vista de bienvenida
+import '../main_tabview/main_tabview.dart'; // Vista principal
 
-import '../login/welcome_view.dart';
 class StartupView extends StatefulWidget {
   const StartupView({super.key});
 
@@ -9,29 +11,48 @@ class StartupView extends StatefulWidget {
 }
 
 class _StartupViewState extends State<StartupView> {
+  final AuthService _authService = AuthService(); // Instancia del servicio de autenticación
+
   @override
   void initState() {
     super.initState();
-    goWelcomePage();
+    _checkSession();
+  }
+
+  /// Verifica si el usuario tiene una sesión activa
+  void _checkSession() async {
+    await Future.delayed(const Duration(seconds: 3)); // Simula tiempo de carga
+    final token = await _authService.getToken(); // Obtiene el token almacenado
+    if (token != null) {
+      print("Token encontrado: $token");
+      final isValid = await _authService.isValidToken(token); // Valida el token
+      print("¿Token válido? $isValid");
+      if (isValid) {
+        _goToMainTabView(); // Navega al `MainTabView` si el token es válido
+        return;
+      }
+    }
+    print("Sesión no válida. Redirigiendo a WelcomePage...");
+    _goToWelcomePage(); // Si no hay sesión activa, navega al `WelcomeView`
   }
 
 
-  void goWelcomePage() async {
-
-      await Future.delayed( const Duration(seconds: 3) );
-      welcomePage();
+  /// Navega a la vista principal
+  void _goToMainTabView() {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const MainTabView()),
+    );
   }
-  void welcomePage(){
 
-    // if (Globs.udValueBool(Globs.userLogin)) {
-    //    Navigator.push(context,
-    //       MaterialPageRoute(builder: (context) => const MainTabView()));
-    // }else{
-       Navigator.push(
-        context, MaterialPageRoute(builder: (context) => const WelcomeView()));
-    // }
+  /// Navega a la vista de bienvenida
+  void _goToWelcomePage() {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const WelcomeView()),
+    );
   }
-  
+
   @override
   Widget build(BuildContext context) {
     var media = MediaQuery.of(context).size;

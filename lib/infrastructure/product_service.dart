@@ -16,16 +16,16 @@ class ProductService {
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(response.body);
 
-      // Convertir el Map a una List de Mapas (cada uno representa un producto)
+
       final productsList = data.values.toList();
 
-      // Mapear cada producto de la lista a una instancia de Product
+
       return productsList.map((json) {
         final productData = ProductData.fromJson(json);
         return Product(
             id_product: productData.id_product,
             image: NetworkImage(productData
-                .imageUrl), // Asegúrate de que `imageUrl` esté presente en `ProductData`
+                .imageUrl), 
             name: productData.name,
             price: productData.price,
             description: productData.description,

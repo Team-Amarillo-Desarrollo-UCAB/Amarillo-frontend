@@ -2,6 +2,7 @@ import 'package:desarrollo_frontend/domain/Combo/combo_view.dart';
 import 'package:desarrollo_frontend/domain/categorias/category_items_view.dart';
 import 'package:flutter/material.dart';
 
+import '../../common/base_url.dart';
 import '../../common/color_extension.dart';
 import '../../common_widget/category_cell.dart';
 import '../../common_widget/most_popular_cell.dart';
@@ -25,7 +26,7 @@ class _HomeViewState extends State<HomeView> {
   List<Product> _product = [];
   final CartService _cartService = CartService();
   final ProductService _productService =
-      ProductService('https://amarillo-backend-production.up.railway.app');
+      ProductService(BaseUrl().BASE_URL);
 
   @override
   void initState() {
@@ -45,19 +46,17 @@ class _HomeViewState extends State<HomeView> {
   }
 
   void onAdd(CartItem item) async {
-    await _cartService.loadCartItems(); // Carga los elementos del carrito
+    await _cartService.loadCartItems();
     bool isProductInCart = _cartService.cartItems.any((cartItem) =>
-        cartItem.name ==
-        item.name); // Verifica si el producto ya está en el carrito
+        cartItem.name == item.name);
     if (isProductInCart) {
       CartItem existingItem = _cartService.cartItems
           .firstWhere((cartItem) => cartItem.name == item.name);
       existingItem.incrementQuantity();
     } else {
-      // Si el producto no está en el carrito, lo añade
       _cartService.cartItems.add(item);
     }
-    await _cartService.saveCartItems(); // Guarda los cambios en el carrito
+    await _cartService.saveCartItems();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(isProductInCart
@@ -91,107 +90,90 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   Widget build(BuildContext context) {
+    var media = MediaQuery.of(context).size;
+
     return Scaffold(
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 20),
+          padding: EdgeInsets.symmetric(vertical: media.height * 0.02),
           child: Column(
             children: [
-              const SizedBox(
-                height: 46,
-              ),
+              SizedBox(height: media.height * 0.05),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                padding: EdgeInsets.symmetric(horizontal: media.width * 0.05),
+                child: Row(
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
+                    ClipOval(
+                      child: Image.asset(
+                        'assets/img/perfil.png',
+                        width: media.width * 0.12,
+                        height: media.width * 0.12,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    SizedBox(width: media.width * 0.03),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        ClipOval(
-                          child: Image.asset(
-                            'assets/img/perfil.png',
-                            width: 50,
-                            height: 50,
-                            fit: BoxFit.cover,
-                          ),
+                        Text(
+                          "¡HOLA CARLOS!",
+                          style: TextStyle(
+                              color: TColor.primary,
+                              fontSize: media.width * 0.04,
+                              fontWeight: FontWeight.w600),
                         ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              // "Good morning ${ServiceCall.userPayload[KKey.name] ?? ""}!",
-                              "¡HOLA CARLOS!",
-                              style: TextStyle(
-                                  color: TColor.primary,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600),
-                            ),
-                            Text(
-                              "Sábana Grande, Caracas",
-                              style: TextStyle(
-                                  color: TColor.secondaryText,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500),
-                            ),
-                            const SizedBox(
-                              width: 10,
-                            )
-                          ],
+                        Text(
+                          "Sábana Grande, Caracas",
+                          style: TextStyle(
+                              color: TColor.secondaryText,
+                              fontSize: media.width * 0.035,
+                              fontWeight: FontWeight.w500),
                         ),
                       ],
                     ),
                   ],
                 ),
               ),
-              const SizedBox(
-                height: 20,
-              ),
+              SizedBox(height: media.height * 0.015),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+                padding: EdgeInsets.symmetric(horizontal: media.width * 0.05),
                 child: RoundTextfield(
                   hintText: "Productos, Categorías...",
                   controller: txtSearch,
                   left: Container(
                     alignment: Alignment.center,
-                    width: 30,
+                    width: media.width * 0.08,
                     child: Image.asset(
                       "assets/img/search.png",
-                      width: 20,
-                      height: 20,
+                      width: media.width * 0.05,
                       color: TColor.primary,
                     ),
                   ),
                 ),
               ),
-              const SizedBox(
-                height: 20,
-              ),
+              SizedBox(height: media.height * 0.03),
               ClipRRect(
-                borderRadius:
-                    BorderRadius.circular(10), // Adjust the radius as needed
+                borderRadius: BorderRadius.circular(media.width * 0.03),
                 child: Image.asset(
                   'assets/img/oferta.png',
-                  width: 400,
-                  height: 180,
+                  width: media.width * 0.9,
+                  height: media.height * 0.17,
                   fit: BoxFit.cover,
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+                padding: EdgeInsets.symmetric(horizontal: media.width * 0.05),
                 child: ViewAllTitleRow(
                   title: "Categorías",
                   onView: () {},
                 ),
               ),
               SizedBox(
-                height: 120,
+                height: media.height * 0.13,
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.symmetric(horizontal: 15),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: media.width * 0.03),
                   itemCount: catArr.length,
                   itemBuilder: ((context, index) {
                     var cObj = catArr[index] as Map? ?? {};
@@ -203,20 +185,23 @@ class _HomeViewState extends State<HomeView> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+                padding: EdgeInsets.symmetric(horizontal: media.width * 0.05),
                 child: ViewAllTitleRow(
                   title: "Oferta de Combos",
                   onView: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => ComboView()));
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ComboView()));
                   },
                 ),
               ),
               SizedBox(
-                height: 200,
+                height: media.height * 0.23,
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.symmetric(horizontal: 15),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: media.width * 0.03),
                   itemCount: mostPopArr.length,
                   itemBuilder: ((context, index) {
                     var mObj = mostPopArr[index] as Map? ?? {};
@@ -228,7 +213,7 @@ class _HomeViewState extends State<HomeView> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+                padding: EdgeInsets.symmetric(horizontal: media.width * 0.05),
                 child: ViewAllTitleRow(
                   title: "Productos Populares",
                   onView: () {
@@ -240,9 +225,10 @@ class _HomeViewState extends State<HomeView> {
                 ),
               ),
               SizedBox(
-                height: 200,
+                height: media.height * 0.25,
                 child: ListView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: 15),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: media.width * 0.03),
                   itemCount: _product.length,
                   itemBuilder: (context, index) {
                     final product = _product[index];
@@ -254,7 +240,7 @@ class _HomeViewState extends State<HomeView> {
                           name: product.name,
                           price: product.price,
                           description: product.description,
-                          peso: product.peso)), // Llamada a la función onAdd
+                          peso: product.peso)),
                     );
                   },
                 ),

@@ -20,9 +20,6 @@ class ViewAllTitleRow extends StatelessWidget {
               fontSize: 20,
               fontWeight: FontWeight.w800),
         ),
-                const SizedBox(
-          width: 90,
-        ),
         Row(
           children: [
             TextButton(
