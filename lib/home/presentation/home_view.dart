@@ -1,4 +1,7 @@
+import 'package:desarrollo_frontend/Combo/domain/combo.dart';
+import 'package:desarrollo_frontend/Combo/infrastructure/combo_service.dart';
 import 'package:desarrollo_frontend/Combo/presentation/combo_view.dart';
+import 'package:desarrollo_frontend/Combo/presentation/combo_widget.dart';
 import 'package:desarrollo_frontend/categorias/presentation/category_items_view.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -26,13 +29,16 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   TextEditingController txtSearch = TextEditingController();
   List<Product> _product = [];
+  List<Combo> _combo = [];
   final CartService _cartService = CartService();
   final ProductService _productService = ProductService(BaseUrl().BASE_URL);
+  final ComboService _comboService = ComboService(BaseUrl().BASE_URL);
 
   @override
   void initState() {
     super.initState();
-    _fetchProducts(); // Llamar al método de carga de productos cuando se inicia el widget
+    _fetchProducts();
+    _fetchCombos(); // Llamar al método de carga de productos cuando se inicia el widget
   }
 
   Future<void> _fetchProducts() async {
@@ -40,6 +46,21 @@ class _HomeViewState extends State<HomeView> {
       List<Product> products = await _productService.getProducts(1);
       setState(() {
         _product = products;
+        _product.shuffle();
+        _product = _product.take(5).toList();
+      });
+    } catch (error) {
+      print('Error al obtener productos: $error');
+    }
+  }
+
+  Future<void> _fetchCombos() async {
+    try {
+      List<Combo> Combos = await _comboService.getCombo(1);
+      setState(() {
+        _combo = Combos;
+        _combo.shuffle();
+        _combo = _combo.take(5).toList();
       });
     } catch (error) {
       print('Error al obtener productos: $error');
@@ -196,19 +217,26 @@ class _HomeViewState extends State<HomeView> {
                 ),
               ),
               SizedBox(
-                height: media.height * 0.23,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  padding: EdgeInsets.symmetric(horizontal: media.width * 0.03),
-                  itemCount: mostPopArr.length,
-                  itemBuilder: ((context, index) {
-                    var mObj = mostPopArr[index] as Map? ?? {};
-                    return MostPopularCell(
-                      mObj: mObj,
-                      onTap: () {},
-                    );
-                  }),
-                ),
+                height: media.height * 0.20,
+                child: _combo.isEmpty
+                    ? const Center(child: CircularProgressIndicator())
+                    : PageView.builder(
+                        itemCount: _combo.length,
+                        itemBuilder: (context, index) {
+                          final combo = _combo[index];
+                          return ComboCard(
+                            combo: combo,
+                            onAdd: () => onAdd(CartItem(
+                                id_product: combo.id_product,
+                                imageUrl: combo.images[0],
+                                name: combo.name,
+                                price: double.parse(combo.price),
+                                description: combo.description,
+                                peso: combo.peso,
+                                productId: combo.productId)),
+                          );
+                        },
+                      ),
               ),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: media.width * 0.05),
@@ -223,24 +251,25 @@ class _HomeViewState extends State<HomeView> {
                 ),
               ),
               SizedBox(
-                height: media.height * 0.25,
-                child: ListView.builder(
-                  padding: EdgeInsets.symmetric(horizontal: media.width * 0.03),
-                  itemCount: _product.length,
-                  itemBuilder: (context, index) {
-                    final product = _product[index];
-                    return ProductCard(
-                      product: product,
-                      onAdd: () => onAdd(CartItem(
-                          id_product: product.id_product,
-                          imageUrl: product.image,
-                          name: product.name,
-                          price: product.price,
-                          description: product.description,
-                          peso: product.peso)),
-                    );
-                  },
-                ),
+                height: media.height * 0.20,
+                child: _product.isEmpty
+                    ? const Center(child: CircularProgressIndicator())
+                    : PageView.builder(
+                        itemCount: _product.length,
+                        itemBuilder: (context, index) {
+                          final product = _product[index];
+                          return ProductCard(
+                            product: product,
+                            onAdd: () => onAdd(CartItem(
+                                id_product: product.id_product,
+                                imageUrl: product.image,
+                                name: product.name,
+                                price: product.price,
+                                description: product.description,
+                                peso: product.peso)),
+                          );
+                        },
+                      ),
               ),
             ],
           ),
