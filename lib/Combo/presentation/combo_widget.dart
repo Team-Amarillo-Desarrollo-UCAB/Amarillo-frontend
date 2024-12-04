@@ -1,12 +1,16 @@
 import 'package:desarrollo_frontend/Combo/domain/combo.dart';
 import 'package:desarrollo_frontend/Combo/presentation/detailcombo_screen.dart';
+import 'package:desarrollo_frontend/Producto/infrastructure/product_service_search_by_id.dart';
+import 'package:desarrollo_frontend/common/infrastructure/base_url.dart';
 import 'package:flutter/material.dart';
 
 class ComboCard extends StatelessWidget {
   final Combo combo;
   final VoidCallback onAdd;
+  final ProductServiceSearchbyId _productServiceSearchbyId =
+      ProductServiceSearchbyId(BaseUrl().BASE_URL);
 
-  const ComboCard({
+  ComboCard({
     super.key,
     required this.combo,
     required this.onAdd,
@@ -16,7 +20,8 @@ class ComboCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
         onTap: () {
-          showDetailComboDialog(context, combo, onAdd);
+          showDetailComboDialog(
+              context, combo, onAdd, _productServiceSearchbyId);
         },
         child: Card(
             elevation: 5,
@@ -28,7 +33,8 @@ class ComboCard extends StatelessWidget {
                 child: Row(
                   children: [
                     CircleAvatar(
-                        backgroundImage: combo.image as ImageProvider<Object>,
+                        backgroundImage:
+                            combo.images[0] as ImageProvider<Object>,
                         radius: 40), //CircleAvatar
                     const SizedBox(width: 16),
                     Expanded(

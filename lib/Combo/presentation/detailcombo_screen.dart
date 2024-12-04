@@ -1,8 +1,10 @@
 import 'package:desarrollo_frontend/Combo/domain/combo.dart';
+import 'package:desarrollo_frontend/Producto/domain/popular_product.dart';
+import 'package:desarrollo_frontend/Producto/infrastructure/product_service_search_by_id.dart';
 import 'package:flutter/material.dart';
 
-void showDetailComboDialog(
-    BuildContext context, Combo combo, VoidCallback onAdd) {
+void showDetailComboDialog(BuildContext context, Combo combo,
+    VoidCallback onAdd, ProductServiceSearchbyId productService) {
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -29,7 +31,7 @@ void showDetailComboDialog(
                 ),
                 SizedBox(height: media.height * 0.02),
                 CircleAvatar(
-                  backgroundImage: combo.image as ImageProvider<Object>,
+                  backgroundImage: combo.images[0] as ImageProvider<Object>,
                   radius: media.width * 0.2,
                 ),
                 SizedBox(height: media.height * 0.02),
@@ -43,17 +45,52 @@ void showDetailComboDialog(
                 SizedBox(height: media.height * 0.01),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: media.width * 0.02),
+                  child: Text(
+                    combo.description,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontFamily: 'Inter',
+                      fontWeight: FontWeight.w600,
+                      fontSize: media.width * 0.035,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ),
+                SizedBox(height: media.height * 0.02),
+                const Text(
+                  'Lista de Productos:',
+                  style: TextStyle(
+                    fontFamily: 'Inter',
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: media.width * 0.02),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: combo.description.map((detailItem) {
-                      return Text(
-                        detailItem,
-                        style: TextStyle(
-                          fontFamily: 'Inter',
-                          fontWeight: FontWeight.w600,
-                          fontSize: media.width * 0.035,
-                          color: Colors.grey,
-                        ),
+                    children: combo.productId.map((productId) {
+                      return FutureBuilder<Product>(
+                        future: productService.getProductById(productId),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return CircularProgressIndicator();
+                          } else if (snapshot.hasError) {
+                            return Text('Error: ${snapshot.error}');
+                          } else if (snapshot.hasData) {
+                            return Text(
+                              snapshot.data!.name,
+                              style: TextStyle(
+                                fontFamily: 'Inter',
+                                fontWeight: FontWeight.w600,
+                                fontSize: media.width * 0.035,
+                                color: Colors.grey,
+                              ),
+                            );
+                          } else {
+                            return Text('Producto no encontrado');
+                          }
+                        },
                       );
                     }).toList(),
                   ),

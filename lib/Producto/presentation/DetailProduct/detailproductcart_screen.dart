@@ -1,7 +1,11 @@
 import 'package:desarrollo_frontend/Carrito/domain/cart_item.dart';
+import 'package:desarrollo_frontend/Producto/domain/popular_product.dart';
+import 'package:desarrollo_frontend/Producto/infrastructure/product_service_search_by_id.dart';
 import 'package:flutter/material.dart';
 
-void showDetailCartItemDialog(BuildContext context, CartItem product) {
+void showDetailCartItemDialog(BuildContext context, CartItem product,
+    ProductServiceSearchbyId productService) {
+  print('productID: ${product.productId}');
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -40,7 +44,61 @@ void showDetailCartItemDialog(BuildContext context, CartItem product) {
                   ),
                 ),
                 SizedBox(height: media.height * 0.01),
-                _buildDescription(product.description, media),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: media.width * 0.02),
+                  child: Text(
+                    product.description,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontFamily: 'Inter',
+                      fontWeight: FontWeight.w600,
+                      fontSize: media.width * 0.035,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ),
+                SizedBox(height: media.height * 0.02),
+                if (product.productId != null) ...[
+                  const Text(
+                    'Lista de Productos:',
+                    style: TextStyle(
+                      fontFamily: 'Inter',
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                  Padding(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: media.width * 0.02),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: product.productId!.map((productId) {
+                        return FutureBuilder<Product>(
+                          future: productService.getProductById(productId),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return CircularProgressIndicator();
+                            } else if (snapshot.hasError) {
+                              return Text('Error: ${snapshot.error}');
+                            } else if (snapshot.hasData) {
+                              return Text(
+                                snapshot.data!.name,
+                                style: TextStyle(
+                                  fontFamily: 'Inter',
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: media.width * 0.035,
+                                  color: Colors.grey,
+                                ),
+                              );
+                            } else {
+                              return Text('Producto no encontrado');
+                            }
+                          },
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ],
                 SizedBox(height: media.height * 0.02),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -81,54 +139,4 @@ void showDetailCartItemDialog(BuildContext context, CartItem product) {
       );
     },
   );
-}
-
-Widget _buildDescription(dynamic description, Size media) {
-  if (description is String) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: media.width * 0.02),
-      child: Text(
-        description,
-        textAlign: TextAlign.center,
-        style: TextStyle(
-          fontFamily: 'Inter',
-          fontWeight: FontWeight.w600,
-          fontSize: media.width * 0.035,
-          color: Colors.grey,
-        ),
-      ),
-    );
-  } else if (description is List<dynamic>) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: media.width * 0.02),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: description.map((detailItem) {
-          return Padding(
-            padding: EdgeInsets.symmetric(vertical: media.height * 0.005),
-            child: Text(
-              detailItem,
-              style: TextStyle(
-                fontFamily: 'Inter',
-                fontWeight: FontWeight.w600,
-                fontSize: media.width * 0.035,
-                color: Colors.grey,
-              ),
-            ),
-          );
-        }).toList(),
-      ),
-    );
-  } else {
-    return const Text(
-      'Descripción no disponible',
-      textAlign: TextAlign.center,
-      style: TextStyle(
-        fontFamily: 'Inter',
-        fontWeight: FontWeight.w600,
-        fontSize: 15,
-        color: Colors.grey,
-      ),
-    );
-  }
 }

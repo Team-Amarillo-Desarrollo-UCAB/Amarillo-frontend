@@ -8,6 +8,7 @@ class CartItem {
   final dynamic description;
   final String peso;
   int quantity;
+  final List<dynamic>? productId;
 
   CartItem({
     required this.id_product,
@@ -17,6 +18,7 @@ class CartItem {
     required this.description,
     required this.peso,
     this.quantity = 1,
+    this.productId,
   });
 
   // Función para incrementar la cantidad
@@ -44,6 +46,7 @@ class CartItem {
       'description': description,
       'peso': peso,
       'quantity': quantity,
+      'productId': productId,
     };
   }
 
@@ -56,6 +59,7 @@ class CartItem {
       description: json['description'],
       peso: json['peso'],
       quantity: json['quantity'],
+      productId: json['productId'],
     );
   }
 }

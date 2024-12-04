@@ -27,8 +27,7 @@ class _HomeViewState extends State<HomeView> {
   TextEditingController txtSearch = TextEditingController();
   List<Product> _product = [];
   final CartService _cartService = CartService();
-  final ProductService _productService =
-      ProductService(BaseUrl().BASE_URL);
+  final ProductService _productService = ProductService(BaseUrl().BASE_URL);
 
   @override
   void initState() {
@@ -49,8 +48,8 @@ class _HomeViewState extends State<HomeView> {
 
   void onAdd(CartItem item) async {
     await _cartService.loadCartItems();
-    bool isProductInCart = _cartService.cartItems.any((cartItem) =>
-        cartItem.name == item.name);
+    bool isProductInCart =
+        _cartService.cartItems.any((cartItem) => cartItem.name == item.name);
     if (isProductInCart) {
       CartItem existingItem = _cartService.cartItems
           .firstWhere((cartItem) => cartItem.name == item.name);
@@ -175,8 +174,7 @@ class _HomeViewState extends State<HomeView> {
                 height: media.height * 0.13,
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
-                  padding:
-                      EdgeInsets.symmetric(horizontal: media.width * 0.03),
+                  padding: EdgeInsets.symmetric(horizontal: media.width * 0.03),
                   itemCount: catArr.length,
                   itemBuilder: ((context, index) {
                     var cObj = catArr[index] as Map? ?? {};
@@ -192,10 +190,8 @@ class _HomeViewState extends State<HomeView> {
                 child: ViewAllTitleRow(
                   title: "Oferta de Combos",
                   onView: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => ComboView()));
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => ComboView()));
                   },
                 ),
               ),
@@ -203,8 +199,7 @@ class _HomeViewState extends State<HomeView> {
                 height: media.height * 0.23,
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
-                  padding:
-                      EdgeInsets.symmetric(horizontal: media.width * 0.03),
+                  padding: EdgeInsets.symmetric(horizontal: media.width * 0.03),
                   itemCount: mostPopArr.length,
                   itemBuilder: ((context, index) {
                     var mObj = mostPopArr[index] as Map? ?? {};
@@ -230,8 +225,7 @@ class _HomeViewState extends State<HomeView> {
               SizedBox(
                 height: media.height * 0.25,
                 child: ListView.builder(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: media.width * 0.03),
+                  padding: EdgeInsets.symmetric(horizontal: media.width * 0.03),
                   itemCount: _product.length,
                   itemBuilder: (context, index) {
                     final product = _product[index];

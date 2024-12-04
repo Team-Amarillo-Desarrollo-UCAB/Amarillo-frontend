@@ -1,4 +1,6 @@
+import 'package:desarrollo_frontend/Producto/infrastructure/product_service_search_by_id.dart';
 import 'package:desarrollo_frontend/Producto/presentation/DetailProduct/detailproductcart_screen.dart';
+import 'package:desarrollo_frontend/common/infrastructure/base_url.dart';
 import 'package:flutter/material.dart';
 import '../domain/cart_item.dart';
 
@@ -7,8 +9,10 @@ class CartItemWidget extends StatelessWidget {
   final VoidCallback onAdd;
   final VoidCallback onRemove;
   final VoidCallback onRemoveItem;
+  final ProductServiceSearchbyId _productServiceSearchbyId =
+      ProductServiceSearchbyId(BaseUrl().BASE_URL);
 
-  const CartItemWidget(
+  CartItemWidget(
       {super.key,
       required this.item,
       required this.onAdd,
@@ -19,7 +23,7 @@ class CartItemWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
         onTap: () {
-          showDetailCartItemDialog(context, item);
+          showDetailCartItemDialog(context, item, _productServiceSearchbyId);
         },
         child: Card(
             elevation: 5,

@@ -1,16 +1,18 @@
 class Combo {
-  final String id_combo;
-  final dynamic image;
+  final String id_product;
+  final List<dynamic> images;
   final String name;
-  final double price;
-  final List<String> description;
+  final String price;
+  final List<dynamic> productId;
   final String peso;
+  final String description;
 
   Combo(
-      {required this.id_combo,
-      required this.image,
+      {required this.id_product,
+      required this.images,
       required this.name,
       required this.price,
       required this.description,
-      required this.peso});
+      required this.peso,
+      required this.productId});
 }
