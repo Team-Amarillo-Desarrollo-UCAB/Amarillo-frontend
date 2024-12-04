@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
-
-import 'domain/on_boarding/startup_view.dart';
+import 'package:provider/provider.dart';
+import 'Users/domain/user_profile.dart';
+import 'common/presentation/main_tabview.dart';
+import 'common/presentation/startup_view.dart';
 
 void main() {
-  runApp(const MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => UserProfile.defaultProfile()),
+      ],
+    child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -12,13 +20,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      
       title: 'GoDely',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         fontFamily: "Metropolis",
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const StartupView(),
+      home: const MainTabView(),//StartupView(),
     );
   }
 }
