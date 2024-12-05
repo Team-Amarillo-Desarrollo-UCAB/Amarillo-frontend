@@ -35,10 +35,11 @@ class CartService {
   }
 
   Future<void> saveCartItems() async {
-    final prefs = await SharedPreferences.getInstance();
-    final jsonItems = _cartItems.map((item) => item.toJson()).toList();
-    prefs.setString('cart_items', jsonEncode(jsonItems));
-  }
+      final prefs = await SharedPreferences.getInstance();
+      final jsonItems = _cartItems.map((item) => item.toJson()).toList();
+      prefs.setString('cart_items', jsonEncode(jsonItems));
+    }
+
 
   void removeItem(CartItem item) {
     _cartItems.remove(item);
@@ -66,8 +67,7 @@ class CartService {
       'entry': orderItems,
     });
 
-    final Uri url = Uri.parse(
-        'https://amarillo-backend-production.up.railway.app/order/create');
+    final Uri url = Uri.parse(BaseUrl().BASE_URL+'/order/create');
 
     final response = await http
         .post(url, body: body, headers: {'Content-Type': 'application/json'});
