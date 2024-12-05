@@ -66,7 +66,8 @@ class CartService {
       'entry': orderItems,
     });
 
-    final Uri url = Uri.parse(BaseUrl().BASE_URL);
+    final Uri url = Uri.parse(
+        'https://amarillo-backend-production.up.railway.app/order/create');
 
     final response = await http
         .post(url, body: body, headers: {'Content-Type': 'application/json'});
