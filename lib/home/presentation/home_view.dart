@@ -23,6 +23,7 @@ import '../../Carrito/domain/cart_item.dart';
 import '../../Carrito/infrastructure/cart_service.dart';
 import '../../Producto/domain/popular_product.dart';
 import '../../Producto/presentation/popular_product_widget.dart';
+import 'drawer_screen.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -46,6 +47,9 @@ class _HomeViewState extends State<HomeView> {
   final DescuentoService _descuentoService =
       DescuentoService(BaseUrl().BASE_URL);
   final CategoryService _categoryService = CategoryService(BaseUrl().BASE_URL);
+  double xOffset = 0;
+  double yOffset = 0;
+  bool isDrawerOpen = false;
 
   @override
   void initState() {
@@ -141,18 +145,63 @@ class _HomeViewState extends State<HomeView> {
     );
   }
 
-  @override
+
+      @override
   Widget build(BuildContext context) {
     var media = MediaQuery.of(context).size;
     final userProfile = Provider.of<UserProfile>(context);
 
-    return Scaffold(
-      body: SingleChildScrollView(
-        child: Padding(
+    return Stack(
+      children: [
+        // Drawer personalizado
+        _buildDrawer(),
+        AnimatedContainer(
+      
+      transform: Matrix4.translationValues(xOffset, yOffset, 0)
+        ..scale(isDrawerOpen ? 0.85 : 1.00),
+      duration: const Duration(milliseconds: 250),
+      decoration: BoxDecoration(
+        borderRadius: isDrawerOpen ? BorderRadius.circular(30) : BorderRadius.zero,
+      ),
+      child: Scaffold(
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              // AppBar personalizado
+              SizedBox(height: media.height * 0.05),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: media.width * 0.05),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    isDrawerOpen
+                        ? IconButton(
+                            icon: const Icon(Icons.arrow_back_ios),
+                            onPressed: () {
+                              setState(() {
+                                xOffset = 0;
+                                yOffset = 0;
+                                isDrawerOpen = false;
+                              });
+                            },
+                          )
+                        : IconButton(
+                            icon: const Icon(Icons.menu),
+                            onPressed: () {
+                              setState(() {
+                                xOffset = 250;
+                                yOffset = 70;
+                                isDrawerOpen = true;
+                              });
+                            },
+                          ),
+                    const Icon(Icons.notifications),
+                  ],
+                ),
+              ), Padding(
           padding: EdgeInsets.symmetric(vertical: media.height * 0.02),
           child: Column(
             children: [
-              SizedBox(height: media.height * 0.05),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: media.width * 0.05),
                 child: Row(
@@ -345,7 +394,54 @@ class _HomeViewState extends State<HomeView> {
             ],
           ),
         ),
+            ],
+        )
+    )
+    ),
+    )
+      ]
+    );
+  }
+
+
+
+  Widget _buildDrawer() {
+    return Container(
+      width: 600,
+      decoration: BoxDecoration(
+        gradient: TColor.gradient,
+      ),
+      child: Column(
+        children: [
+          const SizedBox(height: 200),
+          ListTile( 
+            title: const Text('      Menú', style: TextStyle(
+              color: Colors.white,
+              fontSize: 24,
+              fontWeight: FontWeight.bold,)),
+          ),
+          const SizedBox(height: 50),
+          ListTile(
+            leading: const Icon(Icons.discount, color: Colors.white),
+            title: const Text('Promociones', style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,)),
+            onTap: () {},
+          ),
+          ListTile(
+            leading: const Icon(Icons.card_membership, color: Colors.white),
+            title: const Text('Cupones', style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,)),
+            onTap: () {},
+          ),
+                    ListTile(
+            leading: const Icon(Icons.production_quantity_limits_sharp, color: Colors.white),
+            title: const Text('Combos', style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,)),
+            onTap: () {},
+          ),
+        ],
       ),
     );
   }
+
 }
+
+
+
