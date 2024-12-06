@@ -13,7 +13,8 @@ import '../../Producto/domain/popular_product.dart';
 import '../../Producto/presentation/popular_product_widget.dart';
 
 class ProductListView extends StatefulWidget {
-  const ProductListView({super.key});
+  final String? searchQuery;
+  const ProductListView({super.key, this.searchQuery});
 
   @override
   State<ProductListView> createState() => _ProductListViewState();
@@ -40,6 +41,13 @@ class _ProductListViewState extends State<ProductListView> {
     super.initState();
     _loadMoreProducts();
     _loadCategories();
+    _searchController.addListener(_onSearchChanged);
+    if (widget.searchQuery != null && widget.searchQuery!.isNotEmpty) {
+      _searchController.text = widget.searchQuery!;
+      _searchProductByName(widget.searchQuery!);
+    } else {
+      _loadMoreProducts();
+    }
     _searchController.addListener(_onSearchChanged);
   }
 
@@ -88,9 +96,9 @@ class _ProductListViewState extends State<ProductListView> {
   Future<void> _searchProductByName(String productName) async {
     setState(() {
       _isSearching = true;
+      _product.clear();
     });
 
-    // Formateamos el nombre a título de caso
     String formattedProductName = productName
         .toLowerCase()
         .split(' ')
@@ -102,8 +110,13 @@ class _ProductListViewState extends State<ProductListView> {
           await _productServiceSearch.getProductByName(formattedProductName);
       setState(() {
         _product = [product];
+        _isSearching = false;
       });
     } catch (error) {
+      setState(() {
+        _isSearching = false;
+        _product.clear();
+      });
       print('Error al buscar producto: $error');
     }
   }
