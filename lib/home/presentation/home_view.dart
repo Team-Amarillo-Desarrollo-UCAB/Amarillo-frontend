@@ -2,6 +2,8 @@ import 'package:desarrollo_frontend/Combo/domain/combo.dart';
 import 'package:desarrollo_frontend/Combo/infrastructure/combo_service.dart';
 import 'package:desarrollo_frontend/Combo/presentation/combo_view.dart';
 import 'package:desarrollo_frontend/Combo/presentation/combo_widget.dart';
+import 'package:desarrollo_frontend/Descuento/Domain/descuento.dart';
+import 'package:desarrollo_frontend/Descuento/Infrastructure/descuento_service.dart';
 import 'package:desarrollo_frontend/Descuento/Infrastructure/descuento_service_search_by_id.dart';
 import 'package:desarrollo_frontend/categorias/domain/category.dart';
 import 'package:desarrollo_frontend/categorias/infrasestructure/category_service.dart';
@@ -34,12 +36,15 @@ class _HomeViewState extends State<HomeView> {
   List<Product> _product = [];
   List<Combo> _combo = [];
   List<Category> _categories = [];
+  List<Descuento> _descuentos = [];
+
   final CartService _cartService = CartService();
   final ProductService _productService = ProductService(BaseUrl().BASE_URL);
   final ComboService _comboService = ComboService(BaseUrl().BASE_URL);
   final DescuentoServiceSearchById _descuentoServiceSearchById =
       DescuentoServiceSearchById(BaseUrl().BASE_URL);
-
+  final DescuentoService _descuentoService =
+      DescuentoService(BaseUrl().BASE_URL);
   final CategoryService _categoryService = CategoryService(BaseUrl().BASE_URL);
 
   @override
@@ -48,6 +53,7 @@ class _HomeViewState extends State<HomeView> {
     _fetchProducts();
     _fetchCombos();
     _fetchCategories();
+    _fetchDescuentos();
   }
 
   Future<void> _fetchProducts() async {
@@ -84,6 +90,19 @@ class _HomeViewState extends State<HomeView> {
       });
     } catch (error) {
       print('Error al obtener categorías: $error');
+    }
+  }
+
+  Future<void> _fetchDescuentos() async {
+    try {
+      List<Descuento> descuentos = await _descuentoService.getDescuento(1);
+      setState(() {
+        _descuentos = descuentos;
+        _descuentos.shuffle();
+        _descuentos = _descuentos.take(5).toList();
+      });
+    } catch (error) {
+      print('Error al obtener descuentos: $error');
     }
   }
 
@@ -185,27 +204,37 @@ class _HomeViewState extends State<HomeView> {
                     fillColor: Colors.orange.withOpacity(0.1),
                   ),
                   onSubmitted: (value) {
-                      if (value.trim().isNotEmpty) {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                    builder: (context) => ProductListView(searchQuery: value.trim()),
-                                ),
-                            );    
-                            }
-                        },
+                    if (value.trim().isNotEmpty) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              ProductListView(searchQuery: value.trim()),
+                        ),
+                      );
+                    }
+                  },
                 ),
               ),
               SizedBox(height: media.height * 0.03),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(media.width * 0.03),
-                child: Image.asset(
-                  'assets/img/oferta.png',
-                  width: media.width * 0.9,
-                  height: media.height * 0.17,
-                  fit: BoxFit.cover,
-                ),
-              ),
+              _descuentos.isEmpty
+                  ? const Center(child: CircularProgressIndicator())
+                  : SizedBox(
+                      height: media.height * 0.17,
+                      child: PageView.builder(
+                        itemCount: _descuentos.length,
+                        itemBuilder: (context, index) {
+                          return ClipRRect(
+                            child: Image.network(
+                              _descuentos[index].image,
+                              width: media.width * 0.9,
+                              height: media.height * 0.17,
+                              fit: BoxFit.cover,
+                            ),
+                          );
+                        },
+                      ),
+                    ),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: media.width * 0.05),
                 child: ViewAllTitleRow(

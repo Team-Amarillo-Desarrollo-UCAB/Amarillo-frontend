@@ -20,11 +20,11 @@ class DescuentoServiceSearchById {
       final descuentoData = DescuentoData.fromJson(data);
 
       return Descuento(
-        id: descuentoId,
-        name: descuentoData.name,
-        percentage: descuentoData.percentage,
-        description: descuentoData.description,
-      );
+          id: descuentoId,
+          name: descuentoData.name,
+          percentage: descuentoData.percentage,
+          description: descuentoData.description,
+          image: descuentoData.image);
     } else {
       throw Exception('Error al obtener el descuento');
     }

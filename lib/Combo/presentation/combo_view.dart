@@ -120,7 +120,7 @@ class _ComboViewState extends State<ComboView> {
           onNotification: (ScrollNotification) {
             if (ScrollNotification.metrics.pixels ==
                 ScrollNotification.metrics.maxScrollExtent) {
-              _loadMoreProducts();
+              //_loadMoreProducts();
             }
             return true;
           },

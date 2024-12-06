@@ -52,7 +52,7 @@ void showDetailComboDialog(BuildContext context, Combo combo,
                       fontFamily: 'Inter',
                       fontWeight: FontWeight.w600,
                       fontSize: media.width * 0.035,
-                      color: Colors.grey,
+                      color: Colors.grey[700],
                     ),
                   ),
                 ),
@@ -84,7 +84,7 @@ void showDetailComboDialog(BuildContext context, Combo combo,
                                 fontFamily: 'Inter',
                                 fontWeight: FontWeight.w600,
                                 fontSize: media.width * 0.035,
-                                color: Colors.grey,
+                                color: Colors.grey[700],
                               ),
                             );
                           } else {
@@ -96,7 +96,7 @@ void showDetailComboDialog(BuildContext context, Combo combo,
                   ),
                 ),
                 SizedBox(height: media.height * 0.02),
-                Row(
+                /*Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Text(
@@ -126,7 +126,7 @@ void showDetailComboDialog(BuildContext context, Combo combo,
                       ),
                     ),
                   ],
-                ),
+                ),*/
                 SizedBox(height: media.height * 0.02),
                 ElevatedButton(
                   onPressed: onAdd,
