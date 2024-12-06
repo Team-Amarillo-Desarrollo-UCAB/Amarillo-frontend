@@ -6,7 +6,7 @@ import '../color_extension.dart';
 class TabButton extends StatelessWidget {
   final VoidCallback onTap;
   final String title;
-  final IconData icon; // Changed type to IconData for icons
+  final IconData icon; 
   final bool isSelected;
 
   const TabButton({
@@ -34,7 +34,7 @@ class TabButton extends StatelessWidget {
           Icon(
             icon,
             color: isSelected ? TColor.primary : TColor.placeholder,
-            size: 30, // Adjust size as needed
+            size: 30, 
           ),
           const SizedBox(
             height: 4,

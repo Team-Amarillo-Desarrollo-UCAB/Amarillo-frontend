@@ -211,7 +211,6 @@ class OrderDetailsView extends StatelessWidget {
     );
   }
 
-  // Helper para filas de precios
   Widget _buildPriceRow(String label, double value, {bool isTotal = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0),
@@ -237,7 +236,7 @@ class OrderDetailsView extends StatelessWidget {
       ),
     );
   }
-  // Helper para obtener detalles del estado
+  
   Map<String, dynamic> _getOrderStatusDetails(String status) {
     switch (status) {
       case "Entregado":

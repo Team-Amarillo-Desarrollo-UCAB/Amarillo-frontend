@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import '../../common/infrastructure/session_manager.dart'; // Asegúrate de importar SessionManager
+import '../../common/infrastructure/session_manager.dart'; 
 import '../../common/infrastructure/base_url.dart';
 
 class AuthService {

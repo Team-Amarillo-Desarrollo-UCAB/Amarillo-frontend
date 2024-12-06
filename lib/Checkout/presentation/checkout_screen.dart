@@ -2,7 +2,6 @@ import 'package:desarrollo_frontend/Checkout/domain/direccion.dart';
 import 'package:desarrollo_frontend/Checkout/presentation/direcciones_screen.dart';
 import 'package:desarrollo_frontend/Checkout/presentation/fecha_hora_widget.dart';
 import 'package:desarrollo_frontend/Checkout/presentation/metodo_de_pago_widget.dart';
-import 'package:desarrollo_frontend/Checkout/presentation/payment_method_screen.dart';
 import 'package:desarrollo_frontend/Checkout/presentation/pie_pagina_widget.dart';
 import 'package:flutter/material.dart';
 import '../../common/presentation/common_widget/round_button.dart';

@@ -16,7 +16,7 @@ class ProductServiceSearchbyId {
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(response.body);
 
-      // Aquí directamente accedemos al objeto del producto
+      
       final productData = ProductData.fromJson(data);
 
       return Product(

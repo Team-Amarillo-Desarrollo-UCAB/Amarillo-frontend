@@ -36,7 +36,7 @@ class CartItemWidget extends StatelessWidget {
                   children: [
                     CircleAvatar(
                         backgroundImage: item.imageUrl as ImageProvider<Object>,
-                        radius: 40), //CircleAvatar
+                        radius: 40),
                     const SizedBox(width: 16),
                     Expanded(
                       child: Column(

@@ -36,7 +36,6 @@ class MetodosDePagoState extends State<MetodosDePago> {
           onChanged: (value) {
             setState(() {
               _selectedMethod = value as String;
-              // Notificar al widget padre
               widget.onSelectedMethod(_selectedMethod!);
             });
           },

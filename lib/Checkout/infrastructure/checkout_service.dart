@@ -8,11 +8,11 @@ class CheckoutService {
   static final CheckoutService _instance = CheckoutService._internal();
   factory CheckoutService() => _instance;
 
-  CheckoutService._internal(); // Constructor privado usando singleton
+  CheckoutService._internal(); 
 
   String? _idOrder;
 
-  String? get idOrder => _idOrder; // Getter para obtener el ID de la orden
+  String? get idOrder => _idOrder; 
 
   Future<void> createOrder(List<CartItem> cartItems) async {
     final List<Map<String, dynamic>> orderItems = cartItems

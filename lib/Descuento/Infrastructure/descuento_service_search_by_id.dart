@@ -16,7 +16,7 @@ class DescuentoServiceSearchById {
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(response.body);
 
-      // Aquí directamente accedemos al objeto del producto
+      
       final descuentoData = DescuentoData.fromJson(data);
 
       return Descuento(

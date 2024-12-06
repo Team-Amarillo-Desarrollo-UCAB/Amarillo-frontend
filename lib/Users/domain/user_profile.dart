@@ -13,15 +13,15 @@ class UserProfile with ChangeNotifier {
 
   static UserProfile defaultProfile() {
     return UserProfile(
-      name: "Carlos Alonzo", // Nombre por defecto
-      email: "carlos.alonzo@example.com", // Email por defecto
-      phoneNumber: "+58 4261234567", // Número por defecto
+      name: "Carlos Alonzo", 
+      email: "carlos.alonzo@example.com", 
+      phoneNumber: "+58 4261234567",
     );
   }
 
   void updateProfile(String newName, String newPhoneNumber) {
     name = newName;
     phoneNumber = newPhoneNumber;
-    notifyListeners(); // Notifica a las vistas que el estado ha cambiado
+    notifyListeners(); 
   }
 }

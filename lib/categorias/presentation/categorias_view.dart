@@ -2,9 +2,7 @@ import 'package:desarrollo_frontend/categorias/domain/category.dart';
 import 'package:desarrollo_frontend/categorias/infrasestructure/category_service.dart';
 import 'package:desarrollo_frontend/common/infrastructure/base_url.dart';
 import 'package:flutter/material.dart';
-
 import '../../common/presentation/color_extension.dart';
-import '../../common/presentation/common_widget/round_textfield.dart';
 import '../../common/presentation/common_widget/category_cell.dart';
 import '../../common/presentation/common_widget/title_only.dart';
 import 'category_items_view.dart';
@@ -113,7 +111,7 @@ class _CategoryViewState extends State<CategoryView> {
                   ),
                   ClipRRect(
                     borderRadius: BorderRadius.circular(
-                        10), // Adjust the radius as needed
+                        10), 
                     child: Image.asset(
                       'assets/img/oferta2.png',
                       width: 400,

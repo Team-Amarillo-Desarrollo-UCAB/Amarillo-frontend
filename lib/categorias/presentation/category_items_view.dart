@@ -140,19 +140,19 @@ class _ProductListViewState extends State<ProductListView> {
   }
 
   void onAdd(CartItem item) async {
-    await _cartService.loadCartItems(); // Carga los elementos del carrito
+    await _cartService.loadCartItems(); 
     bool isProductInCart = _cartService.cartItems.any((cartItem) =>
         cartItem.name ==
-        item.name); // Verifica si el producto ya está en el carrito
+        item.name); 
     if (isProductInCart) {
       CartItem existingItem = _cartService.cartItems
           .firstWhere((cartItem) => cartItem.name == item.name);
       existingItem.incrementQuantity();
     } else {
-      // Si el producto no está en el carrito, lo añade
+     
       _cartService.cartItems.add(item);
     }
-    await _cartService.saveCartItems(); // Guarda los cambios en el carrito
+    await _cartService.saveCartItems();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(isProductInCart
@@ -249,7 +249,6 @@ class _ProductListViewState extends State<ProductListView> {
                         ),
                 ),
                 const SizedBox(height: 15),
-                // Número de resultados
                 Text(
                   "${_product.length} Resultados",
                   style: const TextStyle(
@@ -258,13 +257,12 @@ class _ProductListViewState extends State<ProductListView> {
                   ),
                 ),
                 const SizedBox(height: 10),
-                // Lista de Productos obtenidos del backend
                 _product.isEmpty
                     ? const Center(child: CircularProgressIndicator())
                     : ListView.builder(
                         shrinkWrap: true,
                         physics:
-                            const NeverScrollableScrollPhysics(), // Para evitar el scroll dentro del ListView
+                            const NeverScrollableScrollPhysics(),
                         itemCount: _product.length,
                         itemBuilder: (context, index) {
                           final product = _product[index];

@@ -16,7 +16,6 @@ class FechaHoraSelectorState extends State<FechaHoraSelector> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // Sección de la fecha
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -60,8 +59,6 @@ class FechaHoraSelectorState extends State<FechaHoraSelector> {
             ),
           ],
         ),
-
-        // Sección de la hora
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

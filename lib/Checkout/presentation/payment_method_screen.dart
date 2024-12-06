@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'metodo_de_pago_widget.dart'; // Importa el archivo del widget
+import 'metodo_de_pago_widget.dart'; 
 
 class RegisterPaymentPage extends StatefulWidget {
   final int totalItems;
   final double totalPrice;
 
-  // Recibimos los datos desde CheckoutScreen
   const RegisterPaymentPage({
     Key? key,
     required this.totalItems,
@@ -62,7 +61,6 @@ class _RegisterPaymentPageState extends State<RegisterPaymentPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Detalles del pago
             Card(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -155,8 +153,6 @@ class _RegisterPaymentPageState extends State<RegisterPaymentPage> {
               },
             ),
             const Divider(),
-
-            // Campos dinámicos
             if (selectedPaymentMethod.isNotEmpty)
               ...paymentFields[selectedPaymentMethod]!.map(
                 (field) => Padding(
@@ -172,8 +168,6 @@ class _RegisterPaymentPageState extends State<RegisterPaymentPage> {
                 ),
               ),
             const SizedBox(height: 16),
-
-            // Botón para registrar pago
             ElevatedButton(
               onPressed: () {
                 if (_validatePayment()) {

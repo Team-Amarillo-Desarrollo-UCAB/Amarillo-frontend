@@ -71,7 +71,7 @@ class _SignUpViewState extends State<SignUpView> {
           "email": email,
           "name": name,
           "phone": mobile,
-          "image": "", // Por ahora, vacío. Puedes añadir funcionalidad de cargar imágenes.
+          "image": "", 
           "role": "CLIENT",
           "password": password,
         }),

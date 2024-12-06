@@ -4,7 +4,6 @@ import '../infrastructure/session_manager.dart';
 
 
 final SessionManager _sessionManager = SessionManager();
-// Función para mostrar el popup de confirmación
 void showLogoutConfirmationDialog(BuildContext context) {
   showDialog(
     context: context,
@@ -26,7 +25,7 @@ void showLogoutConfirmationDialog(BuildContext context) {
           "¿Desea cerrar sesión de GoDely?",
           textAlign: TextAlign.center,
           style: TextStyle(fontSize: 16),
-        ), // Texto del mensaje
+        ),
         actions: [
           // Botón "Cancelar"
           TextButton(
@@ -45,7 +44,7 @@ void showLogoutConfirmationDialog(BuildContext context) {
               Navigator.of(context).pop(); // Cerrar el popup
               await _sessionManager.clearSession();
               Navigator.push(context, MaterialPageRoute(
-                                        builder: (context) =>StartupView())); // Navegar al login
+                                        builder: (context) =>StartupView())); 
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.orangeAccent,

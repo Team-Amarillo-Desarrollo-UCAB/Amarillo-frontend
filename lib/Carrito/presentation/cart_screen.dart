@@ -13,7 +13,7 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
-   CartService _cartService =  CartService(); // Instancia única de CartService
+   CartService _cartService =  CartService(); 
     List<CartItem> _cartItems = [];
 
   @override

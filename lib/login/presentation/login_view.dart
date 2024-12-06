@@ -23,7 +23,7 @@ class _LoginViewState extends State<LoginView> {
   @override
   void initState() {
     super.initState();
-    _checkSession(); // Verifica sesión al iniciar
+    _checkSession();
   }
 
   bool _isValidEmail(String email) {
@@ -32,7 +32,7 @@ class _LoginViewState extends State<LoginView> {
   }
 
   void _checkSession() async {
-    final token = await _authService.getToken(); // Usar el método público
+    final token = await _authService.getToken(); 
     print("Token recuperado: $token");
     if (token != null) {
       final isValid = await _authService.isValidToken(token);
@@ -98,7 +98,6 @@ class _LoginViewState extends State<LoginView> {
           resizeToAvoidBottomInset: false,
           body: Stack(
             children: [
-              // Fondo de la imagen
               Image.asset(
                 "assets/img/fondologin.png",
                 width: media.width,
@@ -195,7 +194,7 @@ class _LoginViewState extends State<LoginView> {
                       SizedBox(height: media.height * 0.03),
                       RoundButton(
                         title: "Iniciar Sesión",
-                        onPressed: _login, // Llama a _login
+                        onPressed: _login, 
                       ),
                       SizedBox(height: media.height * 0.05),
                       TextButton(

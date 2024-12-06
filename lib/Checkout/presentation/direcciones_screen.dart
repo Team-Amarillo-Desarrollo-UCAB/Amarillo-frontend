@@ -24,10 +24,8 @@ class ListaDireccionesState extends State<ListaDirecciones> {
         ...widget.direcciones.map((direccion) => DireccionWidget(
               direccion: direccion,
               onEdit: () {
-                // Lógica para editar la dirección
               },
               onSelect: () {
-                // Lógica para seleccionar la dirección
                 setState(() {
                   for (var d in widget.direcciones) {
                     d.isSelected = false;

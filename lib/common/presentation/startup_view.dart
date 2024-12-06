@@ -11,7 +11,7 @@ class StartupView extends StatefulWidget {
 }
 
 class _StartupViewState extends State<StartupView> {
-  final AuthService _authService = AuthService(); // Instancia del servicio de autenticación
+  final AuthService _authService = AuthService(); 
 
   @override
   void initState() {
@@ -19,25 +19,23 @@ class _StartupViewState extends State<StartupView> {
     _checkSession();
   }
 
-  /// Verifica si el usuario tiene una sesión activa
   void _checkSession() async {
-    await Future.delayed(const Duration(seconds: 3)); // Simula tiempo de carga
-    final token = await _authService.getToken(); // Obtiene el token almacenado
+    await Future.delayed(const Duration(seconds: 3)); 
+    final token = await _authService.getToken(); 
     if (token != null) {
       print("Token encontrado: $token");
-      final isValid = await _authService.isValidToken(token); // Valida el token
+      final isValid = await _authService.isValidToken(token);
       print("¿Token válido? $isValid");
       if (isValid) {
-        _goToMainTabView(); // Navega al `MainTabView` si el token es válido
+        _goToMainTabView(); 
         return;
       }
     }
     print("Sesión no válida. Redirigiendo a WelcomePage...");
-    _goToWelcomePage(); // Si no hay sesión activa, navega al `WelcomeView`
+    _goToWelcomePage(); 
   }
 
 
-  /// Navega a la vista principal
   void _goToMainTabView() {
     Navigator.pushReplacement(
       context,
@@ -45,7 +43,7 @@ class _StartupViewState extends State<StartupView> {
     );
   }
 
-  /// Navega a la vista de bienvenida
+ 
   void _goToWelcomePage() {
     Navigator.pushReplacement(
       context,
