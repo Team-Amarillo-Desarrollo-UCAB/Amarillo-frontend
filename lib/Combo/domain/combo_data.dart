@@ -23,6 +23,7 @@ class ComboData {
       required this.category,
       required this.productId,
       required this.discount});
+
   factory ComboData.fromJson(Map<String, dynamic> json) {
     return ComboData(
       id: json['id'] ?? 'ERROR01',

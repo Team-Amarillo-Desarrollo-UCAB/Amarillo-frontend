@@ -26,7 +26,8 @@ class ComboService {
             name: comboData.name,
             price: comboData.price,
             description: comboData.description,
-            peso: '${comboData.weight} ${comboData.measurement}');
+            peso: '${comboData.weight} ${comboData.measurement}',
+            discount: comboData.discount);
       }).toList();
     } else {
       throw Exception('Error al obtener la lista de productos');

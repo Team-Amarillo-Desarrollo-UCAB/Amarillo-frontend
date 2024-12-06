@@ -30,10 +30,9 @@ class _ProductListViewState extends State<ProductListView> {
   bool _isSearching = false;
 
   final CartService _cartService = CartService();
-  final ProductService _productService =
-      ProductService(BaseUrl().BASE_URL); 
-  final ProductServiceSearch _productServiceSearch = ProductServiceSearch(
-      BaseUrl().BASE_URL);
+  final ProductService _productService = ProductService(BaseUrl().BASE_URL);
+  final ProductServiceSearch _productServiceSearch =
+      ProductServiceSearch(BaseUrl().BASE_URL);
 
   @override
   void initState() {

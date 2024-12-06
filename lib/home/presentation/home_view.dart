@@ -2,6 +2,7 @@ import 'package:desarrollo_frontend/Combo/domain/combo.dart';
 import 'package:desarrollo_frontend/Combo/infrastructure/combo_service.dart';
 import 'package:desarrollo_frontend/Combo/presentation/combo_view.dart';
 import 'package:desarrollo_frontend/Combo/presentation/combo_widget.dart';
+import 'package:desarrollo_frontend/Descuento/Infrastructure/descuento_service_search_by_id.dart';
 import 'package:desarrollo_frontend/categorias/presentation/category_items_view.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -33,12 +34,14 @@ class _HomeViewState extends State<HomeView> {
   final CartService _cartService = CartService();
   final ProductService _productService = ProductService(BaseUrl().BASE_URL);
   final ComboService _comboService = ComboService(BaseUrl().BASE_URL);
+  final DescuentoServiceSearchById _descuentoServiceSearchById =
+      DescuentoServiceSearchById(BaseUrl().BASE_URL);
 
   @override
   void initState() {
     super.initState();
     _fetchProducts();
-    _fetchCombos(); // Llamar al método de carga de productos cuando se inicia el widget
+    _fetchCombos();
   }
 
   Future<void> _fetchProducts() async {
@@ -65,6 +68,19 @@ class _HomeViewState extends State<HomeView> {
     } catch (error) {
       print('Error al obtener productos: $error');
     }
+  }
+
+  Future<double> _getDiscountedPrice(Combo combo) async {
+    if (combo.discount != "9bd9532c-5033-4621-be8a-87de4934a0be") {
+      try {
+        final descuento =
+            await _descuentoServiceSearchById.getDescuentoById(combo.discount);
+        return double.parse(combo.price) * (1 - descuento.percentage / 100);
+      } catch (error) {
+        print('Error al obtener el descuento: $error');
+      }
+    }
+    return double.parse(combo.price);
   }
 
   void onAdd(CartItem item) async {
@@ -217,23 +233,37 @@ class _HomeViewState extends State<HomeView> {
                 ),
               ),
               SizedBox(
-                height: media.height * 0.20,
+                height: media.height * 0.22,
                 child: _combo.isEmpty
                     ? const Center(child: CircularProgressIndicator())
                     : PageView.builder(
                         itemCount: _combo.length,
                         itemBuilder: (context, index) {
                           final combo = _combo[index];
-                          return ComboCard(
-                            combo: combo,
-                            onAdd: () => onAdd(CartItem(
-                                id_product: combo.id_product,
-                                imageUrl: combo.images[0],
-                                name: combo.name,
-                                price: double.parse(combo.price),
-                                description: combo.description,
-                                peso: combo.peso,
-                                productId: combo.productId)),
+                          return FutureBuilder<double>(
+                            future: _getDiscountedPrice(combo),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return Center(
+                                    child: CircularProgressIndicator());
+                              } else if (snapshot.hasError) {
+                                return Text('Error: ${snapshot.error}');
+                              } else {
+                                final discountedPrice = snapshot.data!;
+                                return ComboCard(
+                                  combo: combo,
+                                  onAdd: () => onAdd(CartItem(
+                                      id_product: combo.id_product,
+                                      imageUrl: combo.images[0],
+                                      name: combo.name,
+                                      price: discountedPrice,
+                                      description: combo.description,
+                                      peso: combo.peso,
+                                      productId: combo.productId)),
+                                );
+                              }
+                            },
                           );
                         },
                       ),
@@ -251,7 +281,7 @@ class _HomeViewState extends State<HomeView> {
                 ),
               ),
               SizedBox(
-                height: media.height * 0.20,
+                height: media.height * 0.19,
                 child: _product.isEmpty
                     ? const Center(child: CircularProgressIndicator())
                     : PageView.builder(

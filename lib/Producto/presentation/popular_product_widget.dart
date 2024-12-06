@@ -38,14 +38,24 @@ class ProductCard extends StatelessWidget {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(product.name,
+                              Expanded(
+                                child: Text(
+                                  product.name,
                                   style: const TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold)),
-                              Text('${product.price} \$',
-                                  style: const TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold)),
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
+                                ),
+                              ),
+                              Text(
+                                '${product.price} \$',
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ],
                           ),
                           const Divider(),
@@ -60,7 +70,7 @@ class ProductCard extends StatelessWidget {
                                   ElevatedButton(
                                     onPressed: onAdd,
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.orange[200],
+                                      backgroundColor: Colors.orange,
                                       shape: RoundedRectangleBorder(
                                           borderRadius:
                                               BorderRadius.circular(10)),
