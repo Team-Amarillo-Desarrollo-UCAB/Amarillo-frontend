@@ -1,6 +1,6 @@
 import 'package:desarrollo_frontend/common/presentation/startup_view.dart';
 import 'package:flutter/material.dart';
-import '../../common/infrastructure/session_manager.dart';
+import '../infrastructure/session_manager.dart';
 
 
 final SessionManager _sessionManager = SessionManager();

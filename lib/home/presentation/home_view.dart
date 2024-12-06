@@ -11,6 +11,7 @@ import 'package:desarrollo_frontend/categorias/presentation/category_items_view.
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../Cupon/presentation/cupon_screen.dart';
 import '../../Users/domain/user_profile.dart';
 import '../../common/infrastructure/base_url.dart';
 import '../../common/presentation/color_extension.dart';
@@ -23,6 +24,7 @@ import '../../Carrito/domain/cart_item.dart';
 import '../../Carrito/infrastructure/cart_service.dart';
 import '../../Producto/domain/popular_product.dart';
 import '../../Producto/presentation/popular_product_widget.dart';
+import '../../common/presentation/logout_dialog.dart';
 import 'drawer_screen.dart';
 
 class HomeView extends StatefulWidget {
@@ -429,13 +431,27 @@ class _HomeViewState extends State<HomeView> {
           ListTile(
             leading: const Icon(Icons.card_membership, color: Colors.white),
             title: const Text('Cupones', style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,)),
-            onTap: () {},
+            onTap: () {
+              Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => CuponView()));
+            },
           ),
                     ListTile(
             leading: const Icon(Icons.production_quantity_limits_sharp, color: Colors.white),
             title: const Text('Combos', style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,)),
-            onTap: () {},
+            onTap: () {
+              Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => ComboView()));
+            },
           ),
+          const SizedBox(height: 150),
+          ListTile(
+            leading: const Icon(Icons.logout, color: Colors.white),
+            title: const Text('Cerrar Sesión', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+            onTap: () {
+              showLogoutConfirmationDialog(context);
+            }, // onTap
+          ), 
         ],
       ),
     );

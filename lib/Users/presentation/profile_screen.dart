@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'edit_profile_screen.dart';
-import 'logout_dialog.dart';
+import '../../common/presentation/logout_dialog.dart';
 import '../domain/user_profile.dart';
 import 'notification_screen.dart';
 
