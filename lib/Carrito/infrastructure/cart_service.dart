@@ -9,23 +9,23 @@ class CartService {
   factory CartService() => _instance;
   
 
-  CartService._internal(); // Constructor privado usando singleton
+  CartService._internal();
 
   List<CartItem> _cartItems = [];
   final List<CartItem> initialCartItems = [];
   
   List<CartItem> get cartItems => _cartItems;
 
-  String? _idOrder; // Atributo para almacenar el id de la orden
+  String? _idOrder;
   List<Map<String, dynamic>>? orderItems;
-  String? get idOrder => _idOrder; // Getter para obtener el id de la orden
+  String? get idOrder => _idOrder; 
 
   Future<void> loadCartItems() async {
     final prefs = await SharedPreferences.getInstance();
     final cartItemsString = prefs.getString('cart_items');
 
     if (cartItemsString == null) {
-      // Si no hay datos guardados, usar los valores iniciales sin guardar en SharedPreferences
+     
       _cartItems = List<CartItem>.from(initialCartItems);
     } else {
       final List<dynamic> jsonItems = jsonDecode(cartItemsString);
@@ -49,9 +49,9 @@ class CartService {
   Future<void> clearCartItems() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(
-        'cart_items'); // Elimina los datos del carrito en SharedPreferences
+        'cart_items'); 
     _cartItems = List<CartItem>.from(initialCartItems);
-    saveCartItems(); // Restaura el carrito a su estado inicial
+    saveCartItems(); 
   }
 
   Future<void> createOrder(List<CartItem> cartItems) async {
@@ -76,10 +76,8 @@ class CartService {
       throw Exception('Error al crear la orden: ${response.statusCode}');
     }
 
-    // Decodifica el JSON de la respuesta
     final Map<String, dynamic> responseData = jsonDecode(response.body);
 
-    // Guarda el ID de la orden en _idOrder
     _idOrder = responseData['id_order'];
   }
 }

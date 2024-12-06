@@ -51,7 +51,7 @@ class _RegisterPaymentPageState extends State<RegisterPaymentPage> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.of(context).pop(); // Regresa a la vista anterior
+            Navigator.of(context).pop(); 
           },
         ),
         title: const Text("Registrar Pago"),

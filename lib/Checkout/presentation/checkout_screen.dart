@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import '../../common/presentation/common_widget/round_button.dart';
 import '../../Carrito/domain/cart_item.dart';
 import '../../Carrito/infrastructure/cart_service.dart';
+import '../../common/presentation/main_tabview.dart';
 import '../../order/application/order_repository.dart';
 
 class CheckoutScreen extends StatefulWidget {
@@ -41,6 +42,32 @@ class CheckoutScreenState extends State<CheckoutScreen> {
       widget.cartService.clearCartItems();
     });
   }
+
+    String selectedPaymentMethod = '';
+  final Map<String, TextEditingController> controllers = {};
+
+  final Map<String, List<Map<String, String>>> paymentFields = {
+    'Pago Móvil': [
+      {'label': 'Teléfono de origen', 'type': 'phone'},
+      {'label': 'Monto', 'type': 'number'},
+      {'label': 'Nro. de Referencia', 'type': 'text'},
+    ],
+    'Paypal': [
+      {'label': 'Correo electrónico', 'type': 'email'},
+      {'label': 'Monto', 'type': 'number'},
+    ],
+    'Tarjeta de crédito': [
+      {'label': 'Número de tarjeta', 'type': 'number'},
+      {'label': 'Fecha de expiración (MM/AA)', 'type': 'text'},
+      {'label': 'CVV', 'type': 'number'},
+    ],
+    'Tarjeta de débito': [
+      {'label': 'Número de tarjeta', 'type': 'number'},
+      {'label': 'Fecha de expiración (MM/AA)', 'type': 'text'},
+      {'label': 'CVV', 'type': 'number'},
+    ],
+    'Efectivo': [],
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -84,7 +111,6 @@ class CheckoutScreenState extends State<CheckoutScreen> {
             ListaDirecciones(
               direcciones: direcciones,
               onAddDireccion: () {
-                // Lógica para añadir una nueva dirección de envío
               },
             ),
             const SizedBox(height: 10),
@@ -114,9 +140,33 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                 ),
               ),
             ),
-            MetodosDePago(onSelectedMethod: (method) {
-              // Lógica para seleccionar el método de pago
-            }),
+            MetodosDePago(
+              onSelectedMethod: (method) {
+                setState(() {
+                  selectedPaymentMethod = method;
+                  controllers.clear();
+                  for (var field in paymentFields[method]!) {
+                    controllers[field['label']!] = TextEditingController();
+                  }
+                });
+              },
+            ),
+            const Divider(),
+
+            if (selectedPaymentMethod.isNotEmpty)
+              ...paymentFields[selectedPaymentMethod]!.map(
+                (field) => Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: TextField(
+                    controller: controllers[field['label']],
+                    keyboardType: _getKeyboardType(field['type']!),
+                    decoration: InputDecoration(
+                      labelText: field['label'],
+                      border: const OutlineInputBorder(),
+                    ),
+                  ),
+                ),
+              ),
             const SizedBox(height: 10),
           ],
         ),
@@ -135,6 +185,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                     title: "Confirmar Pedido",
                     onPressed: () async {
                       try {
+                        if (_validatePayment()) {
                         await widget.cartService
                             .createOrder(widget.listCartItems);
                         showDialog(
@@ -151,23 +202,26 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                   //   items: widget.cartService.orderItems,
                                   // ));
                                   _clearCart();
-                                  Navigator.of(context).pop();
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            RegisterPaymentPage(
-                                              totalItems: widget.totalItems,
-                                              totalPrice: widget.totalPrice,
-                                            ) //OrderHistoryScreen(orderRepository: orderRepository,
-                                        ),
-                                  );
+                                Navigator.of(context)
+                                    .pop(); 
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => MainTabView()//OrderHistoryScreen(orderRepository: orderRepository,
+                                    ),
+                                  
+                                );
                                 },
                                 child: const Text('Continuar'),
                               ),
                             ],
                           ),
                         );
+                        }else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Error al registrar el pago")),
+                  );
+                        }
                       } catch (error) {
                         showDialog(
                           context: context,
@@ -179,7 +233,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                               TextButton(
                                 onPressed: () {
                                   Navigator.of(context)
-                                      .pop(); // Cerrar el diálogo
+                                      .pop();
                                 },
                                 child: const Text('Aceptar'),
                               ),
@@ -194,5 +248,26 @@ class CheckoutScreenState extends State<CheckoutScreen> {
         ),
       ),
     );
+  }
+  TextInputType _getKeyboardType(String type) {
+    switch (type) {
+      case 'number':
+        return TextInputType.number;
+      case 'phone':
+        return TextInputType.phone;
+      case 'email':
+        return TextInputType.emailAddress;
+      default:
+        return TextInputType.text;
+    }
+  }
+  bool _validatePayment() {
+    if (selectedPaymentMethod.isEmpty) return false;
+    for (var controller in controllers.values) {
+      if (controller.text.isEmpty) {
+        return false;
+      }
+    }
+    return true;
   }
 }

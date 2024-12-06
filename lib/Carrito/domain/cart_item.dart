@@ -21,12 +21,10 @@ class CartItem {
     this.productId,
   });
 
-  // Función para incrementar la cantidad
   void incrementQuantity() {
     quantity++;
   }
 
-  // Función para decrementar la cantidad
   void decrementQuantity() {
     if (quantity > 1) {
       quantity--;
