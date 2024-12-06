@@ -33,6 +33,9 @@ class _HomeViewState extends State<HomeView> {
   final CartService _cartService = CartService();
   final ProductService _productService = ProductService(BaseUrl().BASE_URL);
   final ComboService _comboService = ComboService(BaseUrl().BASE_URL);
+  double xOffset = 0;
+  double yOffset = 0;
+  bool isDrawerOpen = false;
 
   @override
   void initState() {
@@ -115,13 +118,55 @@ class _HomeViewState extends State<HomeView> {
     var media = MediaQuery.of(context).size;
     final userProfile = Provider.of<UserProfile>(context);
 
-    return Scaffold(
-      body: SingleChildScrollView(
-        child: Padding(
+    return AnimatedContainer(
+      transform: Matrix4.translationValues(xOffset, yOffset, 0)
+        ..scale(isDrawerOpen ? 0.85 : 1.00),
+      duration: const Duration(milliseconds: 250),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: isDrawerOpen ? BorderRadius.circular(30) : BorderRadius.zero,
+      ),
+      child: Scaffold(
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              // AppBar personalizado
+              SizedBox(height: media.height * 0.05),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: media.width * 0.05),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    isDrawerOpen
+                        ? IconButton(
+                            icon: const Icon(Icons.arrow_back_ios),
+                            onPressed: () {
+                              setState(() {
+                                xOffset = 0;
+                                yOffset = 0;
+                                isDrawerOpen = false;
+                              });
+                            },
+                          )
+                        : IconButton(
+                            icon: const Icon(Icons.menu),
+                            onPressed: () {
+                              setState(() {
+                                xOffset = 250;
+                                yOffset = 70;
+                                isDrawerOpen = true;
+                              });
+                            },
+                          ),
+                    const Icon(Icons.notifications),
+                  ],
+                ),
+              ),
+        Padding(
           padding: EdgeInsets.symmetric(vertical: media.height * 0.02),
           child: Column(
             children: [
-              SizedBox(height: media.height * 0.05),
+
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: media.width * 0.05),
                 child: Row(
@@ -274,7 +319,10 @@ class _HomeViewState extends State<HomeView> {
             ],
           ),
         ),
-      ),
+      ],
+    )
+    )
+    ),
     );
   }
 }
