@@ -6,13 +6,10 @@ import '../../../categorias/presentation/category_items_view.dart';
 class CategoryCell extends StatelessWidget {
   final Map cObj;
   final VoidCallback onTap;
-
   const CategoryCell({super.key, required this.cObj, required this.onTap});
-
   @override
   Widget build(BuildContext context) {
     var media = MediaQuery.of(context).size;
-
     return Container(
       margin: EdgeInsets.symmetric(horizontal: media.width * 0.02),
       child: InkWell(
@@ -26,8 +23,8 @@ class CategoryCell extends StatelessWidget {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(media.width * 0.2),
-              child: Image.asset(
-                cObj["image"].toString(),
+              child: Image(
+                image: cObj["image"] as ImageProvider<Object>,
                 width: media.width * 0.15,
                 height: media.width * 0.15,
                 fit: BoxFit.cover,

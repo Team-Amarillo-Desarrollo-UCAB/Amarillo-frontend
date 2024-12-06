@@ -3,6 +3,8 @@ import 'package:desarrollo_frontend/Combo/infrastructure/combo_service.dart';
 import 'package:desarrollo_frontend/Combo/presentation/combo_view.dart';
 import 'package:desarrollo_frontend/Combo/presentation/combo_widget.dart';
 import 'package:desarrollo_frontend/Descuento/Infrastructure/descuento_service_search_by_id.dart';
+import 'package:desarrollo_frontend/categorias/domain/category.dart';
+import 'package:desarrollo_frontend/categorias/infrasestructure/category_service.dart';
 import 'package:desarrollo_frontend/categorias/presentation/category_items_view.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -31,17 +33,21 @@ class _HomeViewState extends State<HomeView> {
   TextEditingController txtSearch = TextEditingController();
   List<Product> _product = [];
   List<Combo> _combo = [];
+  List<Category> _categories = [];
   final CartService _cartService = CartService();
   final ProductService _productService = ProductService(BaseUrl().BASE_URL);
   final ComboService _comboService = ComboService(BaseUrl().BASE_URL);
   final DescuentoServiceSearchById _descuentoServiceSearchById =
       DescuentoServiceSearchById(BaseUrl().BASE_URL);
 
+  final CategoryService _categoryService = CategoryService(BaseUrl().BASE_URL);
+
   @override
   void initState() {
     super.initState();
     _fetchProducts();
     _fetchCombos();
+    _fetchCategories();
   }
 
   Future<void> _fetchProducts() async {
@@ -67,6 +73,17 @@ class _HomeViewState extends State<HomeView> {
       });
     } catch (error) {
       print('Error al obtener productos: $error');
+    }
+  }
+
+  Future<void> _fetchCategories() async {
+    try {
+      List<Category> categories = await _categoryService.getCategories(1);
+      setState(() {
+        _categories = categories;
+      });
+    } catch (error) {
+      print('Error al obtener categorías: $error');
     }
   }
 
@@ -104,27 +121,6 @@ class _HomeViewState extends State<HomeView> {
       ),
     );
   }
-
-  List catArr = [
-    {"image": "assets/img/comida.png", "name": "Comida"},
-    {"image": "assets/img/Infantil.png", "name": "Infantil"},
-    {"image": "assets/img/Belleza.png", "name": "Belleza"},
-    {"image": "assets/img/Salud.png", "name": "Salud"},
-    {"image": "assets/img/Hogar.png", "name": "Hogar"},
-  ];
-
-  List mostPopArr = [
-    {
-      "image": "assets/img/almuerzo_familiar.png",
-      "name": "Almuerzo Familiar",
-      "price": "30",
-    },
-    {
-      "image": "assets/img/cesta_basica.png",
-      "name": "Cesta Basica",
-      "price": "102,90",
-    },
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -209,18 +205,24 @@ class _HomeViewState extends State<HomeView> {
               ),
               SizedBox(
                 height: media.height * 0.13,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  padding: EdgeInsets.symmetric(horizontal: media.width * 0.03),
-                  itemCount: catArr.length,
-                  itemBuilder: ((context, index) {
-                    var cObj = catArr[index] as Map? ?? {};
-                    return CategoryCell(
-                      cObj: cObj,
-                      onTap: () {},
-                    );
-                  }),
-                ),
+                child: _categories.isEmpty
+                    ? const Center(child: CircularProgressIndicator())
+                    : ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        padding: EdgeInsets.symmetric(
+                            horizontal: media.width * 0.03),
+                        itemCount: _categories.length,
+                        itemBuilder: ((context, index) {
+                          final category = _categories[index];
+                          return CategoryCell(
+                            cObj: {
+                              'image': category.categoryImage,
+                              'name': category.categoryName,
+                            },
+                            onTap: () {},
+                          );
+                        }),
+                      ),
               ),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: media.width * 0.05),
