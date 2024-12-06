@@ -27,7 +27,7 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-  TextEditingController txtSearch = TextEditingController();
+  TextEditingController _searchController = TextEditingController();
   List<Product> _product = [];
   List<Combo> _combo = [];
   final CartService _cartService = CartService();
@@ -160,18 +160,28 @@ class _HomeViewState extends State<HomeView> {
               SizedBox(height: media.height * 0.015),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: media.width * 0.05),
-                child: RoundTextfield(
-                  hintText: "Productos, Categorías...",
-                  controller: txtSearch,
-                  left: Container(
-                    alignment: Alignment.center,
-                    width: media.width * 0.08,
-                    child: Image.asset(
-                      "assets/img/search.png",
-                      width: media.width * 0.05,
-                      color: TColor.primary,
+                child: TextField(
+                  controller: _searchController,
+                  decoration: InputDecoration(
+                    hintText: "Productos, Categorías...",
+                    prefixIcon: const Icon(Icons.search, color: Colors.orange),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30),
+                      borderSide: BorderSide.none,
                     ),
+                    filled: true,
+                    fillColor: Colors.orange.withOpacity(0.1),
                   ),
+                  onSubmitted: (value) {
+                      if (value.trim().isNotEmpty) {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                    builder: (context) => ProductListView(searchQuery: value.trim()),
+                                ),
+                            );    
+                            }
+                        },
                 ),
               ),
               SizedBox(height: media.height * 0.03),

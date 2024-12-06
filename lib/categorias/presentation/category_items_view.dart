@@ -10,7 +10,8 @@ import '../../Producto/domain/popular_product.dart';
 import '../../Producto/presentation/popular_product_widget.dart';
 
 class ProductListView extends StatefulWidget {
-  const ProductListView({super.key});
+  final String? searchQuery; 
+  const ProductListView({super.key, this.searchQuery});
 
   @override
   State<ProductListView> createState() => _ProductListViewState();
@@ -38,8 +39,13 @@ class _ProductListViewState extends State<ProductListView> {
   @override
   void initState() {
     super.initState();
-    _loadMoreProducts(); // Llamada al backend para cargar productos al iniciar el widget
-    _searchController.addListener(_onSearchChanged);
+    if (widget.searchQuery != null && widget.searchQuery!.isNotEmpty) {
+    _searchController.text = widget.searchQuery!;
+    _searchProductByName(widget.searchQuery!); 
+  } else {
+    _loadMoreProducts(); 
+  }
+  _searchController.addListener(_onSearchChanged);
   }
 
   @override
@@ -74,27 +80,32 @@ class _ProductListViewState extends State<ProductListView> {
   }
 
   Future<void> _searchProductByName(String productName) async {
+  setState(() {
+    _isSearching = true;
+    _product.clear(); 
+  });
+
+  String formattedProductName = productName
+      .toLowerCase()
+      .split(' ')
+      .map((word) => word[0].toUpperCase() + word.substring(1))
+      .join(' ');
+
+  try {
+    Product product =
+        await _productServiceSearch.getProductByName(formattedProductName);
     setState(() {
-      _isSearching = true;
+      _product = [product];
+      _isSearching = false; 
     });
-
-    // Formateamos el nombre a título de caso
-    String formattedProductName = productName
-        .toLowerCase()
-        .split(' ')
-        .map((word) => word[0].toUpperCase() + word.substring(1))
-        .join(' ');
-
-    try {
-      Product product =
-          await _productServiceSearch.getProductByName(formattedProductName);
-      setState(() {
-        _product = [product];
-      });
-    } catch (error) {
-      print('Error al buscar producto: $error');
-    }
+  } catch (error) {
+    setState(() {
+      _isSearching = false;
+      _product.clear(); 
+    });
+    print('Error al buscar producto: $error');
   }
+}
 
   void _onSearchChanged() {
     if (_searchController.text.isNotEmpty) {

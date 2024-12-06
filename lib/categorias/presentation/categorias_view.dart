@@ -4,6 +4,7 @@ import '../../common/presentation/color_extension.dart';
 import '../../common/presentation/common_widget/round_textfield.dart';
 import '../../common/presentation/common_widget/category_cell.dart';
 import '../../common/presentation/common_widget/title_only.dart';
+import 'category_items_view.dart';
 
 class CategoryView extends StatefulWidget {
   const CategoryView({super.key});
@@ -24,7 +25,7 @@ class _MenuViewState extends State<CategoryView> {
     {"image": "assets/img/Limpieza.png", "name": "Limpieza"},
   ];
 
-  TextEditingController txtSearch = TextEditingController();
+  TextEditingController _searchController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -63,19 +64,28 @@ class _MenuViewState extends State<CategoryView> {
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: RoundTextfield(
-                      hintText: "Productos, Categorias",
-                      controller: txtSearch,
-                      left: Container(
-                        alignment: Alignment.center,
-                        width: 30,
-                        child: Image.asset(
-                          "assets/img/search.png",
-                          width: 20,
-                          height: 20,
-                          color: TColor.primary,
-                        ),
-                      ),
+                    child: TextField(
+                  controller: _searchController,
+                  decoration: InputDecoration(
+                    hintText: "Productos, Categorías...",
+                    prefixIcon: const Icon(Icons.search, color: Colors.orange),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30),
+                      borderSide: BorderSide.none,
+                    ),
+                    filled: true,
+                    fillColor: Colors.orange.withOpacity(0.1),
+                  ),
+                  onSubmitted: (value) {
+                      if (value.trim().isNotEmpty) {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                    builder: (context) => ProductListView(searchQuery: value.trim()),
+                                ),
+                            );    
+                            }
+                        },
                     ),
                   ),
                   const SizedBox(

@@ -3,29 +3,29 @@ import 'package:provider/provider.dart';
 import 'edit_profile_screen.dart';
 import 'logout_dialog.dart';
 import '../domain/user_profile.dart';
+import 'notification_screen.dart';
 
 class UserProfileScreen extends StatelessWidget {
-  const UserProfileScreen({Key? key}) : super(key: key);// Constructor de la clase
+  const UserProfileScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final userProfile = Provider.of<UserProfile>(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Perfil'), // Título de la pantalla
-        centerTitle: true,// Centrar el título
+        title: const Text('Perfil'), 
+        centerTitle: true,
         automaticallyImplyLeading: false, 
       ), 
       body: Column(
         children: [
-          const SizedBox(height: 20), // Espaciado superior
+          const SizedBox(height: 20),
           Center(
             child: Stack(
               children: [
-                // Imagen de perfil
                 CircleAvatar(
                   radius: 80,
-                  backgroundImage: AssetImage('assets/img/perfil.png'), // Imagen por defecto
+                  backgroundImage: AssetImage('assets/img/perfil.png'),
                 ), 
                 Positioned(
                   bottom: 0,
@@ -37,7 +37,7 @@ class UserProfileScreen extends StatelessWidget {
                       radius: 20,
                       backgroundColor: Colors.orangeAccent,
                       child: const Icon(Icons.edit, color: Colors.white),
-                    ), // CircleAvatar
+                    ), 
                   ), 
                 ), 
               ], // Children del Stack
@@ -66,11 +66,10 @@ class UserProfileScreen extends StatelessWidget {
               ), 
               const Divider(
                 thickness: 1,
-                color: Color(0xFFFFD4B2), // Barra anaranjada clara
+                color: Color(0xFFFFD4B2),
               ), 
             ], // Children de la columna
           ), 
-          // Sección de "Notificaciones"
           Column(
             children: [
               ListTile(
@@ -78,23 +77,23 @@ class UserProfileScreen extends StatelessWidget {
                 title: const Text('Notificaciones'),
                 trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                 onTap: () { 
-                  // Navegación a la pantalla Notificaciones
+                  /*Navigator.push(context, MaterialPageRoute(
+                                       builder: (context) => NotificationsView()));*/
                 }, // onTap
               ), 
               const Divider(
                 thickness: 1,
-                color: Color(0xFFFFD4B2), // Barra anaranjada clara
+                color: Color(0xFFFFD4B2), 
               ), 
             ], // Children de la columna
           ), 
-          // Sección de "Configuración"
           Column(
             children: [
               ListTile(
                 leading: const Icon(Icons.settings, color: Color(0xFFFF7622)),
                 title: const Text('Configuración'),
                 trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                onTap: () {  // Navegación a la pantalla Configuración
+                onTap: () { 
                 }, // onTap
               ), 
               const Divider(
@@ -103,7 +102,6 @@ class UserProfileScreen extends StatelessWidget {
               ), 
             ], // Children de la columna
           ), 
-          // Botón de "Cerrar Sesión"
           ListTile(
             leading: const Icon(Icons.logout, color: Colors.red),
             title: const Text('Cerrar Sesión', style: TextStyle(color: Colors.red)),
