@@ -1,30 +1,49 @@
+import 'package:desarrollo_frontend/categorias/domain/category.dart';
+import 'package:desarrollo_frontend/categorias/infrasestructure/category_service.dart';
+import 'package:desarrollo_frontend/common/infrastructure/base_url.dart';
 import 'package:flutter/material.dart';
 
 import '../../common/presentation/color_extension.dart';
 import '../../common/presentation/common_widget/round_textfield.dart';
 import '../../common/presentation/common_widget/category_cell.dart';
 import '../../common/presentation/common_widget/title_only.dart';
+import 'category_items_view.dart';
 
 class CategoryView extends StatefulWidget {
   const CategoryView({super.key});
-
   @override
-  State<CategoryView> createState() => _MenuViewState();
+  State<CategoryView> createState() => _CategoryViewState();
 }
 
-class _MenuViewState extends State<CategoryView> {
-  List catArr = [
-    {"image": "assets/img/comida.png", "name": "Comida"},
-    {"image": "assets/img/Infantil.png", "name": "Infantil"},
-    {"image": "assets/img/Belleza.png", "name": "Belleza"},
-    {"image": "assets/img/Salud.png", "name": "Salud"},
-    {"image": "assets/img/Hogar.png", "name": "Hogar"},
-    {"image": "assets/img/Oficina.png", "name": "Oficina"},
-    {"image": "assets/img/Jardin.png", "name": "Jardin"},
-    {"image": "assets/img/Limpieza.png", "name": "Limpieza"},
-  ];
+class _CategoryViewState extends State<CategoryView> {
+  List<Category> _categories = [];
+  TextEditingController _searchController = TextEditingController();
+  final CategoryService _categoryService = CategoryService(BaseUrl().BASE_URL);
+  bool _isLoading = false;
 
-  TextEditingController txtSearch = TextEditingController();
+  @override
+  void initState() {
+    super.initState();
+    _loadCategories();
+  }
+
+  Future<void> _loadCategories() async {
+    setState(() {
+      _isLoading = true;
+    });
+    try {
+      List<Category> categories = await _categoryService.getCategories(1);
+      setState(() {
+        _categories = categories;
+      });
+    } catch (error) {
+      print('Error al obtener categorías: $error');
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -63,19 +82,30 @@ class _MenuViewState extends State<CategoryView> {
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: RoundTextfield(
-                      hintText: "Productos, Categorias",
-                      controller: txtSearch,
-                      left: Container(
-                        alignment: Alignment.center,
-                        width: 30,
-                        child: Image.asset(
-                          "assets/img/search.png",
-                          width: 20,
-                          height: 20,
-                          color: TColor.primary,
+                    child: TextField(
+                      controller: _searchController,
+                      decoration: InputDecoration(
+                        hintText: "Productos, Categorías...",
+                        prefixIcon:
+                            const Icon(Icons.search, color: Colors.orange),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          borderSide: BorderSide.none,
                         ),
+                        filled: true,
+                        fillColor: Colors.orange.withOpacity(0.1),
                       ),
+                      onSubmitted: (value) {
+                        if (value.trim().isNotEmpty) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  ProductListView(searchQuery: value.trim()),
+                            ),
+                          );
+                        }
+                      },
                     ),
                   ),
                   const SizedBox(
@@ -106,18 +136,23 @@ class _MenuViewState extends State<CategoryView> {
                   ),
                   SizedBox(
                     height: 120,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      padding: const EdgeInsets.symmetric(horizontal: 15),
-                      itemCount: catArr.length,
-                      itemBuilder: ((context, index) {
-                        var cObj = catArr[index] as Map? ?? {};
-                        return CategoryCell(
-                          cObj: cObj,
-                          onTap: () {},
-                        );
-                      }),
-                    ),
+                    child: _isLoading
+                        ? const Center(child: CircularProgressIndicator())
+                        : ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            padding: const EdgeInsets.symmetric(horizontal: 15),
+                            itemCount: _categories.length,
+                            itemBuilder: ((context, index) {
+                              final category = _categories[index];
+                              return CategoryCell(
+                                cObj: {
+                                  'image': category.categoryImage,
+                                  'name': category.categoryName,
+                                },
+                                onTap: () {},
+                              );
+                            }),
+                          ),
                   ),
                 ],
               ),

@@ -1,4 +1,7 @@
 import 'package:desarrollo_frontend/Carrito/presentation/cart_screen.dart';
+import 'package:desarrollo_frontend/categorias/domain/category.dart';
+import 'package:desarrollo_frontend/categorias/infrasestructure/category_service.dart';
+import 'package:desarrollo_frontend/common/presentation/common_widget/category_cell.dart';
 import 'package:desarrollo_frontend/common/presentation/main_tabview.dart';
 import 'package:flutter/material.dart';
 import '../../common/infrastructure/base_url.dart';
@@ -10,7 +13,8 @@ import '../../Producto/domain/popular_product.dart';
 import '../../Producto/presentation/popular_product_widget.dart';
 
 class ProductListView extends StatefulWidget {
-  const ProductListView({super.key});
+  final String? searchQuery;
+  const ProductListView({super.key, this.searchQuery});
 
   @override
   State<ProductListView> createState() => _ProductListViewState();
@@ -19,10 +23,7 @@ class ProductListView extends StatefulWidget {
 class _ProductListViewState extends State<ProductListView> {
   TextEditingController _searchController = TextEditingController();
 
-  // Declaramos las categorías para las etiquetas
-  List<String> categories = ['Todos', 'Comida', 'Infantil', 'Completa'];
-  String selectedCategory = 'Todos'; // Categoría seleccionada por defecto
-
+  List<Category> _categories = [];
   List<Product> _product = [];
   int _page = 1;
   bool _isLoading = false;
@@ -30,15 +31,23 @@ class _ProductListViewState extends State<ProductListView> {
   bool _isSearching = false;
 
   final CartService _cartService = CartService();
-  final ProductService _productService =
-      ProductService(BaseUrl().BASE_URL); 
-  final ProductServiceSearch _productServiceSearch = ProductServiceSearch(
-      BaseUrl().BASE_URL);
+  final ProductService _productService = ProductService(BaseUrl().BASE_URL);
+  final ProductServiceSearch _productServiceSearch =
+      ProductServiceSearch(BaseUrl().BASE_URL);
+  final CategoryService _categoryService = CategoryService(BaseUrl().BASE_URL);
 
   @override
   void initState() {
     super.initState();
-    _loadMoreProducts(); // Llamada al backend para cargar productos al iniciar el widget
+    _loadMoreProducts();
+    _loadCategories();
+    _searchController.addListener(_onSearchChanged);
+    if (widget.searchQuery != null && widget.searchQuery!.isNotEmpty) {
+      _searchController.text = widget.searchQuery!;
+      _searchProductByName(widget.searchQuery!);
+    } else {
+      _loadMoreProducts();
+    }
     _searchController.addListener(_onSearchChanged);
   }
 
@@ -73,12 +82,23 @@ class _ProductListViewState extends State<ProductListView> {
     });
   }
 
+  Future<void> _loadCategories() async {
+    try {
+      List<Category> categories = await _categoryService.getCategories(1);
+      setState(() {
+        _categories = categories;
+      });
+    } catch (error) {
+      print('Error al obtener categorías: $error');
+    }
+  }
+
   Future<void> _searchProductByName(String productName) async {
     setState(() {
       _isSearching = true;
+      _product.clear();
     });
 
-    // Formateamos el nombre a título de caso
     String formattedProductName = productName
         .toLowerCase()
         .split(' ')
@@ -90,8 +110,13 @@ class _ProductListViewState extends State<ProductListView> {
           await _productServiceSearch.getProductByName(formattedProductName);
       setState(() {
         _product = [product];
+        _isSearching = false;
       });
     } catch (error) {
+      setState(() {
+        _isSearching = false;
+        _product.clear();
+      });
       print('Error al buscar producto: $error');
     }
   }
@@ -203,32 +228,25 @@ class _ProductListViewState extends State<ProductListView> {
                   },
                 ),
                 const SizedBox(height: 15),
-                // Etiquetas de categorías
                 SizedBox(
-                  height: 40,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: categories.length,
-                    itemBuilder: (context, index) {
-                      String category = categories[index];
-                      bool isSelected = category == selectedCategory;
-                      return Padding(
-                        padding: const EdgeInsets.only(right: 8.0),
-                        child: ChoiceChip(
-                          label: Text(category),
-                          selected: isSelected,
-                          selectedColor: Colors.orange,
-                          backgroundColor: Colors.orange.withOpacity(0.2),
-                          onSelected: (bool selected) {
-                            setState(() {
-                              selectedCategory = category;
-                            });
-                            // Aquí puedes agregar la lógica de filtrado
-                          },
+                  height: 120,
+                  child: _categories.isEmpty
+                      ? const Center(child: CircularProgressIndicator())
+                      : ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          padding: const EdgeInsets.symmetric(horizontal: 15),
+                          itemCount: _categories.length,
+                          itemBuilder: ((context, index) {
+                            final category = _categories[index];
+                            return CategoryCell(
+                              cObj: {
+                                'image': category.categoryImage,
+                                'name': category.categoryName,
+                              },
+                              onTap: () {},
+                            );
+                          }),
                         ),
-                      );
-                    },
-                  ),
                 ),
                 const SizedBox(height: 15),
                 // Número de resultados

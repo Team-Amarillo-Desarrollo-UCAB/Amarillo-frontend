@@ -2,6 +2,11 @@ import 'package:desarrollo_frontend/Combo/domain/combo.dart';
 import 'package:desarrollo_frontend/Combo/infrastructure/combo_service.dart';
 import 'package:desarrollo_frontend/Combo/presentation/combo_view.dart';
 import 'package:desarrollo_frontend/Combo/presentation/combo_widget.dart';
+import 'package:desarrollo_frontend/Descuento/Domain/descuento.dart';
+import 'package:desarrollo_frontend/Descuento/Infrastructure/descuento_service.dart';
+import 'package:desarrollo_frontend/Descuento/Infrastructure/descuento_service_search_by_id.dart';
+import 'package:desarrollo_frontend/categorias/domain/category.dart';
+import 'package:desarrollo_frontend/categorias/infrasestructure/category_service.dart';
 import 'package:desarrollo_frontend/categorias/presentation/category_items_view.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -27,21 +32,31 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-  TextEditingController txtSearch = TextEditingController();
+  TextEditingController _searchController = TextEditingController();
   List<Product> _product = [];
   List<Combo> _combo = [];
+  List<Category> _categories = [];
+  List<Descuento> _descuentos = [];
+
   final CartService _cartService = CartService();
   final ProductService _productService = ProductService(BaseUrl().BASE_URL);
   final ComboService _comboService = ComboService(BaseUrl().BASE_URL);
   double xOffset = 0;
   double yOffset = 0;
   bool isDrawerOpen = false;
+  final DescuentoServiceSearchById _descuentoServiceSearchById =
+      DescuentoServiceSearchById(BaseUrl().BASE_URL);
+  final DescuentoService _descuentoService =
+      DescuentoService(BaseUrl().BASE_URL);
+  final CategoryService _categoryService = CategoryService(BaseUrl().BASE_URL);
 
   @override
   void initState() {
     super.initState();
     _fetchProducts();
-    _fetchCombos(); // Llamar al método de carga de productos cuando se inicia el widget
+    _fetchCombos();
+    _fetchCategories();
+    _fetchDescuentos();
   }
 
   Future<void> _fetchProducts() async {
@@ -70,6 +85,43 @@ class _HomeViewState extends State<HomeView> {
     }
   }
 
+  Future<void> _fetchCategories() async {
+    try {
+      List<Category> categories = await _categoryService.getCategories(1);
+      setState(() {
+        _categories = categories;
+      });
+    } catch (error) {
+      print('Error al obtener categorías: $error');
+    }
+  }
+
+  Future<void> _fetchDescuentos() async {
+    try {
+      List<Descuento> descuentos = await _descuentoService.getDescuento(1);
+      setState(() {
+        _descuentos = descuentos;
+        _descuentos.shuffle();
+        _descuentos = _descuentos.take(5).toList();
+      });
+    } catch (error) {
+      print('Error al obtener descuentos: $error');
+    }
+  }
+
+  Future<double> _getDiscountedPrice(Combo combo) async {
+    if (combo.discount != "9bd9532c-5033-4621-be8a-87de4934a0be") {
+      try {
+        final descuento =
+            await _descuentoServiceSearchById.getDescuentoById(combo.discount);
+        return double.parse(combo.price) * (1 - descuento.percentage / 100);
+      } catch (error) {
+        print('Error al obtener el descuento: $error');
+      }
+    }
+    return double.parse(combo.price);
+  }
+
   void onAdd(CartItem item) async {
     await _cartService.loadCartItems();
     bool isProductInCart =
@@ -91,27 +143,6 @@ class _HomeViewState extends State<HomeView> {
       ),
     );
   }
-
-  List catArr = [
-    {"image": "assets/img/comida.png", "name": "Comida"},
-    {"image": "assets/img/Infantil.png", "name": "Infantil"},
-    {"image": "assets/img/Belleza.png", "name": "Belleza"},
-    {"image": "assets/img/Salud.png", "name": "Salud"},
-    {"image": "assets/img/Hogar.png", "name": "Hogar"},
-  ];
-
-  List mostPopArr = [
-    {
-      "image": "assets/img/almuerzo_familiar.png",
-      "name": "Almuerzo Familiar",
-      "price": "30",
-    },
-    {
-      "image": "assets/img/cesta_basica.png",
-      "name": "Cesta Basica",
-      "price": "102,90",
-    },
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -205,30 +236,50 @@ class _HomeViewState extends State<HomeView> {
               SizedBox(height: media.height * 0.015),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: media.width * 0.05),
-                child: RoundTextfield(
-                  hintText: "Productos, Categorías...",
-                  controller: txtSearch,
-                  left: Container(
-                    alignment: Alignment.center,
-                    width: media.width * 0.08,
-                    child: Image.asset(
-                      "assets/img/search.png",
-                      width: media.width * 0.05,
-                      color: TColor.primary,
+                child: TextField(
+                  controller: _searchController,
+                  decoration: InputDecoration(
+                    hintText: "Productos, Categorías...",
+                    prefixIcon: const Icon(Icons.search, color: Colors.orange),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30),
+                      borderSide: BorderSide.none,
                     ),
+                    filled: true,
+                    fillColor: Colors.orange.withOpacity(0.1),
                   ),
+                  onSubmitted: (value) {
+                    if (value.trim().isNotEmpty) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              ProductListView(searchQuery: value.trim()),
+                        ),
+                      );
+                    }
+                  },
                 ),
               ),
               SizedBox(height: media.height * 0.03),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(media.width * 0.03),
-                child: Image.asset(
-                  'assets/img/oferta.png',
-                  width: media.width * 0.9,
-                  height: media.height * 0.17,
-                  fit: BoxFit.cover,
-                ),
-              ),
+              _descuentos.isEmpty
+                  ? const Center(child: CircularProgressIndicator())
+                  : SizedBox(
+                      height: media.height * 0.17,
+                      child: PageView.builder(
+                        itemCount: _descuentos.length,
+                        itemBuilder: (context, index) {
+                          return ClipRRect(
+                            child: Image.network(
+                              _descuentos[index].image,
+                              width: media.width * 0.9,
+                              height: media.height * 0.17,
+                              fit: BoxFit.cover,
+                            ),
+                          );
+                        },
+                      ),
+                    ),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: media.width * 0.05),
                 child: ViewAllTitleRow(
@@ -238,18 +289,24 @@ class _HomeViewState extends State<HomeView> {
               ),
               SizedBox(
                 height: media.height * 0.13,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  padding: EdgeInsets.symmetric(horizontal: media.width * 0.03),
-                  itemCount: catArr.length,
-                  itemBuilder: ((context, index) {
-                    var cObj = catArr[index] as Map? ?? {};
-                    return CategoryCell(
-                      cObj: cObj,
-                      onTap: () {},
-                    );
-                  }),
-                ),
+                child: _categories.isEmpty
+                    ? const Center(child: CircularProgressIndicator())
+                    : ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        padding: EdgeInsets.symmetric(
+                            horizontal: media.width * 0.03),
+                        itemCount: _categories.length,
+                        itemBuilder: ((context, index) {
+                          final category = _categories[index];
+                          return CategoryCell(
+                            cObj: {
+                              'image': category.categoryImage,
+                              'name': category.categoryName,
+                            },
+                            onTap: () {},
+                          );
+                        }),
+                      ),
               ),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: media.width * 0.05),
@@ -262,23 +319,37 @@ class _HomeViewState extends State<HomeView> {
                 ),
               ),
               SizedBox(
-                height: media.height * 0.20,
+                height: media.height * 0.22,
                 child: _combo.isEmpty
                     ? const Center(child: CircularProgressIndicator())
                     : PageView.builder(
                         itemCount: _combo.length,
                         itemBuilder: (context, index) {
                           final combo = _combo[index];
-                          return ComboCard(
-                            combo: combo,
-                            onAdd: () => onAdd(CartItem(
-                                id_product: combo.id_product,
-                                imageUrl: combo.images[0],
-                                name: combo.name,
-                                price: double.parse(combo.price),
-                                description: combo.description,
-                                peso: combo.peso,
-                                productId: combo.productId)),
+                          return FutureBuilder<double>(
+                            future: _getDiscountedPrice(combo),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return Center(
+                                    child: CircularProgressIndicator());
+                              } else if (snapshot.hasError) {
+                                return Text('Error: ${snapshot.error}');
+                              } else {
+                                final discountedPrice = snapshot.data!;
+                                return ComboCard(
+                                  combo: combo,
+                                  onAdd: () => onAdd(CartItem(
+                                      id_product: combo.id_product,
+                                      imageUrl: combo.images[0],
+                                      name: combo.name,
+                                      price: discountedPrice,
+                                      description: combo.description,
+                                      peso: combo.peso,
+                                      productId: combo.productId)),
+                                );
+                              }
+                            },
                           );
                         },
                       ),
@@ -296,7 +367,7 @@ class _HomeViewState extends State<HomeView> {
                 ),
               ),
               SizedBox(
-                height: media.height * 0.20,
+                height: media.height * 0.19,
                 child: _product.isEmpty
                     ? const Center(child: CircularProgressIndicator())
                     : PageView.builder(
