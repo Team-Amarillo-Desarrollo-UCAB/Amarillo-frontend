@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../../common/infrastructure/session_manager.dart'; 
 import '../../common/infrastructure/base_url.dart';
+import '../../common/infrastructure/tokenUser.dart';
 
 class AuthService {
   final String baseUrl = BaseUrl().BASE_URL;
@@ -24,6 +25,7 @@ class AuthService {
         if (data.containsKey("token")) {
           final token = data["token"];
           print("Token recibido del servidor: $token");
+          await TokenUser().setToken(token);
           await _sessionManager.saveToken(token);
         }
         return data;
@@ -45,6 +47,10 @@ class AuthService {
           'Content-Type': 'application/json',
         },
       );
+
+      if (response.statusCode == 200) {
+      return true;
+    }
       return response.statusCode == 200;
     } catch (e) {
       return false;
