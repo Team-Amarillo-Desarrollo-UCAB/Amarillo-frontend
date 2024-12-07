@@ -39,6 +39,18 @@ class _HistoryOrderScreenState extends State<OrderHistoryScreen> {
     }
   }
 
+// Future<void> fetchOrders() async {
+//   try {
+//     final fetchedOrders = await orderService.getOrders(); // Llama al nuevo método
+//     setState(() {
+//       orders.addAll(fetchedOrders); // Carga todas las órdenes
+//     });
+//   } catch (e) {
+//     ScaffoldMessenger.of(context).showSnackBar(
+//       SnackBar(content: Text('Error al cargar las órdenes: $e')),
+//     );
+//   }
+// }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -81,12 +93,12 @@ class _HistoryOrderScreenState extends State<OrderHistoryScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const SizedBox(height: 4),
-                        Text("Order #${order.orderId}",
+                        Text("Orden Nº${order.orderId}",
                             style: const TextStyle(
                                 fontSize: 16, fontWeight: FontWeight.bold)),
                         const SizedBox(height: 4),
                         Text(
-                          "\$ ${order.totalAmount.toStringAsFixed(2)}",
+                          "\$ ${double.parse(order.totalAmount).toStringAsFixed(1)}",
                         ),
                         const SizedBox(height: 8),
                         Text(
@@ -149,7 +161,7 @@ class _HistoryOrderScreenState extends State<OrderHistoryScreen> {
 class Order {
   final String orderId;
   final List<Product> products;
-  final double totalAmount;
+  final String totalAmount;
   final DateTime creationDate;
   final String status;
 
@@ -168,7 +180,7 @@ class Order {
       products: (json['productos'] as List<dynamic>)
           .map((product) => Product.fromJson(product))
           .toList(),
-      totalAmount: json['monto_total'].toDouble(),
+      totalAmount: json['monto_total'],
       creationDate: DateTime.parse(json['fecha_creacion']),
       status: json['estado'],
     );
@@ -177,7 +189,7 @@ class Order {
 
 class Product {
   final String name;
-  final int quantity;
+  final String quantity;
 
   Product({
     required this.name,
@@ -187,8 +199,8 @@ class Product {
   // Método para crear una instancia desde un JSON
   factory Product.fromJson(Map<String, dynamic> json) {
     return Product(
-      name: json['nombre'] ?? "Producto desconocido", // Fallback si no hay nombre
-      quantity: json['cantidad'] ?? 1,
+      name: json['nombre_producto'] ?? "Producto desconocido", // Fallback si no hay nombre
+      quantity: json['cantidad_producto'] ?? "1", // Fallback si no hay cantidad
     );
   }
 }
@@ -200,26 +212,46 @@ class OrderService {
 
   /// Obtiene todas las órdenes
   Future<List<Order>> getOrders() async {
-    final response = await http.get(Uri.parse('$baseUrl/order/many'));
+  final response = await http.get(Uri.parse('$baseUrl/order/many'));
+  print("Código de respuesta: ${response.statusCode}"); // Debug
 
-    if (response.statusCode == 200) {
-      // Decodifica el cuerpo como un Map
-      final Map<String, dynamic> decodedData = json.decode(response.body);
-
-      // Verifica que la clave "orders" exista y sea una lista
-      if (decodedData.containsKey('orders') && decodedData['orders'] is List) {
-        final List<dynamic> ordersData = decodedData['orders'];
-        return ordersData
+  if (response.statusCode == 200) {
+    // Decodifica el cuerpo como un Map
+    final Map<String, dynamic> decodedData = json.decode(response.body);
+    return decodedData.values
             .map<Order>((jsonOrder) => Order.fromJson(jsonOrder))
             .toList();
+  } else {
+    throw Exception('Error al obtener las órdenes');
+  }
+}
+
+Future<List<Order>> getAllOrders() async {
+  List<Order> allOrders = [];
+  int page = 1;
+  bool hasMore = true;
+
+  while (hasMore) {
+    final response = await http.get(Uri.parse('$baseUrl/order/many?page=$page'));
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> decodedData = json.decode(response.body);
+
+      if (decodedData.isEmpty) {
+        hasMore = false; // Si no hay más datos, termina el ciclo
       } else {
-        throw Exception(
-            'El formato de respuesta no es válido: no contiene una lista de órdenes.');
+        allOrders.addAll(
+          decodedData.values.map<Order>((jsonOrder) => Order.fromJson(jsonOrder)).toList(),
+        );
+        page++;
       }
     } else {
-      throw Exception('Error al obtener las órdenes');
+      throw Exception('Error al obtener las órdenes en la página $page');
     }
   }
+  return allOrders;
+}
+
+
 
   /// Obtiene una orden específica por ID
   Future<Order> getOrderById(String orderId) async {
