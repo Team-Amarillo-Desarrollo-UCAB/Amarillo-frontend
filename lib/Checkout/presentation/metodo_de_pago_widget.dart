@@ -1,8 +1,10 @@
+import 'package:desarrollo_frontend/Checkout/infrastructure/payment_service.dart';
 import 'package:flutter/material.dart';
 
 class MetodosDePago extends StatefulWidget {
   final Function(String) onSelectedMethod;
-  const MetodosDePago({super.key, required this.onSelectedMethod});
+   final List<PaymentMethod> paymentMethods;
+  const MetodosDePago({super.key, required this.onSelectedMethod, required this.paymentMethods});
   @override
   MetodosDePagoState createState() => MetodosDePagoState();
 }
@@ -10,28 +12,20 @@ class MetodosDePago extends StatefulWidget {
 class MetodosDePagoState extends State<MetodosDePago> {
   String? _selectedMethod;
 
-  final List<String> _paymentMethods = [
-    'Efectivo',
-    'Tarjeta de crédito',
-    'Tarjeta de débito',
-    'Paypal',
-    'Pago Móvil',
-  ];
-
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: _paymentMethods.map((method) {
+      children: widget.paymentMethods.map((method) {
         return RadioListTile(
           title: Text(
-            method,
+            method.name,
             style: const TextStyle(
               fontFamily: 'Inter',
               fontWeight: FontWeight.w600,
               fontSize: 16,
             ),
           ),
-          value: method,
+          value: method.idPayment,
           groupValue: _selectedMethod,
           onChanged: (value) {
             setState(() {
