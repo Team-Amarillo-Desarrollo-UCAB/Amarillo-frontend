@@ -1,9 +1,11 @@
 import 'package:desarrollo_frontend/Checkout/domain/direccion.dart';
+import 'package:desarrollo_frontend/Checkout/infrastructure/payment_service.dart';
 import 'package:desarrollo_frontend/Checkout/presentation/direcciones_screen.dart';
 import 'package:desarrollo_frontend/Checkout/presentation/fecha_hora_widget.dart';
 import 'package:desarrollo_frontend/Checkout/presentation/metodo_de_pago_widget.dart';
 import 'package:desarrollo_frontend/Checkout/presentation/pie_pagina_widget.dart';
 import 'package:flutter/material.dart';
+import '../../common/infrastructure/base_url.dart';
 import '../../common/presentation/common_widget/round_button.dart';
 import '../../Carrito/domain/cart_item.dart';
 import '../../Carrito/infrastructure/cart_service.dart';
@@ -42,31 +44,31 @@ class CheckoutScreenState extends State<CheckoutScreen> {
     });
   }
 
-    String selectedPaymentMethod = '';
-  final Map<String, TextEditingController> controllers = {};
+  @override
+  void initState() {
+    super.initState();
+    _fetchPaymentMethods();
+  }
 
-  final Map<String, List<Map<String, String>>> paymentFields = {
-    'Pago Móvil': [
-      {'label': 'Teléfono de origen', 'type': 'phone'},
-      {'label': 'Monto', 'type': 'number'},
-      {'label': 'Nro. de Referencia', 'type': 'text'},
-    ],
-    'Paypal': [
-      {'label': 'Correo electrónico', 'type': 'email'},
-      {'label': 'Monto', 'type': 'number'},
-    ],
-    'Tarjeta de crédito': [
-      {'label': 'Número de tarjeta', 'type': 'number'},
-      {'label': 'Fecha de expiración (MM/AA)', 'type': 'text'},
-      {'label': 'CVV', 'type': 'number'},
-    ],
-    'Tarjeta de débito': [
-      {'label': 'Número de tarjeta', 'type': 'number'},
-      {'label': 'Fecha de expiración (MM/AA)', 'type': 'text'},
-      {'label': 'CVV', 'type': 'number'},
-    ],
-    'Efectivo': [],
-  };
+  final PaymentService paymentService = PaymentService(BaseUrl().BASE_URL);
+
+  final Map<String, TextEditingController> controllers = {};
+  String selectedPaymentMethod = '';
+  List<PaymentMethod> paymentFields = [];
+  
+  
+  Future<void> _fetchPaymentMethods() async {
+    try {
+      List<PaymentMethod> paymentMethod = await paymentService.getPaymentMethods(1);
+      setState(() {
+        paymentFields = paymentMethod;
+      });
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error al obtener los métodos de pago: $error")),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -139,34 +141,18 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                 ),
               ),
             ),
-            MetodosDePago(
+              MetodosDePago(
+              paymentMethods: paymentFields,
               onSelectedMethod: (method) {
                 setState(() {
                   selectedPaymentMethod = method;
-                  controllers.clear();
-                  for (var field in paymentFields[method]!) {
-                    controllers[field['label']!] = TextEditingController();
-                  }
+                  _generatePaymentFields(method);
                 });
               },
             ),
             const Divider(),
-
             if (selectedPaymentMethod.isNotEmpty)
-              ...paymentFields[selectedPaymentMethod]!.map(
-                (field) => Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: TextField(
-                    controller: controllers[field['label']],
-                    keyboardType: _getKeyboardType(field['type']!),
-                    decoration: InputDecoration(
-                      labelText: field['label'],
-                      border: const OutlineInputBorder(),
-                    ),
-                  ),
-                ),
-              ),
-            const SizedBox(height: 10),
+              ..._buildPaymentFields(),
           ],
         ),
       ),
@@ -183,8 +169,13 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                 RoundButton(
                     title: "Confirmar Pedido",
                     onPressed: () async {
+                      if (!_validateFields()) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text("Por favor, complete todos los campos.")),
+                            );
+                            return; // Detener el proceso si no están completos
+                          }
                       try {
-                        if (_validatePayment()) {
                         await widget.cartService
                             .createOrder(widget.listCartItems);
                         showDialog(
@@ -216,11 +207,6 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                             ],
                           ),
                         );
-                        }else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Error al registrar el pago")),
-                  );
-                        }
                       } catch (error) {
                         showDialog(
                           context: context,
@@ -248,25 +234,57 @@ class CheckoutScreenState extends State<CheckoutScreen> {
       ),
     );
   }
-  TextInputType _getKeyboardType(String type) {
-    switch (type) {
-      case 'number':
-        return TextInputType.number;
-      case 'phone':
-        return TextInputType.phone;
-      case 'email':
-        return TextInputType.emailAddress;
-      default:
-        return TextInputType.text;
-    }
-  }
-  bool _validatePayment() {
-    if (selectedPaymentMethod.isEmpty) return false;
-    for (var controller in controllers.values) {
-      if (controller.text.isEmpty) {
-        return false;
+  void _generatePaymentFields(String method) {
+    setState(() {
+      controllers.clear(); 
+      if (method == 'c9710a23-6748-4841-aaf3-007a0a4caf74') {
+        controllers['email'] = TextEditingController();
+      } else if (method == 'f8386cbb-c503-450c-9829-6548b2c60b7c') {
+        controllers['token'] = TextEditingController();
       }
-    }
-    return true;
+    });
   }
+
+  List<Widget> _buildPaymentFields() {
+    List<Widget> fields = [];
+
+    if (selectedPaymentMethod == 'c9710a23-6748-4841-aaf3-007a0a4caf74') {
+      fields.add(
+        TextField(
+          controller: controllers['email'],
+           keyboardType: TextInputType.emailAddress,
+          decoration: InputDecoration(
+            labelText: 'Paypal Email',
+            border: OutlineInputBorder(),
+          ),
+        ),
+      );
+    } else if (selectedPaymentMethod == 'f8386cbb-c503-450c-9829-6548b2c60b7c') {
+      fields.add(
+        TextField(
+          controller: controllers['Token'],
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: const InputDecoration(
+                    labelText: 'Token de la tarjeta',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+      );
+    }
+    return fields;
+  }
+  bool _validateFields() {
+  if (selectedPaymentMethod == 'c9710a23-6748-4841-aaf3-007a0a4caf74') {
+    // Validación para PayPal (campo de email)
+    if (controllers['email'] == null || controllers['email']!.text.isEmpty) {
+      return false; // El campo está vacío
+    }
+  } else if (selectedPaymentMethod == 'f8386cbb-c503-450c-9829-6548b2c60b7c') {
+    // Validación para Stripe (campo de token)
+    if (controllers['token'] == null || controllers['token']!.text.isEmpty) {
+      return false; // El campo está vacío
+    }
+  }
+  return true; 
+}
 }

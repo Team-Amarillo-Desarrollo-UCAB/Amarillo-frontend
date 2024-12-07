@@ -141,17 +141,17 @@ class _RegisterPaymentPageState extends State<RegisterPaymentPage> {
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
             ),
             const SizedBox(height: 8),
-            MetodosDePago(
-              onSelectedMethod: (method) {
-                setState(() {
-                  selectedPaymentMethod = method;
-                  controllers.clear();
-                  for (var field in paymentFields[method]!) {
-                    controllers[field['label']!] = TextEditingController();
-                  }
-                });
-              },
-            ),
+            // MetodosDePago(
+            //   onSelectedMethod: (method) {
+            //     setState(() {
+            //       selectedPaymentMethod = method;
+            //       controllers.clear();
+            //       for (var field in paymentFields[method]!) {
+            //         controllers[field['label']!] = TextEditingController();
+            //       }
+            //     });
+            //   },
+            // ),
             const Divider(),
             if (selectedPaymentMethod.isNotEmpty)
               ...paymentFields[selectedPaymentMethod]!.map(

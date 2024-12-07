@@ -4,12 +4,13 @@ import 'Users/domain/user_profile.dart';
 import 'common/presentation/main_tabview.dart';
 import 'common/presentation/startup_view.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  final userProfile = await UserProfile.loadFromPreferences();
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => UserProfile.defaultProfile()),
+        ChangeNotifierProvider(create: (_) => userProfile),
       ],
     child: MyApp()));
 }
