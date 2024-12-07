@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../common/presentation/color_extension.dart';
+
 class OrderDetailsView extends StatelessWidget {
   final String orderId = "#221342";
   final String orderStatus = "Entregado"; 
@@ -192,7 +194,7 @@ class OrderDetailsView extends StatelessWidget {
                 onPressed: () {
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.orange,
+                  backgroundColor: Colors.grey,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8.0),
                   ),
