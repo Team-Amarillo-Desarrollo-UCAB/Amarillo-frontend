@@ -14,22 +14,47 @@ class OrderHistoryScreen extends StatefulWidget {
 }
 
 class _HistoryOrderScreenState extends State<OrderHistoryScreen> {
-  final List<Order> orders = [];
+  List<Order> orders = [];
   late final OrderService orderService;
-
+  int _page = 1;
+  bool _isLoading = false;
+  bool _hasMore = true;
+  late ScrollController _scrollController;
   @override
   void initState() {
     super.initState();
     orderService = OrderService(BaseUrl().BASE_URL);
-    fetchOrders(); // Carga los datos al iniciar
+    fetchOrders(); 
+    //_loadMoreOrders();
+    _scrollController = ScrollController();
+    _scrollController.addListener(_onScroll);
+
   }
 
-  // Simula la obtención de datos del endpoint
+@override
+void dispose() {
+  _scrollController.dispose();
+  super.dispose();
+}
+
+void _onScroll() {
+  if (_scrollController.position.pixels >=
+          _scrollController.position.maxScrollExtent - 200 && // Detecta si está cerca del final
+      !_isLoading &&
+      _hasMore) {
+    _loadMoreOrders();
+  }
+}
+
+
+
+
+ // Simula la obtención de datos del endpoint
   Future<void> fetchOrders() async {
     try {
-      final fetchedOrders = await orderService.getOrders();
+      List<Order>  fetchedOrders = await orderService.getOrders(1);
       setState(() {
-        orders.addAll(fetchedOrders);
+        orders = fetchedOrders;
       });
     } catch (e) {
       // Manejo de errores, por ejemplo, mostrar un snackbar
@@ -39,18 +64,60 @@ class _HistoryOrderScreenState extends State<OrderHistoryScreen> {
     }
   }
 
-// Future<void> fetchOrders() async {
-//   try {
-//     final fetchedOrders = await orderService.getOrders(); // Llama al nuevo método
-//     setState(() {
-//       orders.addAll(fetchedOrders); // Carga todas las órdenes
-//     });
-//   } catch (e) {
-//     ScaffoldMessenger.of(context).showSnackBar(
-//       SnackBar(content: Text('Error al cargar las órdenes: $e')),
-//     );
-//   }
-// }
+void _loadMoreOrders() async {
+  if (_isLoading || !_hasMore) return;
+  setState(() => _isLoading = true);
+  try {
+    List<Order> newOrders = await orderService.getOrders(_page);
+    setState(() {
+        if (newOrders.isEmpty) {
+          _hasMore = false;
+        } else {
+          orders.addAll(newOrders);
+          _page++;
+        }
+      });
+
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Error al cargar más órdenes: $e')),
+    );
+  } finally {
+    setState(() => _isLoading = false);
+  }
+}
+
+/*
+ Future<void> _loadMoreProducts() async {
+    if (_isLoading || !_hasMore) return;
+    setState(() {
+      _isLoading = true;
+    });
+    try {
+      List<Product> newProducts = await _productService.getProducts(_page);
+      setState(() {
+        if (newProducts.isEmpty) {
+          _hasMore = false;
+        } else {
+          _product.addAll(newProducts);
+          _page++;
+        }
+      });
+    } catch (error) {
+      print('Error al obtener productos: $error');
+    }
+
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
+
+
+*/
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -80,9 +147,16 @@ class _HistoryOrderScreenState extends State<OrderHistoryScreen> {
             ),
           ),
           Expanded(
-            child: ListView.builder(
-              itemCount: orders.length,
+            child: 
+            orders.isEmpty ? const Center(child: CircularProgressIndicator()) : 
+            ListView.builder(
+              controller: _scrollController,
+              itemCount: _hasMore ? orders.length + 1 : orders.length,
               itemBuilder: (context, index) {
+                if (index >= orders.length) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
                 final order = orders[index];
                 return Card(
                   margin:
@@ -93,7 +167,11 @@ class _HistoryOrderScreenState extends State<OrderHistoryScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const SizedBox(height: 4),
-                        Text("Orden Nº${order.orderId}",
+                        Text("Orden",
+                            style: const TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold)),
+                        const SizedBox(height: 4),
+                        Text("Nº${order.orderId}",
                             style: const TextStyle(
                                 fontSize: 16, fontWeight: FontWeight.bold)),
                         const SizedBox(height: 4),
@@ -211,8 +289,8 @@ class OrderService {
   OrderService(this.baseUrl);
 
   /// Obtiene todas las órdenes
-  Future<List<Order>> getOrders() async {
-  final response = await http.get(Uri.parse('$baseUrl/order/many'));
+  Future<List<Order>> getOrders(int page) async {
+  final response = await http.get(Uri.parse('$baseUrl/order/many?page=$page'));
   print("Código de respuesta: ${response.statusCode}"); // Debug
 
   if (response.statusCode == 200) {
