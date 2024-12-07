@@ -169,13 +169,12 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                 RoundButton(
                     title: "Confirmar Pedido",
                     onPressed: () async {
-                      if (!_validateFields()) {
+                      try {
+                        if (!_validateFields()) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(content: Text("Por favor, complete todos los campos.")),
                             );
-                            return; // Detener el proceso si no están completos
                           }
-                      try {
                         await widget.cartService
                             .createOrder(widget.listCartItems);
                         showDialog(
@@ -262,8 +261,8 @@ class CheckoutScreenState extends State<CheckoutScreen> {
     } else if (selectedPaymentMethod == 'f8386cbb-c503-450c-9829-6548b2c60b7c') {
       fields.add(
         TextField(
-          controller: controllers['Token'],
-                  keyboardType: TextInputType.emailAddress,
+          controller: controllers['token'],
+                  keyboardType: TextInputType.text,
                   decoration: const InputDecoration(
                     labelText: 'Token de la tarjeta',
                     border: OutlineInputBorder(),
@@ -275,14 +274,12 @@ class CheckoutScreenState extends State<CheckoutScreen> {
   }
   bool _validateFields() {
   if (selectedPaymentMethod == 'c9710a23-6748-4841-aaf3-007a0a4caf74') {
-    // Validación para PayPal (campo de email)
     if (controllers['email'] == null || controllers['email']!.text.isEmpty) {
-      return false; // El campo está vacío
+      return false;
     }
   } else if (selectedPaymentMethod == 'f8386cbb-c503-450c-9829-6548b2c60b7c') {
-    // Validación para Stripe (campo de token)
     if (controllers['token'] == null || controllers['token']!.text.isEmpty) {
-      return false; // El campo está vacío
+      return false;
     }
   }
   return true; 
