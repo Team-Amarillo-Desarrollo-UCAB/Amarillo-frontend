@@ -12,8 +12,8 @@ class OrderDetailsView extends StatelessWidget {
     {"name": "Bolígrafo", "quantity": 1, "price": 0.50},
 
   ];
-  final double subtotal = 138.50;
-  final double shippingFee = 25.00;
+  final double subtotal = 14.50;
+  final double shippingFee = 0.00;
   final double discount = 0.00;
   final String deliveryTime = "Entregado hoy a las 3:00 PM";
   final String deliveryLocation = "Universidad Católica Andrés Bello";
