@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import '../../common/presentation/color_extension.dart';
 
 class OrderDetailsView extends StatelessWidget {
-  final String orderId = "#221342";
+  final String orderId = "#08900b6f";
   final String orderStatus = "Entregado"; 
-  final String paymentMethod = "Efectivo"; 
+  final String paymentMethod = "PayPal"; 
   final List<Map<String, dynamic>> items = [
-    {"name": "Harina pan", "quantity": 2, "price": 7.00},
-    {"name": "Nestea - Durazno", "quantity": 1, "price": 1.50},
-    {"name": "Almuerzo familiar", "quantity": 2, "price": 30.00},
-    {"name": "Desayuno familiar", "quantity": 2, "price": 30.00},
+    {"name": "Cochino", "quantity": 1, "price": 4.00},
+    {"name": "Pañales", "quantity": 1, "price": 10.0},
+    {"name": "Bolígrafo", "quantity": 1, "price": 0.50},
+
   ];
   final double subtotal = 138.50;
   final double shippingFee = 25.00;
