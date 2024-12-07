@@ -5,6 +5,7 @@ import 'package:desarrollo_frontend/Combo/presentation/combo_widget.dart';
 import 'package:desarrollo_frontend/Descuento/Domain/descuento.dart';
 import 'package:desarrollo_frontend/Descuento/Infrastructure/descuento_service.dart';
 import 'package:desarrollo_frontend/Descuento/Infrastructure/descuento_service_search_by_id.dart';
+import 'package:desarrollo_frontend/Promociones/promocion_screen.dart';
 import 'package:desarrollo_frontend/categorias/domain/category.dart';
 import 'package:desarrollo_frontend/categorias/infrasestructure/category_service.dart';
 import 'package:desarrollo_frontend/categorias/presentation/category_items_view.dart';
@@ -103,15 +104,16 @@ class _HomeViewState extends State<HomeView> {
     try {
       List<Descuento> descuentos = await _descuentoService.getDescuento(2);
       const List<String> idsFiltrar = [
-      'd4b64ba1-3470-4289-b4e3-2b14aa6894b9',
-      '217bf967-b7cd-4992-b9c5-ca56fc789109',
-      '44f31904-d26d-4041-b8b1-7024e5d18eb5',
+        'd4b64ba1-3470-4289-b4e3-2b14aa6894b9',
+        '217bf967-b7cd-4992-b9c5-ca56fc789109',
+        '44f31904-d26d-4041-b8b1-7024e5d18eb5',
       ];
       print('Descuentos: ${descuentos.map((d) => d.id).toList()}');
       List<Descuento> descuentosFiltrados = descuentos
-        .where((descuento) => idsFiltrar.contains(descuento.id))
-        .toList();
-      print('Descuentos Filtrados: ${descuentosFiltrados.map((d) => d.id).toList()}');
+          .where((descuento) => idsFiltrar.contains(descuento.id))
+          .toList();
+      print(
+          'Descuentos Filtrados: ${descuentosFiltrados.map((d) => d.id).toList()}');
 
       setState(() {
         _descuentos = descuentosFiltrados;
@@ -158,265 +160,267 @@ class _HomeViewState extends State<HomeView> {
     );
   }
 
-
-      @override
+  @override
   Widget build(BuildContext context) {
     var media = MediaQuery.of(context).size;
     final userProfile = Provider.of<UserProfile>(context);
 
-    return Stack(
-      children: [
-        // Drawer personalizado
-        _buildDrawer(),
-        AnimatedContainer(
-      
-      transform: Matrix4.translationValues(xOffset, yOffset, 0)
-        ..scale(isDrawerOpen ? 0.85 : 1.00),
-      duration: const Duration(milliseconds: 250),
-      decoration: BoxDecoration(
-        borderRadius: isDrawerOpen ? BorderRadius.circular(30) : BorderRadius.zero,
-      ),
-      child: Scaffold(
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              // AppBar personalizado
-              SizedBox(height: media.height * 0.05),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: media.width * 0.05),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    isDrawerOpen
-                        ? IconButton(
-                            icon: const Icon(Icons.arrow_back_ios),
-                            onPressed: () {
-                              setState(() {
-                                xOffset = 0;
-                                yOffset = 0;
-                                isDrawerOpen = false;
-                              });
-                            },
-                          )
-                        : IconButton(
-                            icon: const Icon(Icons.menu),
-                            onPressed: () {
-                              setState(() {
-                                xOffset = 250;
-                                yOffset = 70;
-                                isDrawerOpen = true;
-                              });
-                            },
-                          ),
-                    const Icon(Icons.notifications),
-                  ],
-                ),
-              ), Padding(
-          padding: EdgeInsets.symmetric(vertical: media.height * 0.02),
-          child: Column(
-            children: [
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: media.width * 0.05),
-                child: Row(
-                  children: [
-                    ClipOval(
-                      child: Image.asset(
-                        'assets/img/perfil.png',
-                        width: media.width * 0.12,
-                        height: media.width * 0.12,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    SizedBox(width: media.width * 0.03),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          '¡HOLA ${userProfile.name.toUpperCase()}!',
-                          style: TextStyle(
-                              color: TColor.primary,
-                              fontSize: media.width * 0.04,
-                              fontWeight: FontWeight.w600),
+    return Stack(children: [
+      // Drawer personalizado
+      _buildDrawer(),
+      AnimatedContainer(
+        transform: Matrix4.translationValues(xOffset, yOffset, 0)
+          ..scale(isDrawerOpen ? 0.85 : 1.00),
+        duration: const Duration(milliseconds: 250),
+        decoration: BoxDecoration(
+          borderRadius:
+              isDrawerOpen ? BorderRadius.circular(30) : BorderRadius.zero,
+        ),
+        child: Scaffold(
+            body: SingleChildScrollView(
+                child: Column(
+          children: [
+            // AppBar personalizado
+            SizedBox(height: media.height * 0.05),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: media.width * 0.05),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  isDrawerOpen
+                      ? IconButton(
+                          icon: const Icon(Icons.arrow_back_ios),
+                          onPressed: () {
+                            setState(() {
+                              xOffset = 0;
+                              yOffset = 0;
+                              isDrawerOpen = false;
+                            });
+                          },
+                        )
+                      : IconButton(
+                          icon: const Icon(Icons.menu),
+                          onPressed: () {
+                            setState(() {
+                              xOffset = 250;
+                              yOffset = 70;
+                              isDrawerOpen = true;
+                            });
+                          },
                         ),
-                        Text(
-                          "Sábana Grande, Caracas",
-                          style: TextStyle(
-                              color: TColor.secondaryText,
-                              fontSize: media.width * 0.035,
-                              fontWeight: FontWeight.w500),
+                  const Icon(Icons.notifications),
+                ],
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: media.height * 0.02),
+              child: Column(
+                children: [
+                  Padding(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: media.width * 0.05),
+                    child: Row(
+                      children: [
+                        ClipOval(
+                          child: Image.asset(
+                            'assets/img/perfil.png',
+                            width: media.width * 0.12,
+                            height: media.width * 0.12,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        SizedBox(width: media.width * 0.03),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '¡HOLA ${userProfile.name.toUpperCase()}!',
+                              style: TextStyle(
+                                  color: TColor.primary,
+                                  fontSize: media.width * 0.04,
+                                  fontWeight: FontWeight.w600),
+                            ),
+                            Text(
+                              "Sábana Grande, Caracas",
+                              style: TextStyle(
+                                  color: TColor.secondaryText,
+                                  fontSize: media.width * 0.035,
+                                  fontWeight: FontWeight.w500),
+                            ),
+                          ],
                         ),
                       ],
                     ),
-                  ],
-                ),
-              ),
-              SizedBox(height: media.height * 0.015),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: media.width * 0.05),
-                child: TextField(
-                  controller: _searchController,
-                  decoration: InputDecoration(
-                    hintText: "Productos, Categorías...",
-                    prefixIcon: const Icon(Icons.search, color: Colors.orange),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30),
-                      borderSide: BorderSide.none,
-                    ),
-                    filled: true,
-                    fillColor: Colors.orange.withOpacity(0.1),
                   ),
-                  onSubmitted: (value) {
-                    if (value.trim().isNotEmpty) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              ProductListView(searchQuery: value.trim()),
+                  SizedBox(height: media.height * 0.015),
+                  Padding(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: media.width * 0.05),
+                    child: TextField(
+                      controller: _searchController,
+                      decoration: InputDecoration(
+                        hintText: "Productos, Categorías...",
+                        prefixIcon:
+                            const Icon(Icons.search, color: Colors.orange),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          borderSide: BorderSide.none,
                         ),
-                      );
-                    }
-                  },
-                ),
-              ),
-              SizedBox(height: media.height * 0.03),
-              _descuentos.isEmpty
-                  ? const Center(child: CircularProgressIndicator())
-                  : SizedBox(
-                      height: media.height * 0.17,
-                      child: PageView.builder(
-                        itemCount: _descuentos.length,
-                        itemBuilder: (context, index) {
-                          return ClipRRect(
-                            child: Image.network(
-                              _descuentos[index].image,
-                              width: media.width * 0.9,
-                              height: media.height * 0.17,
-                              fit: BoxFit.cover,
+                        filled: true,
+                        fillColor: Colors.orange.withOpacity(0.1),
+                      ),
+                      onSubmitted: (value) {
+                        if (value.trim().isNotEmpty) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  ProductListView(searchQuery: value.trim()),
                             ),
                           );
-                        },
-                      ),
+                        }
+                      },
                     ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: media.width * 0.05),
-                child: ViewAllTitleRow(
-                  title: "Categorías",
-                  onView: () {},
-                ),
-              ),
-              SizedBox(
-                height: media.height * 0.13,
-                child: _categories.isEmpty
-                    ? const Center(child: CircularProgressIndicator())
-                    : ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        padding: EdgeInsets.symmetric(
-                            horizontal: media.width * 0.03),
-                        itemCount: _categories.length,
-                        itemBuilder: ((context, index) {
-                          final category = _categories[index];
-                          return CategoryCell(
-                            cObj: {
-                              'image': category.categoryImage,
-                              'name': category.categoryName,
+                  ),
+                  SizedBox(height: media.height * 0.03),
+                  _descuentos.isEmpty
+                      ? const Center(child: CircularProgressIndicator())
+                      : SizedBox(
+                          height: media.height * 0.17,
+                          child: PageView.builder(
+                            itemCount: _descuentos.length,
+                            itemBuilder: (context, index) {
+                              return ClipRRect(
+                                child: Image.network(
+                                  _descuentos[index].image,
+                                  width: media.width * 0.9,
+                                  height: media.height * 0.17,
+                                  fit: BoxFit.cover,
+                                ),
+                              );
                             },
-                            onTap: () {},
-                          );
-                        }),
-                      ),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: media.width * 0.05),
-                child: ViewAllTitleRow(
-                  title: "Oferta de Combos",
-                  onView: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => ComboView()));
-                  },
-                ),
-              ),
-              SizedBox(
-                height: media.height * 0.22,
-                child: _combo.isEmpty
-                    ? const Center(child: CircularProgressIndicator())
-                    : PageView.builder(
-                        itemCount: _combo.length,
-                        itemBuilder: (context, index) {
-                          final combo = _combo[index];
-                          return FutureBuilder<double>(
-                            future: _getDiscountedPrice(combo),
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                return Center(
-                                    child: CircularProgressIndicator());
-                              } else if (snapshot.hasError) {
-                                return Text('Error: ${snapshot.error}');
-                              } else {
-                                final discountedPrice = snapshot.data!;
-                                return ComboCard(
-                                  combo: combo,
-                                  onAdd: () => onAdd(CartItem(
-                                      id_product: combo.id_product,
-                                      imageUrl: combo.images[0],
-                                      name: combo.name,
-                                      price: discountedPrice,
-                                      description: combo.description,
-                                      peso: combo.peso,
-                                      productId: combo.productId)),
-                                );
-                              }
+                          ),
+                        ),
+                  Padding(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: media.width * 0.05),
+                    child: ViewAllTitleRow(
+                      title: "Categorías",
+                      onView: () {},
+                    ),
+                  ),
+                  SizedBox(
+                    height: media.height * 0.13,
+                    child: _categories.isEmpty
+                        ? const Center(child: CircularProgressIndicator())
+                        : ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            padding: EdgeInsets.symmetric(
+                                horizontal: media.width * 0.03),
+                            itemCount: _categories.length,
+                            itemBuilder: ((context, index) {
+                              final category = _categories[index];
+                              return CategoryCell(
+                                cObj: {
+                                  'image': category.categoryImage,
+                                  'name': category.categoryName,
+                                },
+                                onTap: () {},
+                              );
+                            }),
+                          ),
+                  ),
+                  Padding(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: media.width * 0.05),
+                    child: ViewAllTitleRow(
+                      title: "Oferta de Combos",
+                      onView: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ComboView()));
+                      },
+                    ),
+                  ),
+                  SizedBox(
+                    height: media.height * 0.22,
+                    child: _combo.isEmpty
+                        ? const Center(child: CircularProgressIndicator())
+                        : PageView.builder(
+                            itemCount: _combo.length,
+                            itemBuilder: (context, index) {
+                              final combo = _combo[index];
+                              return FutureBuilder<double>(
+                                future: _getDiscountedPrice(combo),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return Center(
+                                        child: CircularProgressIndicator());
+                                  } else if (snapshot.hasError) {
+                                    return Text('Error: ${snapshot.error}');
+                                  } else {
+                                    final discountedPrice = snapshot.data!;
+                                    return ComboCard(
+                                      combo: combo,
+                                      onAdd: () => onAdd(CartItem(
+                                          id_product: combo.id_product,
+                                          imageUrl: combo.images[0],
+                                          name: combo.name,
+                                          price: discountedPrice,
+                                          description: combo.description,
+                                          peso: combo.peso,
+                                          productId: combo.productId)),
+                                    );
+                                  }
+                                },
+                              );
                             },
-                          );
-                        },
-                      ),
+                          ),
+                  ),
+                  Padding(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: media.width * 0.05),
+                    child: ViewAllTitleRow(
+                      title: "Productos Populares",
+                      onView: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ProductListView()));
+                      },
+                    ),
+                  ),
+                  SizedBox(
+                    height: media.height * 0.19,
+                    child: _product.isEmpty
+                        ? const Center(child: CircularProgressIndicator())
+                        : PageView.builder(
+                            itemCount: _product.length,
+                            itemBuilder: (context, index) {
+                              final product = _product[index];
+                              return ProductCard(
+                                product: product,
+                                onAdd: () => onAdd(CartItem(
+                                    id_product: product.id_product,
+                                    imageUrl: product.image,
+                                    name: product.name,
+                                    price: product.price,
+                                    description: product.description,
+                                    peso: product.peso)),
+                              );
+                            },
+                          ),
+                  ),
+                ],
               ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: media.width * 0.05),
-                child: ViewAllTitleRow(
-                  title: "Productos Populares",
-                  onView: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => ProductListView()));
-                  },
-                ),
-              ),
-              SizedBox(
-                height: media.height * 0.19,
-                child: _product.isEmpty
-                    ? const Center(child: CircularProgressIndicator())
-                    : PageView.builder(
-                        itemCount: _product.length,
-                        itemBuilder: (context, index) {
-                          final product = _product[index];
-                          return ProductCard(
-                            product: product,
-                            onAdd: () => onAdd(CartItem(
-                                id_product: product.id_product,
-                                imageUrl: product.image,
-                                name: product.name,
-                                price: product.price,
-                                description: product.description,
-                                peso: product.peso)),
-                          );
-                        },
-                      ),
-              ),
-            ],
-          ),
-        ),
-            ],
-        )
-    )
-    ),
-    )
-      ]
-    );
+            ),
+          ],
+        ))),
+      )
+    ]);
   }
-
-
 
   Widget _buildDrawer() {
     return Container(
@@ -427,48 +431,64 @@ class _HomeViewState extends State<HomeView> {
       child: Column(
         children: [
           const SizedBox(height: 200),
-          ListTile( 
-            title: const Text('      Menú', style: TextStyle(
-              color: Colors.white,
-              fontSize: 24,
-              fontWeight: FontWeight.bold,)),
+          ListTile(
+            title: const Text('      Menú',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                )),
           ),
           const SizedBox(height: 50),
           ListTile(
             leading: const Icon(Icons.discount, color: Colors.white),
-            title: const Text('Promociones', style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,)),
-            onTap: () {},
+            title: const Text('Promociones',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                )),
+            onTap: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => PromocionesView()));
+            },
           ),
           ListTile(
             leading: const Icon(Icons.card_membership, color: Colors.white),
-            title: const Text('Cupones', style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,)),
+            title: const Text('Cupones',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                )),
             onTap: () {
               Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => CuponView()));
+                  MaterialPageRoute(builder: (context) => CuponView()));
             },
           ),
-                    ListTile(
-            leading: const Icon(Icons.production_quantity_limits_sharp, color: Colors.white),
-            title: const Text('Combos', style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,)),
+          ListTile(
+            leading: const Icon(Icons.production_quantity_limits_sharp,
+                color: Colors.white),
+            title: const Text('Combos',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                )),
             onTap: () {
               Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => ComboView()));
+                  MaterialPageRoute(builder: (context) => ComboView()));
             },
           ),
           const SizedBox(height: 150),
           ListTile(
             leading: const Icon(Icons.logout, color: Colors.white),
-            title: const Text('Cerrar Sesión', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+            title: const Text('Cerrar Sesión',
+                style: TextStyle(
+                    color: Colors.white, fontWeight: FontWeight.bold)),
             onTap: () {
               showLogoutConfirmationDialog(context);
             }, // onTap
-          ), 
+          ),
         ],
       ),
     );
   }
-
 }
-
-
-
