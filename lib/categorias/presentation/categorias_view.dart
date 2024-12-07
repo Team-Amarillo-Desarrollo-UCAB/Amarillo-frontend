@@ -34,12 +34,15 @@ class _CategoryViewState extends State<CategoryView> {
       setState(() {
         _categories = categories;
       });
-    } catch (error) {
-      print('Error al obtener categorías: $error');
-    } finally {
       setState(() {
         _isLoading = false;
       });
+    } catch (error) {
+      print('Error al obtener categorías: $error');
+    } finally {
+      // setState(() {
+      //   _isLoading = false;
+      // });
     }
   }
 
