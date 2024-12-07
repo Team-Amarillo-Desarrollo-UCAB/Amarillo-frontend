@@ -101,11 +101,22 @@ class _HomeViewState extends State<HomeView> {
 
   Future<void> _fetchDescuentos() async {
     try {
-      List<Descuento> descuentos = await _descuentoService.getDescuento(1);
+      List<Descuento> descuentos = await _descuentoService.getDescuento(2);
+      const List<String> idsFiltrar = [
+      'd4b64ba1-3470-4289-b4e3-2b14aa6894b9',
+      '217bf967-b7cd-4992-b9c5-ca56fc789109',
+      '44f31904-d26d-4041-b8b1-7024e5d18eb5',
+      ];
+      print('Descuentos: ${descuentos.map((d) => d.id).toList()}');
+      List<Descuento> descuentosFiltrados = descuentos
+        .where((descuento) => idsFiltrar.contains(descuento.id))
+        .toList();
+      print('Descuentos Filtrados: ${descuentosFiltrados.map((d) => d.id).toList()}');
+
       setState(() {
-        _descuentos = descuentos;
-        _descuentos.shuffle();
-        _descuentos = _descuentos.take(5).toList();
+        _descuentos = descuentosFiltrados;
+        //_descuentos.shuffle();
+        _descuentos = _descuentos.take(3).toList();
       });
     } catch (error) {
       print('Error al obtener descuentos: $error');

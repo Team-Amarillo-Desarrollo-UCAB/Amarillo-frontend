@@ -5,11 +5,13 @@ class UserProfile with ChangeNotifier {
   String name;
   String email;
   String phoneNumber;
+  String image = '';
 
   UserProfile({
     required this.name,
     required this.email,
     required this.phoneNumber,
+    this.image = '',
   });
 
   static UserProfile defaultProfile() {
@@ -17,6 +19,7 @@ class UserProfile with ChangeNotifier {
       name: "Carlos Alonzo", 
       email: "carlos.alonzo@example.com", 
       phoneNumber: "+58 4261234567",
+      image: ""
     );
   }
 
