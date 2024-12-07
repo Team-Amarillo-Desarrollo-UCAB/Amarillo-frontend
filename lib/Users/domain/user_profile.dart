@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert' as convert;
-import '../../common/infrastructure/base_url.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class UserProfile with ChangeNotifier {
   String name;
@@ -25,39 +23,33 @@ class UserProfile with ChangeNotifier {
     );
   }
 
+  /// Actualiza los datos del perfil y guarda en SharedPreferences
   void updateProfile(String newName, String newPhoneNumber) {
     name = newName;
     phoneNumber = newPhoneNumber;
-    notifyListeners(); 
+    notifyListeners();
+    _saveToPreferences();
   }
 
-  Future<void> updateProfileFromToken(String token) async {
-    final url = Uri.parse('$BaseUrl().BASE_URL/auth/current');
-    try {
-      final response = await http.get(
-        url,
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Content-Type': 'application/json',
-        },
-      );
+  
+  Future<void> _saveToPreferences() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString('user_name', name);
+    prefs.setString('user_phone_number', phoneNumber);
+    prefs.setString('user_email', email);
+  }
 
-      if (response.statusCode == 200) {
-        final data = convert.jsonDecode(response.body) as Map<String, dynamic>; // Cast to Map
+  
+  static Future<UserProfile> loadFromPreferences() async {
+    final prefs = await SharedPreferences.getInstance();
+    final name = prefs.getString('user_name') ?? "Carlos Alonzo";
+    final phoneNumber = prefs.getString('user_phone_number') ?? "+58 4261234567";
+    final email = prefs.getString('user_email') ?? "carlos.alonzo@example.com";
 
-        name = data['name'];
-        email = data['email'];
-        phoneNumber = data['phone'];
-        image = data['image'] ?? ''; // Handle potential missing image key
-
-        notifyListeners(); // Notify listeners of the state change
-      } else {
-        print('Error fetching user profile: ${response.statusCode}');
-        // Handle potential errors (e.g., display a snackbar to the user)
-      }
-    } catch (e) {
-      print('Error fetching user profile: $e');
-      // Handle exceptions (e.g., display a generic error message)
-    }
+    return UserProfile(
+      name: name,
+      email: email,
+      phoneNumber: phoneNumber,
+    );
   }
 }
