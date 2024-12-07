@@ -1,17 +1,23 @@
+import 'package:desarrollo_frontend/Carrito/infrastructure/cart_service.dart';
 import 'package:flutter/material.dart';
 
+import '../../Carrito/domain/cart_item.dart';
+import '../../Carrito/presentation/cart_screen.dart';
+import '../../Producto/presentation/popular_product_widget.dart';
+
 class OrderDetailsView extends StatelessWidget {
-  final String orderId = "#221342";
+  final CartService _cartService = CartService();
+  final String orderId = "#08900b6f";
   final String orderStatus = "Entregado"; 
-  final String paymentMethod = "Efectivo"; 
+  final String paymentMethod = "PayPal"; 
   final List<Map<String, dynamic>> items = [
-    {"name": "Harina pan", "quantity": 2, "price": 7.00},
-    {"name": "Nestea - Durazno", "quantity": 1, "price": 1.50},
-    {"name": "Almuerzo familiar", "quantity": 2, "price": 30.00},
-    {"name": "Desayuno familiar", "quantity": 2, "price": 30.00},
+    {"name": "Cochino", "quantity": 1, "price": 4.00},
+    {"name": "Pañales", "quantity": 1, "price": 10.0},
+    {"name": "Bolígrafo", "quantity": 1, "price": 0.50},
+
   ];
-  final double subtotal = 138.50;
-  final double shippingFee = 25.00;
+  final double subtotal = 14.50;
+  final double shippingFee = 0.00;
   final double discount = 0.00;
   final String deliveryTime = "Entregado hoy a las 3:00 PM";
   final String deliveryLocation = "Universidad Católica Andrés Bello";
@@ -29,6 +35,7 @@ class OrderDetailsView extends StatelessWidget {
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
+            
             Navigator.pop(context);
           },
         ),
@@ -190,6 +197,36 @@ class OrderDetailsView extends StatelessWidget {
               padding: const EdgeInsets.all(16.0),
               child: ElevatedButton(
                 onPressed: () {
+ ProductCard(
+                                onAdd: () => onAdd(
+CartItem(
+    id_product: "07ef12b4-9759-493e-b644-5b29f3aa9c19",
+    imageUrl: null,
+    name: "Cochino",
+    price: 4.0, // Convertimos el precio a tipo double
+    description: "comida",
+    peso: "1 kg", // Concatenamos cantidad y unidad de medida
+  );
+  CartItem(
+    id_product: "0c84343b-c9a9-4c5a-b680-9405391dbbc6",
+    imageUrl: "https://res.cloudinary.com/dxttqmyxu/image/upload/v1731484573/sgsqquwni3pnipaxilky.jpg",
+    name: "Bolígrafo",
+    price: 0.5,
+    description: "Bolígrafo azul",
+    peso: "10 g",
+  );
+  CartItem(
+    id_product: "0a86ad7d-fa64-4cb6-910c-a282aba331fa",
+    imageUrl: "https://res.cloudinary.com/dxttqmyxu/image/upload/v1731483519/txhouysijwq9dz7db1wx.png",
+    name: "Pañales",
+    price: 10.0,
+    description: "Pañales para bebé",
+    peso: "500 g",
+  );
+                  Navigator.push(context,
+                                  MaterialPageRoute(builder: (context) => CartScreen(
+                                    //orderId: 'order.orderId',
+                                    )));
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.orange,
@@ -271,3 +308,30 @@ class OrderDetailsView extends StatelessWidget {
     }
   }
 }
+
+void onAdd(CartItem item) async {
+    await _cartService.loadCartItems();
+    bool isProductInCart =
+        _cartService.cartItems.any((cartItem) => cartItem.name == item.name);
+    if (isProductInCart) {
+      CartItem existingItem = _cartService.cartItems
+          .firstWhere((cartItem) => cartItem.name == item.name);
+      existingItem.incrementQuantity();
+    } else {
+      _cartService.cartItems.add(item);
+    }
+    await _cartService.saveCartItems();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(isProductInCart
+            ? '${item.name} cantidad incrementada'
+            : '${item.name} añadido al carrito'),
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+
+
+
+
+
