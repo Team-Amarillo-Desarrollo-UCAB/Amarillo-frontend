@@ -51,8 +51,9 @@ Future<List<Order>> getAllOrders() async {
 
   /// Obtiene una orden específica por ID
   Future<Order> getOrderById(String orderId) async {
+    print("OrderID" + orderId);
     final response =
-        await http.get(Uri.parse('$baseUrl/order/one?orderId=$orderId'));
+        await http.get(Uri.parse('$baseUrl/order/one/by/$orderId'));
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(response.body);

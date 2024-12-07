@@ -16,8 +16,6 @@ class OrderDetailsView extends StatelessWidget {
   final String deliveryTime = "Entregado hoy a las 3:00 PM";
   final String deliveryLocation = "Universidad Católica Andrés Bello";
 
-  OrderDetailsView(String orderId);
-
   @override
   Widget build(BuildContext context) {
     

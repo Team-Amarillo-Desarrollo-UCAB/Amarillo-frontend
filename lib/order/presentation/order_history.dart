@@ -216,7 +216,9 @@ void _loadMoreOrders() async {
                             TextButton(
                               onPressed: () {
                                 Navigator.push(context,
-                                  MaterialPageRoute(builder: (context) => OrderDetailsView(order.orderId)));
+                                  MaterialPageRoute(builder: (context) => OrderDetailsView(
+                                    //orderId: 'order.orderId',
+                                    )));
                               },
                               child: Text("Ver Detalles",
                                   style: TextStyle(color: TColor.primary)),
@@ -284,6 +286,8 @@ class Product {
       quantity: json['cantidad_producto'] ?? "1", // Fallback si no hay cantidad
     );
   }
+
+  
 }
 
 
