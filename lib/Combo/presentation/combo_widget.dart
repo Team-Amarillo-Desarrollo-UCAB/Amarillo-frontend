@@ -33,26 +33,30 @@ class _ComboCardState extends State<ComboCard> {
     _fetchDescuento();
   }
 
-  Future<void> _fetchDescuento() async {
-    if (widget.combo.discount != "9bd9532c-5033-4621-be8a-87de4934a0be") {
-      setState(() {
-        _isLoading = true;
-      });
-      try {
-        final descuento = await _descuentoServiceSearchById
-            .getDescuentoById(widget.combo.discount);
+Future<void> _fetchDescuento() async {
+  if (widget.combo.discount != "9bd9532c-5033-4621-be8a-87de4934a0be" && mounted) {
+    setState(() {
+      _isLoading = true;
+    });
+    try {
+      final descuento = await _descuentoServiceSearchById.getDescuentoById(widget.combo.discount);
+      if (mounted) {
         setState(() {
           _descuento = descuento;
+          _isLoading = false;
         });
-      } catch (error) {
-        print('Error al obtener el descuento: $error');
-      } finally {
+      }
+    } catch (error) {
+      print('Error al obtener el descuento: $error');
+    } finally {
+      if (mounted) {
         setState(() {
           _isLoading = false;
         });
       }
     }
   }
+}
 
   @override
   Widget build(BuildContext context) {

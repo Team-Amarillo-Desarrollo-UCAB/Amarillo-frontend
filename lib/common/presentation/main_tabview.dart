@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../Users/domain/user_profile.dart';
 import '../../Users/presentation/profile_screen.dart';
 import '../../Carrito/presentation/cart_screen.dart';
 import '../../categorias/presentation/categorias_view.dart';
@@ -18,6 +20,13 @@ class _MainTabViewState extends State<MainTabView> {
   int selctTab = 2;
   PageStorageBucket storageBucket = PageStorageBucket();
   Widget selectPageView = const HomeView();
+
+  // @override
+  // void didChangeDependencies() {
+  //   super.didChangeDependencies();
+  //   final userProfile = Provider.of<UserProfile>(context, listen: false);
+  //   userProfile.reloadFromPreferences();
+  // }
 
   @override
   Widget build(BuildContext context) {
