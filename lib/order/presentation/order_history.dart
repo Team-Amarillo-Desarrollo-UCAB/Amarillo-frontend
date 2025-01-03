@@ -1,5 +1,6 @@
 import 'package:desarrollo_frontend/common/presentation/color_extension.dart';
 import 'package:desarrollo_frontend/common/presentation/common_widget/round_button.dart';
+import 'package:desarrollo_frontend/order/presentation/track_order_view.dart';
 import 'package:flutter/material.dart';
 
 import '../../common/infrastructure/base_url.dart';
@@ -156,9 +157,19 @@ void _loadMoreOrders() async {
                 if (index >= orders.length) {
                   return const Center(child: CircularProgressIndicator());
                 }
-
                 final order = orders[index];
-                return Card(
+                return InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => OrderDetailsView(
+                              orderId: order.orderId
+                            ),
+                          ),
+                        );
+                      },
+        child: Card(
                   margin:
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   child: Padding(
@@ -216,11 +227,9 @@ void _loadMoreOrders() async {
                             TextButton(
                               onPressed: () {
                                 Navigator.push(context,
-                                  MaterialPageRoute(builder: (context) => OrderDetailsView(
-                                    //orderId: 'order.orderId',
-                                    )));
+                                  MaterialPageRoute(builder: (context) => TrackOrderView(orderId: order.orderId)));
                               },
-                              child: Text("Ver Detalles",
+                              child: Text("Track orden",
                                   style: TextStyle(color: TColor.primary)),
                             ),
                           ],
@@ -228,6 +237,7 @@ void _loadMoreOrders() async {
                       ],
                     ),
                   ),
+                ),
                 );
               },
             ),
