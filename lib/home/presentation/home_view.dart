@@ -41,7 +41,7 @@ class _HomeViewState extends State<HomeView> {
   List<Combo> _combo = [];
   List<Category> _categories = [];
   List<Descuento> _descuentos = [];
-
+  late UserProfile userProfile = Provider.of<UserProfile?>(context)!;
   final CartService _cartService = CartService();
   final ProductService _productService = ProductService(BaseUrl().BASE_URL);
   final ComboService _comboService = ComboService(BaseUrl().BASE_URL);
@@ -57,6 +57,12 @@ class _HomeViewState extends State<HomeView> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+    final userProfile = Provider.of<UserProfile>(context, listen: false);
+    userProfile.reloadFromPreferences().then((_) {
+      setState(() {}); // Forzar reconstrucción
+    });
+  });
     _fetchProducts();
     _fetchCombos();
     _fetchCategories();
@@ -117,7 +123,6 @@ class _HomeViewState extends State<HomeView> {
 
       setState(() {
         _descuentos = descuentosFiltrados;
-        //_descuentos.shuffle();
         _descuentos = _descuentos.take(3).toList();
       });
     } catch (error) {
@@ -161,10 +166,16 @@ class _HomeViewState extends State<HomeView> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    userProfile = Provider.of<UserProfile>(context, listen: false);
+    userProfile.reloadFromPreferences();
+  }
+
+  @override
   Widget build(BuildContext context) {
     var media = MediaQuery.of(context).size;
-    final userProfile = Provider.of<UserProfile>(context);
-
+    didChangeDependencies();
     return Stack(children: [
       // Drawer personalizado
       _buildDrawer(),
@@ -222,12 +233,15 @@ class _HomeViewState extends State<HomeView> {
                     child: Row(
                       children: [
                         ClipOval(
-                          child: Image.asset(
-                            'assets/img/perfil.png',
+                          child: Image.network(
+                            userProfile.image,
                             width: media.width * 0.12,
                             height: media.width * 0.12,
                             fit: BoxFit.cover,
-                          ),
+                            errorBuilder: (context, error, stackTrace) {
+                              // Widget a mostrar en caso de error al cargar la imagen
+                              return Icon(Icons.error);
+                            }),
                         ),
                         SizedBox(width: media.width * 0.03),
                         Column(

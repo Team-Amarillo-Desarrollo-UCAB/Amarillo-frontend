@@ -21,8 +21,8 @@ class TokenUser {
   }
 
   // Guarda el token de forma persistente
-  Future<void> setToken(Future<String?> token) async {
-    _token = token as String?;
+  Future<void> setToken(String? token) async {
+    _token = token;
 
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('authToken', token as String);

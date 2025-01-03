@@ -40,7 +40,7 @@ void dispose() {
 
 void _onScroll() {
   if (_scrollController.position.pixels >=
-          _scrollController.position.maxScrollExtent - 200 && // Detecta si está cerca del final
+          _scrollController.position.maxScrollExtent - 200 && 
       !_isLoading &&
       _hasMore) {
     _loadMoreOrders();
@@ -50,7 +50,6 @@ void _onScroll() {
 
 
 
- // Simula la obtención de datos del endpoint
   Future<void> fetchOrders() async {
     try {
       List<Order>  fetchedOrders = await orderService.getOrders(1);
@@ -58,7 +57,6 @@ void _onScroll() {
         orders = fetchedOrders;
       });
     } catch (e) {
-      // Manejo de errores, por ejemplo, mostrar un snackbar
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error al cargar las órdenes: $e')),
       );
@@ -289,11 +287,11 @@ class Product {
     required this.quantity,
   });
 
-  // Método para crear una instancia desde un JSON
+ 
   factory Product.fromJson(Map<String, dynamic> json) {
     return Product(
-      name: json['nombre_producto'] ?? "Producto desconocido", // Fallback si no hay nombre
-      quantity: json['cantidad_producto'] ?? "1", // Fallback si no hay cantidad
+      name: json['nombre_producto'] ?? "Producto desconocido", 
+      quantity: json['cantidad_producto'] ?? "1", 
     );
   }
 
