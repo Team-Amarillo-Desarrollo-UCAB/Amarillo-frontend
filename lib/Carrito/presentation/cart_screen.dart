@@ -79,10 +79,9 @@ class _CartScreenState extends State<CartScreen> {
               itemBuilder: (context, index) {
                 final item = _cartItems[index];
                  return Dismissible(
-                  key: Key(item.id_product), // Identificador único para cada elemento.
-                  direction: DismissDirection.endToStart, // Solo permite deslizar hacia la izquierda.
+                  key: Key(item.id_product), 
+                  direction: DismissDirection.endToStart, 
                   
-                  // Fondo visible al deslizar (color rojo con ícono de eliminar).
                   background: Container(
                     color: Colors.red,
                     padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -90,14 +89,12 @@ class _CartScreenState extends State<CartScreen> {
                     child: const Icon(Icons.delete, color: Colors.white),
                   ),
 
-                  // Acción al completar el gesto de deslizamiento.
                   onDismissed: (direction) {
-                    _removeItem(item); // Elimina el elemento del carrito.
+                    _removeItem(item); 
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text('${item.name} eliminado del carrito')),
                     );
                   },
-                  // El widget del producto se mantiene dentro del `Dismissible`.
                   child: CartItemWidget(
                     item: item,
                     onAdd: () => _incrementItemQuantity(item),

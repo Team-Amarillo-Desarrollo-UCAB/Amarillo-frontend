@@ -4,14 +4,23 @@ import 'package:desarrollo_frontend/Combo/domain/combo_data.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
+import '../../common/infrastructure/tokenUser.dart';
+
 class ComboService {
   final String baseUrl;
 
   ComboService(this.baseUrl);
 
   Future<List<Combo>> getCombo(int page) async {
+
+    final token = await TokenUser().getToken();
     final response =
-        await http.get(Uri.parse('$baseUrl/bundle/many?page=$page'));
+        await http.get(
+          Uri.parse('$baseUrl/bundle/many?page=$page'),
+          headers:{
+            'Authorization': 'Bearer $token',
+          },
+          );
 
     if (response.statusCode == 200) {
       final List<dynamic> data = json.decode(response.body);
