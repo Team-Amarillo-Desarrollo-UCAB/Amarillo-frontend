@@ -78,11 +78,29 @@ class _CartScreenState extends State<CartScreen> {
               itemCount: _cartItems.length,
               itemBuilder: (context, index) {
                 final item = _cartItems[index];
-                return CartItemWidget(
-                  item: item,
-                  onAdd: () => _incrementItemQuantity(item),
-                  onRemove: () => _decrementItemQuantity(item),
-                  onRemoveItem: () => _removeItem(item),
+                 return Dismissible(
+                  key: Key(item.id_product), 
+                  direction: DismissDirection.endToStart, 
+                  
+                  background: Container(
+                    color: Colors.red,
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    alignment: Alignment.centerRight,
+                    child: const Icon(Icons.delete, color: Colors.white),
+                  ),
+
+                  onDismissed: (direction) {
+                    _removeItem(item); 
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('${item.name} eliminado del carrito')),
+                    );
+                  },
+                  child: CartItemWidget(
+                    item: item,
+                    onAdd: () => _incrementItemQuantity(item),
+                    onRemove: () => _decrementItemQuantity(item),
+                    onRemoveItem: () => _removeItem(item),
+                  ),
                 );
               },
             ),

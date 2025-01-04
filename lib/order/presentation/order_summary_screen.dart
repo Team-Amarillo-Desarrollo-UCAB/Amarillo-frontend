@@ -1,28 +1,52 @@
 import 'package:flutter/material.dart';
-
+import '../../common/infrastructure/base_url.dart';
 import '../../common/presentation/color_extension.dart';
+import '../domain/order.dart';
+import '../infrastructure/order_service_search_by_id.dart';
 
-class OrderDetailsView extends StatelessWidget {
-  final String orderId = "#08900b6f";
+class OrderDetailsView extends StatefulWidget {
+  final String orderId;
+
+  OrderDetailsView({super.key, required this.orderId});
+
+  @override
+  _OrderDetailsViewState createState() => _OrderDetailsViewState();
+}
+
+class _OrderDetailsViewState extends State<OrderDetailsView> {
   final String orderStatus = "Entregado"; 
   final String paymentMethod = "PayPal"; 
-  final List<Map<String, dynamic>> items = [
-    {"name": "Cochino", "quantity": 1, "price": 4.00},
-    {"name": "Pañales", "quantity": 1, "price": 10.0},
-    {"name": "Bolígrafo", "quantity": 1, "price": 0.50},
-
-  ];
+  final List<Map<String, dynamic>> items = [];
   final double subtotal = 14.50;
   final double shippingFee = 0.00;
   final double discount = 0.00;
-  final String deliveryTime = "Entregado hoy a las 3:00 PM";
   final String deliveryLocation = "Universidad Católica Andrés Bello";
+
+  late Order order;
+  final OrderServiceSearchById orderServiceSearchById =
+      OrderServiceSearchById(BaseUrl().BASE_URL);
+
+    @override
+  void initState() {
+    super.initState();
+    _fetchOrderDetails();
+  }
+
+  Future<void> _fetchOrderDetails() async {
+    try {
+      final fetchedOrder = await orderServiceSearchById.getOrderById(widget.orderId);
+      setState(() {
+        order = fetchedOrder; 
+      });
+    } catch (e) {
+      print('Error obteniendo detalles de la orden: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     
     final double total = subtotal + shippingFee - discount;
-    
     final orderStatusDetails = _getOrderStatusDetails(orderStatus);
 
     return Scaffold(
@@ -57,7 +81,7 @@ class OrderDetailsView extends StatelessWidget {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text("Orden $orderId",
+                              Text("Orden #${order.orderId}",
                                   style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold)),
@@ -109,9 +133,9 @@ class OrderDetailsView extends StatelessWidget {
                   ListView.builder(
                     shrinkWrap: true,
                     physics: NeverScrollableScrollPhysics(),
-                    itemCount: items.length,
+                    itemCount: order.items?.length,
                     itemBuilder: (context, index) {
-                      final item = items[index];
+                      final item = order.items![index];
                       return Padding(
                         padding: const EdgeInsets.symmetric(vertical: 4.0),
                         child: Row(
@@ -131,7 +155,6 @@ class OrderDetailsView extends StatelessWidget {
                     },
                   ),
                   Divider(),
-                  // Subtotal, Shipping, Descuento, Total
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -160,7 +183,7 @@ class OrderDetailsView extends StatelessWidget {
                               Icon(Icons.access_time, size: 16),
                               SizedBox(width: 8),
                               Text(
-                                deliveryTime,
+                                order.creationDate,
                                 style: TextStyle(fontSize: 14),
                               ),
                             ],

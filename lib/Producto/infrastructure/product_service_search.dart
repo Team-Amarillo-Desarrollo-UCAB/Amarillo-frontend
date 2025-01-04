@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import '../../common/infrastructure/tokenUser.dart';
 import '../domain/product_data.dart';
 import '../domain/popular_product.dart';
 
@@ -10,8 +11,16 @@ class ProductServiceSearch {
   ProductServiceSearch(this.baseUrl);
 
   Future<Product> getProductByName(String productName) async {
+
+    final token = await TokenUser().getToken();
+
     final response = await http
-        .get(Uri.parse('$baseUrl/product/one/by/name?name=$productName'));
+        .get(Uri.parse(
+          '$baseUrl/product/one/by/name?name=$productName'),
+          headers: {
+            'Authorization': 'Bearer $token',
+          }
+          );
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(response.body);
