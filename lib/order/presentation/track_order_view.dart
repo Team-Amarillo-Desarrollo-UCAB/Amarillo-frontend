@@ -17,7 +17,7 @@ class _TrackOrderViewState extends State<TrackOrderView> {
   int currentStep = 0;
 
   final LatLng origin = LatLng(10.491, -66.902);
-  late Order order;
+  Order? order;
   final OrderServiceSearchById orderServiceSearchById =
       OrderServiceSearchById(BaseUrl().BASE_URL);
       
@@ -45,7 +45,7 @@ class _TrackOrderViewState extends State<TrackOrderView> {
 
   @override
   Widget build(BuildContext context) {
-    final deliveryLatLng = LatLng(order.latitude, order.longitude);
+    final deliveryLatLng = LatLng(order!.latitude, order!.longitude);
     return Scaffold(
       appBar: AppBar(
         title: Text('Track orden'),
@@ -79,7 +79,7 @@ class _TrackOrderViewState extends State<TrackOrderView> {
                             Icon(Icons.access_time, size: 16),
                             SizedBox(width: 8),
                             Text(
-                              order.creationDate,
+                              order!.creationDate,
                               style: TextStyle(fontSize: 14),
                             ),
                           ],
@@ -91,7 +91,7 @@ class _TrackOrderViewState extends State<TrackOrderView> {
                             SizedBox(width: 8),
                             Expanded(
                               child: Text(
-                                order.directionName,
+                                order!.directionName,
                                 style: TextStyle(fontSize: 14),
                               ),
                             ),
@@ -161,13 +161,13 @@ class _TrackOrderViewState extends State<TrackOrderView> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "Orden #${order.orderId}",
+                              "Orden #${order!.orderId}",
                               style: TextStyle(
                                   fontSize: 16, fontWeight: FontWeight.bold),
                             ),
                             SizedBox(height: 8),
                             Text(
-                              "Total: \$${order.totalAmount}",
+                              "Total: \$${order!.totalAmount}",
                               style:
                                   TextStyle(fontSize: 14, color: Colors.grey[600]),
                             ),

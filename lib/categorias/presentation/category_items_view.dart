@@ -84,7 +84,7 @@ class _ProductListViewState extends State<ProductListView> {
 
   Future<void> _loadCategories() async {
     try {
-      List<Category> categories = await _categoryService.getCategories(1);
+      List<Category> categories = await _categoryService.getCategories();
       setState(() {
         _categories = categories;
       });
@@ -270,7 +270,7 @@ class _ProductListViewState extends State<ProductListView> {
                             product: product,
                             onAdd: () => onAdd(CartItem(
                                 id_product: product.id_product,
-                                imageUrl: product.image,
+                                imageUrl: product.images[0],
                                 name: product.name,
                                 price: product.price,
                                 description: product.description,

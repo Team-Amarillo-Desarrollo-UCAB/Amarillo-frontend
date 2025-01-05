@@ -30,8 +30,8 @@ class OrderService {
       return Order(
         orderId: orderData.id,
         items: orderData.products,
-        latitude: orderData.orderDirection['lat'],
-        longitude: orderData.orderDirection['long'],
+        latitude: double.parse(orderData.orderDirection['lat']),
+        longitude: double.parse(orderData.orderDirection['long']),
         directionName: orderData.directionName,
         status: orderData.orderState,
         totalAmount: orderData.totalAmount,
