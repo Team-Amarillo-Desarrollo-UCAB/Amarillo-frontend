@@ -5,7 +5,7 @@ class Product {
   final String description;
   final String peso;
   final List<dynamic> images;
-  final List<String> category;
+  final List<dynamic> category;
   final String discount;
 
   Product(

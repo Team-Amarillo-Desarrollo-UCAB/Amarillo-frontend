@@ -499,7 +499,7 @@ class _HomeViewState extends State<HomeView> {
                     color: Colors.white, fontWeight: FontWeight.bold)),
             onTap: () {
               showLogoutConfirmationDialog(context);
-            }, // onTap
+            },
           ),
         ],
       ),

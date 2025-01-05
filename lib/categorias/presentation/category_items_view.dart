@@ -84,7 +84,7 @@ class _ProductListViewState extends State<ProductListView> {
 
   Future<void> _loadCategories() async {
     try {
-      List<Category> categories = await _categoryService.getCategories(1);
+      List<Category> categories = await _categoryService.getCategories();
       setState(() {
         _categories = categories;
       });
@@ -140,16 +140,14 @@ class _ProductListViewState extends State<ProductListView> {
   }
 
   void onAdd(CartItem item) async {
-    await _cartService.loadCartItems(); 
-    bool isProductInCart = _cartService.cartItems.any((cartItem) =>
-        cartItem.name ==
-        item.name); 
+    await _cartService.loadCartItems();
+    bool isProductInCart =
+        _cartService.cartItems.any((cartItem) => cartItem.name == item.name);
     if (isProductInCart) {
       CartItem existingItem = _cartService.cartItems
           .firstWhere((cartItem) => cartItem.name == item.name);
       existingItem.incrementQuantity();
     } else {
-     
       _cartService.cartItems.add(item);
     }
     await _cartService.saveCartItems();
@@ -261,8 +259,7 @@ class _ProductListViewState extends State<ProductListView> {
                     ? const Center(child: CircularProgressIndicator())
                     : ListView.builder(
                         shrinkWrap: true,
-                        physics:
-                            const NeverScrollableScrollPhysics(),
+                        physics: const NeverScrollableScrollPhysics(),
                         itemCount: _product.length,
                         itemBuilder: (context, index) {
                           final product = _product[index];
@@ -270,7 +267,7 @@ class _ProductListViewState extends State<ProductListView> {
                             product: product,
                             onAdd: () => onAdd(CartItem(
                                 id_product: product.id_product,
-                                imageUrl: product.image,
+                                imageUrl: product.images[0],
                                 name: product.name,
                                 price: product.price,
                                 description: product.description,
