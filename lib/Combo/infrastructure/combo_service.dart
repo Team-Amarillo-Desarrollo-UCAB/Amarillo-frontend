@@ -12,15 +12,13 @@ class ComboService {
   ComboService(this.baseUrl);
 
   Future<List<Combo>> getCombo(int page) async {
-
     final token = await TokenUser().getToken();
-    final response =
-        await http.get(
-          Uri.parse('$baseUrl/bundle/many?page=$page'),
-          headers:{
-            'Authorization': 'Bearer $token',
-          },
-          );
+    final response = await http.get(
+      Uri.parse('$baseUrl/bundle/many?page=$page'),
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
 
     if (response.statusCode == 200) {
       final List<dynamic> data = json.decode(response.body);
@@ -36,7 +34,8 @@ class ComboService {
             price: comboData.price,
             description: comboData.description,
             peso: '${comboData.weight} ${comboData.measurement}',
-            discount: comboData.discount);
+            discount: comboData.discount,
+            category: comboData.category);
       }).toList();
     } else {
       throw Exception('Error al obtener la lista de productos');

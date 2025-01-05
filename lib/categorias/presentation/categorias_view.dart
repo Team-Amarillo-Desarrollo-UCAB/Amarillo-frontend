@@ -30,7 +30,7 @@ class _CategoryViewState extends State<CategoryView> {
       _isLoading = true;
     });
     try {
-      List<Category> categories = await _categoryService.getCategories(1);
+      List<Category> categories = await _categoryService.getCategories();
       setState(() {
         _categories = categories;
       });
@@ -113,8 +113,7 @@ class _CategoryViewState extends State<CategoryView> {
                     height: 30,
                   ),
                   ClipRRect(
-                    borderRadius: BorderRadius.circular(
-                        10), 
+                    borderRadius: BorderRadius.circular(10),
                     child: Image.asset(
                       'assets/img/oferta2.png',
                       width: 400,
@@ -149,6 +148,7 @@ class _CategoryViewState extends State<CategoryView> {
                                 cObj: {
                                   'image': category.categoryImage,
                                   'name': category.categoryName,
+                                  'id': category.categoryID,
                                 },
                                 onTap: () {},
                               );

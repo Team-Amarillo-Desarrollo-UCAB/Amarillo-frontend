@@ -20,6 +20,7 @@ class _ComboViewState extends State<ComboView> {
   int _page = 1;
   bool _isLoading = false;
   bool _hasMore = true;
+  bool _isSearching = false;
   final CartService _cartService = CartService();
   final ComboService _comboService = ComboService(BaseUrl().BASE_URL);
   final DescuentoServiceSearchById _descuentoServiceSearchById =
@@ -119,8 +120,9 @@ class _ComboViewState extends State<ComboView> {
         body: NotificationListener<ScrollNotification>(
           onNotification: (ScrollNotification) {
             if (ScrollNotification.metrics.pixels ==
-                ScrollNotification.metrics.maxScrollExtent) {
-              //_loadMoreProducts();
+                    ScrollNotification.metrics.maxScrollExtent &&
+                !_isSearching) {
+              _loadMoreProducts();
             }
             return true;
           },

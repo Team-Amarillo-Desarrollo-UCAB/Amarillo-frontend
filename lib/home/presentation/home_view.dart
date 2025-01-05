@@ -58,11 +58,11 @@ class _HomeViewState extends State<HomeView> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-    final userProfile = Provider.of<UserProfile>(context, listen: false);
-    userProfile.reloadFromPreferences().then((_) {
-      setState(() {}); // Forzar reconstrucción
+      final userProfile = Provider.of<UserProfile>(context, listen: false);
+      userProfile.reloadFromPreferences().then((_) {
+        setState(() {}); // Forzar reconstrucción
+      });
     });
-  });
     _fetchProducts();
     _fetchCombos();
     _fetchCategories();
@@ -97,7 +97,7 @@ class _HomeViewState extends State<HomeView> {
 
   Future<void> _fetchCategories() async {
     try {
-      List<Category> categories = await _categoryService.getCategories(1);
+      List<Category> categories = await _categoryService.getCategories();
       setState(() {
         _categories = categories;
       });
@@ -233,15 +233,14 @@ class _HomeViewState extends State<HomeView> {
                     child: Row(
                       children: [
                         ClipOval(
-                          child: Image.network(
-                            userProfile.image,
-                            width: media.width * 0.12,
-                            height: media.width * 0.12,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) {
-                              // Widget a mostrar en caso de error al cargar la imagen
-                              return Icon(Icons.error);
-                            }),
+                          child: Image.network(userProfile.image,
+                              width: media.width * 0.12,
+                              height: media.width * 0.12,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                            // Widget a mostrar en caso de error al cargar la imagen
+                            return Icon(Icons.error);
+                          }),
                         ),
                         SizedBox(width: media.width * 0.03),
                         Column(
@@ -338,6 +337,7 @@ class _HomeViewState extends State<HomeView> {
                                 cObj: {
                                   'image': category.categoryImage,
                                   'name': category.categoryName,
+                                  'id': category.categoryID,
                                 },
                                 onTap: () {},
                               );
@@ -418,7 +418,7 @@ class _HomeViewState extends State<HomeView> {
                                 product: product,
                                 onAdd: () => onAdd(CartItem(
                                     id_product: product.id_product,
-                                    imageUrl: product.image,
+                                    imageUrl: product.images[0],
                                     name: product.name,
                                     price: product.price,
                                     description: product.description,

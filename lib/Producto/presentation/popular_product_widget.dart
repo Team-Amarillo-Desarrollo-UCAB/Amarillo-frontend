@@ -28,7 +28,8 @@ class ProductCard extends StatelessWidget {
                 child: Row(
                   children: [
                     CircleAvatar(
-                        backgroundImage: product.image as ImageProvider<Object>,
+                        backgroundImage:
+                            product.images[0] as ImageProvider<Object>,
                         radius: 40),
                     const SizedBox(width: 16),
                     Expanded(
