@@ -4,6 +4,7 @@ import 'package:desarrollo_frontend/order/presentation/track_order_view.dart';
 import 'package:flutter/material.dart';
 
 import '../../common/infrastructure/base_url.dart';
+import '../domain/order.dart';
 import '../infrastructure/order-service.dart';
 import 'order_summary_screen.dart'; 
 
@@ -185,13 +186,13 @@ void _loadMoreOrders() async {
                                 fontSize: 16, fontWeight: FontWeight.bold)),
                         const SizedBox(height: 4),
                         Text(
-                          "\$ ${double.parse(order.totalAmount).toStringAsFixed(1)}",
+                          "\$ ${(order.totalAmount).toStringAsFixed(1)}",
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          order.products
-                              .map((item) => "${item.name} (${item.quantity})")
-                              .join(", "),
+                          "Productos",
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(height: 8),
                         Row(
@@ -246,57 +247,6 @@ void _loadMoreOrders() async {
   }
 }
 
-
-
-
-class Order {
-  final String orderId;
-  final List<Product> products;
-  final String totalAmount;
-  final DateTime creationDate;
-  final String status;
-
-  Order({
-    required this.orderId,
-    required this.products,
-    required this.totalAmount,
-    required this.creationDate,
-    required this.status,
-  });
-
-  // Método para crear una instancia desde un JSON
-  factory Order.fromJson(Map<String, dynamic> json) {
-    return Order(
-      orderId: json['id_orden'],
-      products: (json['productos'] as List<dynamic>)
-          .map((product) => Product.fromJson(product))
-          .toList(),
-      totalAmount: json['monto_total'],
-      creationDate: DateTime.parse(json['fecha_creacion']),
-      status: json['estado'],
-    );
-  }
-}
-
-class Product {
-  final String name;
-  final String quantity;
-
-  Product({
-    required this.name,
-    required this.quantity,
-  });
-
- 
-  factory Product.fromJson(Map<String, dynamic> json) {
-    return Product(
-      name: json['nombre_producto'] ?? "Producto desconocido", 
-      quantity: json['cantidad_producto'] ?? "1", 
-    );
-  }
-
-  
-}
 
 
 

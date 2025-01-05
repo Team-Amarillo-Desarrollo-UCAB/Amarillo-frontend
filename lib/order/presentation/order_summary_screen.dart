@@ -16,11 +16,6 @@ class OrderDetailsView extends StatefulWidget {
 class _OrderDetailsViewState extends State<OrderDetailsView> {
   final String orderStatus = "Entregado"; 
   final String paymentMethod = "PayPal"; 
-  final List<Map<String, dynamic>> items = [];
-  final double subtotal = 14.50;
-  final double shippingFee = 0.00;
-  final double discount = 0.00;
-  final String deliveryLocation = "Universidad Católica Andrés Bello";
 
   late Order order;
   final OrderServiceSearchById orderServiceSearchById =
@@ -46,12 +41,12 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
   @override
   Widget build(BuildContext context) {
     
-    final double total = subtotal + shippingFee - discount;
     final orderStatusDetails = _getOrderStatusDetails(orderStatus);
 
     return Scaffold(
       appBar: AppBar(
         title: Text("Detalle orden"),
+        centerTitle: true,
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
@@ -81,10 +76,13 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text("Orden #${order.orderId}",
+                              Expanded(
+                              child: Text("Orden #${order.orderId}",
                                   style: TextStyle(
                                       fontSize: 16,
-                                      fontWeight: FontWeight.bold)),
+                                      fontWeight: FontWeight.bold),
+                                      overflow: TextOverflow.ellipsis),
+                              ),
                               Container(
                                 padding: EdgeInsets.symmetric(
                                     horizontal: 10.0, vertical: 5.0),
@@ -133,19 +131,22 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
                   ListView.builder(
                     shrinkWrap: true,
                     physics: NeverScrollableScrollPhysics(),
-                    itemCount: order.items?.length,
+                    itemCount: order.items.length,
                     itemBuilder: (context, index) {
-                      final item = order.items![index];
+                      final item = order.items[index];
                       return Padding(
                         padding: const EdgeInsets.symmetric(vertical: 4.0),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              "${item['name']} x ${item['quantity']}",
-                              style: TextStyle(fontSize: 14),
-                            ),
-                            Text("\$${item['price']}",
+                            Expanded(
+                                child: Text(
+                                  "${item['id']} x ${item['quantity']}",
+                                  style: TextStyle(fontSize: 14),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            Text("el precio es 10",
                                 style: TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w500)),
@@ -158,15 +159,14 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildPriceRow("Subtotal", subtotal),
-                      _buildPriceRow("Shipping fee", shippingFee),
-                      _buildPriceRow("Descuento", discount),
+                      _buildPriceRow("Subtotal", order.subTotal),
+                      _buildPriceRow("Shipping fee", order.deliveryFee),
+                      _buildPriceRow("Descuento", order.discount.toDouble()),
                       Divider(),
-                      _buildPriceRow("Total", total, isTotal: true),
+                      _buildPriceRow("Total", order.totalAmount, isTotal: true),
                     ],
                   ),
                   SizedBox(height: 16),
-                  // Hora y lugar
                   Card(
                     elevation: 3,
                     shape: RoundedRectangleBorder(
@@ -195,7 +195,7 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
                               SizedBox(width: 8),
                               Expanded(
                                 child: Text(
-                                  deliveryLocation,
+                                  order.directionName,
                                   style: TextStyle(fontSize: 14),
                                 ),
                               ),
