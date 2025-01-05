@@ -29,7 +29,7 @@ void showDetailProductDialog(
                 ),
                 SizedBox(height: media.height * 0.02),
                 CircleAvatar(
-                  backgroundImage: product.image as ImageProvider<Object>,
+                  backgroundImage: product.images[0] as ImageProvider<Object>,
                   radius: media.width * 0.2,
                 ),
                 SizedBox(height: media.height * 0.02),

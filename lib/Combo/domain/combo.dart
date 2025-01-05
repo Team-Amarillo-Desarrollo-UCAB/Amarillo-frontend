@@ -7,6 +7,7 @@ class Combo {
   final String peso;
   final String description;
   final String discount;
+  final List<dynamic> category;
 
   Combo(
       {required this.id_product,
@@ -16,5 +17,6 @@ class Combo {
       required this.description,
       required this.peso,
       required this.productId,
-      required this.discount});
+      required this.discount,
+      required this.category});
 }

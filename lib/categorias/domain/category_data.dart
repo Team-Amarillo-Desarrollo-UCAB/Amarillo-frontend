@@ -1,19 +1,16 @@
 class CategoryData {
-  final String categoryID;
-  final String categoryName;
-  final dynamic categoryImage;
+  final String id;
+  final String name;
+  final dynamic image;
 
-  CategoryData(
-      {required this.categoryID,
-      required this.categoryName,
-      required this.categoryImage});
+  CategoryData({required this.id, required this.name, required this.image});
 
   factory CategoryData.fromJson(Map<String, dynamic> json) {
     return CategoryData(
-      categoryID: json['categoryID'] ?? 'ERROR01',
-      categoryImage: json['categoryImage'] ??
+      id: json['id'] ?? 'ERROR01',
+      image: json['image'] ??
           'https://t4.ftcdn.net/jpg/04/99/93/31/360_F_499933117_ZAUBfv3P1HEOsZDrnkbNCt4jc3AodArl.jpg',
-      categoryName: json['categoryName'] ?? 'Nombre no disponible',
+      name: json['name'] ?? 'Estoy aqui?',
     );
   }
 }

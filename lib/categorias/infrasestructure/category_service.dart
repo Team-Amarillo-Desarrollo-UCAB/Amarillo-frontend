@@ -9,9 +9,8 @@ class CategoryService {
 
   CategoryService(this.baseUrl);
 
-  Future<List<Category>> getCategories(int page) async {
-    final response =
-        await http.get(Uri.parse('$baseUrl/category/many?page=$page'));
+  Future<List<Category>> getCategories() async {
+    final response = await http.get(Uri.parse('$baseUrl/category/many'));
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(response.body);
@@ -21,9 +20,9 @@ class CategoryService {
       return categoriesList.map((json) {
         final categoryData = CategoryData.fromJson(json);
         return Category(
-            categoryID: categoryData.categoryID,
-            categoryImage: NetworkImage(categoryData.categoryImage),
-            categoryName: categoryData.categoryName);
+            categoryID: categoryData.id,
+            categoryImage: NetworkImage(categoryData.image),
+            categoryName: categoryData.name);
       }).toList();
     } else {
       throw Exception('Error al obtener la lista de categorias');
