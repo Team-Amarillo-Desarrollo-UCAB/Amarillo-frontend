@@ -40,7 +40,7 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
       for (var item in items) {
         final product = await _productService.getProductById(item['id']);
         final double quantity = double.parse(item['quantity']);
-        final double total = product.price * quantity;
+        final double total = double.parse(product.price) * quantity;
         productDetails.add({
           'name': product.name,
           'quantity': item['quantity'],

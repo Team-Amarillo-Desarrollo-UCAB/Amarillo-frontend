@@ -1,5 +1,5 @@
 import 'package:desarrollo_frontend/Carrito/domain/cart_item.dart';
-import 'package:desarrollo_frontend/Producto/domain/popular_product.dart';
+import 'package:desarrollo_frontend/Producto/domain/product.dart';
 import 'package:desarrollo_frontend/Producto/infrastructure/product_service_search_by_id.dart';
 import 'package:flutter/material.dart';
 
@@ -112,7 +112,7 @@ void showDetailCartItemDialog(BuildContext context, CartItem product,
                     ),
                     SizedBox(width: media.width * 0.02),
                     Text(
-                      '${product.price} USD',
+                      '${product.price.toStringAsFixed(2)} USD',
                       style: TextStyle(
                         fontFamily: 'Inter',
                         fontWeight: FontWeight.w900,

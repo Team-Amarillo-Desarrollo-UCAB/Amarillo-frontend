@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import '../domain/product_data.dart';
-import '../domain/popular_product.dart';
+import '../domain/product.dart';
 import 'package:desarrollo_frontend/common/infrastructure/tokenUser.dart';
 
 class ProductCategoryService {

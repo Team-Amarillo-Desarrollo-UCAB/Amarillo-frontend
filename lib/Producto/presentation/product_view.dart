@@ -1,4 +1,5 @@
 import 'package:desarrollo_frontend/Carrito/presentation/cart_screen.dart';
+import 'package:desarrollo_frontend/Descuento/Infrastructure/descuento_service_search_by_id.dart';
 import 'package:desarrollo_frontend/categorias/domain/category.dart';
 import 'package:desarrollo_frontend/categorias/infrasestructure/category_service.dart';
 import 'package:desarrollo_frontend/common/presentation/common_widget/category_cell.dart';
@@ -9,8 +10,8 @@ import '../infrastructure/product_service.dart';
 import '../infrastructure/product_service_search.dart';
 import '../../Carrito/domain/cart_item.dart';
 import '../../Carrito/infrastructure/cart_service.dart';
-import '../domain/popular_product.dart';
-import 'popular_product_widget.dart';
+import '../domain/product.dart';
+import 'product_widget.dart';
 
 class ProductView extends StatefulWidget {
   final String? searchQuery;
@@ -35,6 +36,9 @@ class _ProductViewState extends State<ProductView> {
   final ProductServiceSearch _productServiceSearch =
       ProductServiceSearch(BaseUrl().BASE_URL);
   final CategoryService _categoryService = CategoryService(BaseUrl().BASE_URL);
+  final DescuentoServiceSearchById _descuentoServiceSearchById =
+      DescuentoServiceSearchById(BaseUrl().BASE_URL);
+  Map<String, Future<double>> _discountedPriceFutures = {};
 
   @override
   void initState() {
@@ -70,6 +74,10 @@ class _ProductViewState extends State<ProductView> {
           _hasMore = false;
         } else {
           _product.addAll(newProducts);
+          for (var product in newProducts) {
+            _discountedPriceFutures[product.id_product] =
+                _getDiscountedPrice(product);
+          }
           _page++;
         }
       });
@@ -91,6 +99,19 @@ class _ProductViewState extends State<ProductView> {
     } catch (error) {
       print('Error al obtener categorías: $error');
     }
+  }
+
+  Future<double> _getDiscountedPrice(Product product) async {
+    if (product.discount != "9bd9532c-5033-4621-be8a-87de4934a0be") {
+      try {
+        final descuento = await _descuentoServiceSearchById
+            .getDescuentoById(product.discount);
+        return double.parse(product.price) * (1 - descuento.percentage / 100);
+      } catch (error) {
+        print('Error al obtener el descuento: $error');
+      }
+    }
+    return double.parse(product.price);
   }
 
   Future<void> _searchProductByName(String productName) async {
@@ -265,15 +286,29 @@ class _ProductViewState extends State<ProductView> {
                         itemCount: _product.length,
                         itemBuilder: (context, index) {
                           final product = _product[index];
-                          return ProductCard(
-                            product: product,
-                            onAdd: () => onAdd(CartItem(
-                                id_product: product.id_product,
-                                imageUrl: product.images[0],
-                                name: product.name,
-                                price: product.price,
-                                description: product.description,
-                                peso: product.peso)),
+                          return FutureBuilder<double>(
+                            future: _discountedPriceFutures[product.id_product],
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return Center(
+                                    child: CircularProgressIndicator());
+                              } else if (snapshot.hasError) {
+                                return Text('Error: ${snapshot.error}');
+                              } else {
+                                final discountedPrice = snapshot.data!;
+                                return ProductCard2(
+                                  product: product,
+                                  onAdd: () => onAdd(CartItem(
+                                      id_product: product.id_product,
+                                      imageUrl: product.images[0],
+                                      name: product.name,
+                                      price: discountedPrice,
+                                      description: product.description,
+                                      peso: product.peso)),
+                                );
+                              }
+                            },
                           );
                         },
                       ),

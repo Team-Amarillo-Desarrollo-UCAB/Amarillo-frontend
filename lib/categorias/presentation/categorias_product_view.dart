@@ -1,10 +1,11 @@
 import 'package:desarrollo_frontend/Carrito/domain/cart_item.dart';
 import 'package:desarrollo_frontend/Carrito/infrastructure/cart_service.dart';
 import 'package:desarrollo_frontend/Carrito/presentation/cart_screen.dart';
-import 'package:desarrollo_frontend/Producto/domain/popular_product.dart';
+import 'package:desarrollo_frontend/Descuento/Infrastructure/descuento_service_search_by_id.dart';
+import 'package:desarrollo_frontend/Producto/domain/product.dart';
 import 'package:desarrollo_frontend/Producto/infrastructure/product_category_service.dart';
 import 'package:desarrollo_frontend/Producto/infrastructure/product_service_search.dart';
-import 'package:desarrollo_frontend/Producto/presentation/popular_product_widget.dart';
+import 'package:desarrollo_frontend/Producto/presentation/product_widget.dart';
 import 'package:desarrollo_frontend/Producto/presentation/product_view.dart';
 import 'package:desarrollo_frontend/categorias/domain/category.dart';
 import 'package:desarrollo_frontend/categorias/infrasestructure/category_service.dart';
@@ -40,6 +41,9 @@ class _CategoriasProductViewState extends State<CategoriasProductView> {
   final ProductServiceSearch _productServiceSearch =
       ProductServiceSearch(BaseUrl().BASE_URL);
   final CategoryService _categoryService = CategoryService(BaseUrl().BASE_URL);
+  final DescuentoServiceSearchById _descuentoServiceSearchById =
+      DescuentoServiceSearchById(BaseUrl().BASE_URL);
+  Map<String, Future<double>> _discountedPriceFutures = {};
 
   @override
   void initState() {
@@ -76,6 +80,10 @@ class _CategoriasProductViewState extends State<CategoriasProductView> {
           _hasMore = false;
         } else {
           _product.addAll(newProducts);
+          for (var product in newProducts) {
+            _discountedPriceFutures[product.id_product] =
+                _getDiscountedPrice(product);
+          }
           _page++;
         }
       });
@@ -97,6 +105,19 @@ class _CategoriasProductViewState extends State<CategoriasProductView> {
     } catch (error) {
       print('Error al obtener categorías: $error');
     }
+  }
+
+  Future<double> _getDiscountedPrice(Product product) async {
+    if (product.discount != "9bd9532c-5033-4621-be8a-87de4934a0be") {
+      try {
+        final descuento = await _descuentoServiceSearchById
+            .getDescuentoById(product.discount);
+        return double.parse(product.price) * (1 - descuento.percentage / 100);
+      } catch (error) {
+        print('Error al obtener el descuento: $error');
+      }
+    }
+    return double.parse(product.price);
   }
 
   Future<void> _searchProductByName(String productName) async {
@@ -279,15 +300,29 @@ class _CategoriasProductViewState extends State<CategoriasProductView> {
                         itemCount: _product.length,
                         itemBuilder: (context, index) {
                           final product = _product[index];
-                          return ProductCard(
-                            product: product,
-                            onAdd: () => onAdd(CartItem(
-                                id_product: product.id_product,
-                                imageUrl: product.images[0],
-                                name: product.name,
-                                price: product.price,
-                                description: product.description,
-                                peso: product.peso)),
+                          return FutureBuilder<double>(
+                            future: _discountedPriceFutures[product.id_product],
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return Center(
+                                    child: CircularProgressIndicator());
+                              } else if (snapshot.hasError) {
+                                return Text('Error: ${snapshot.error}');
+                              } else {
+                                final discountedPrice = snapshot.data!;
+                                return ProductCard2(
+                                  product: product,
+                                  onAdd: () => onAdd(CartItem(
+                                      id_product: product.id_product,
+                                      imageUrl: product.images[0],
+                                      name: product.name,
+                                      price: discountedPrice,
+                                      description: product.description,
+                                      peso: product.peso)),
+                                );
+                              }
+                            },
                           );
                         },
                       ),

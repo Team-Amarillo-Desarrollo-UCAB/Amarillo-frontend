@@ -20,8 +20,8 @@ import '../../common/presentation/common_widget/category_cell.dart';
 import '../../common/presentation/common_widget/view_all_title_row.dart';
 import '../../Carrito/domain/cart_item.dart';
 import '../../Carrito/infrastructure/cart_service.dart';
-import '../../Producto/domain/popular_product.dart';
-import '../../Producto/presentation/popular_product_widget.dart';
+import '../../Producto/domain/product.dart';
+import '../../Producto/presentation/product_widget.dart';
 import '../../common/presentation/logout_dialog.dart';
 
 class HomeView extends StatefulWidget {
@@ -103,28 +103,15 @@ class _HomeViewState extends State<HomeView> {
   Future<void> _fetchDescuentos() async {
     try {
       List<Descuento> descuentos = await _descuentoService.getDescuento(1);
-      const List<String> idsFiltrar = [
-        'd4b64ba1-3470-4289-b4e3-2b14aa6894b9',
-        '217bf967-b7cd-4992-b9c5-ca56fc789109',
-        '44f31904-d26d-4041-b8b1-7024e5d18eb5',
-      ];
-      print('Descuentos: ${descuentos.map((d) => d.id).toList()}');
-      List<Descuento> descuentosFiltrados = descuentos
-          .where((descuento) => idsFiltrar.contains(descuento.id))
-          .toList();
-      print(
-          'Descuentos Filtrados: ${descuentosFiltrados.map((d) => d.id).toList()}');
-
       setState(() {
-        _descuentos = descuentosFiltrados;
-        _descuentos = _descuentos.take(3).toList();
+        _descuentos = descuentos;
       });
     } catch (error) {
       print('Error al obtener descuentos: $error');
     }
   }
 
-  Future<double> _getDiscountedPrice(Combo combo) async {
+  Future<double> _getDiscountedPriceCombo(Combo combo) async {
     if (combo.discount != "9bd9532c-5033-4621-be8a-87de4934a0be") {
       try {
         final descuento =
@@ -135,6 +122,19 @@ class _HomeViewState extends State<HomeView> {
       }
     }
     return double.parse(combo.price);
+  }
+
+  Future<double> _getDiscountedPriceProduct(Product product) async {
+    if (product.discount != "9bd9532c-5033-4621-be8a-87de4934a0be") {
+      try {
+        final descuento = await _descuentoServiceSearchById
+            .getDescuentoById(product.discount);
+        return double.parse(product.price) * (1 - descuento.percentage / 100);
+      } catch (error) {
+        print('Error al obtener el descuento: $error');
+      }
+    }
+    return double.parse(product.price);
   }
 
   void onAdd(CartItem item) async {
@@ -370,7 +370,7 @@ class _HomeViewState extends State<HomeView> {
                             itemBuilder: (context, index) {
                               final combo = _combo[index];
                               return FutureBuilder<double>(
-                                future: _getDiscountedPrice(combo),
+                                future: _getDiscountedPriceCombo(combo),
                                 builder: (context, snapshot) {
                                   if (snapshot.connectionState ==
                                       ConnectionState.waiting) {
@@ -418,15 +418,29 @@ class _HomeViewState extends State<HomeView> {
                             itemCount: _product.length,
                             itemBuilder: (context, index) {
                               final product = _product[index];
-                              return ProductCard(
-                                product: product,
-                                onAdd: () => onAdd(CartItem(
-                                    id_product: product.id_product,
-                                    imageUrl: product.images[0],
-                                    name: product.name,
-                                    price: product.price,
-                                    description: product.description,
-                                    peso: product.peso)),
+                              return FutureBuilder<double>(
+                                future: _getDiscountedPriceProduct(product),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return Center(
+                                        child: CircularProgressIndicator());
+                                  } else if (snapshot.hasError) {
+                                    return Text('Error: ${snapshot.error}');
+                                  } else {
+                                    final discountedPrice = snapshot.data!;
+                                    return ProductCard2(
+                                      product: product,
+                                      onAdd: () => onAdd(CartItem(
+                                          id_product: product.id_product,
+                                          imageUrl: product.images[0],
+                                          name: product.name,
+                                          price: discountedPrice,
+                                          description: product.description,
+                                          peso: product.peso)),
+                                    );
+                                  }
+                                },
                               );
                             },
                           ),

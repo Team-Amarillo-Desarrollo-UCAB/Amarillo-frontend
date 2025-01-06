@@ -1,7 +1,7 @@
 class ProductData {
   final String id_product;
   final String name;
-  final double price;
+  final String price;
   final String unitMeasure;
   final double quantity;
   final String description;
@@ -29,7 +29,7 @@ class ProductData {
           ]),
       name: json['nombre'] ?? 'Nombre no disponible',
       description: json['descripcion'] ?? '',
-      price: double.parse(json['precio'] ?? '0'),
+      price: json['precio'] ?? '0',
       unitMeasure: json['unidad_medida'] ?? '',
       quantity: double.parse(json['cantidad_medida'] ?? '0'),
       category: List<String>.from(json['category'] ?? []),
