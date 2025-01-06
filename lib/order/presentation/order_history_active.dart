@@ -2,6 +2,7 @@ import 'package:desarrollo_frontend/Combo/infrastructure/combo_service_search_by
 import 'package:desarrollo_frontend/common/presentation/color_extension.dart';
 import 'package:desarrollo_frontend/common/presentation/common_widget/round_button.dart';
 import 'package:desarrollo_frontend/order/infrastructure/order_service_active.dart';
+import 'package:desarrollo_frontend/order/infrastructure/order_service_past.dart';
 import 'package:desarrollo_frontend/order/presentation/track_order_view.dart';
 import 'package:flutter/material.dart';
 
@@ -11,7 +12,7 @@ import '../application/order_cancel.dart';
 import '../domain/order.dart';
 import '../infrastructure/order-service.dart';
 import 'order_history_past.dart';
-import 'order_summary_screen.dart'; 
+import 'order_summary_screen.dart';
 
 class OrderHistoryScreen extends StatefulWidget {
   OrderHistoryScreen({super.key});
@@ -21,64 +22,73 @@ class OrderHistoryScreen extends StatefulWidget {
 }
 
 class _HistoryOrderScreenState extends State<OrderHistoryScreen> {
-  List<Order> orders = [];
-  late final OrderServiceActive orderService;
+  List<Order> activeOrders = [];
+  List<Order> pastOrders = [];
+  late final OrderServiceActive orderServiceActive;
+  late final OrderServicePast orderServicePast;
   final ProductServiceSearchbyId _productService = ProductServiceSearchbyId(BaseUrl().BASE_URL);
   final ComboServiceSearchById _comboService = ComboServiceSearchById(BaseUrl().BASE_URL);
   int _page = 1;
   bool _isLoading = false;
   bool _hasMore = true;
+  bool _isActiveTab = true; // Variable para controlar qué lista se muestra
   late ScrollController _scrollController;
+
   @override
   void initState() {
     super.initState();
-    orderService = OrderServiceActive(BaseUrl().BASE_URL);
+    orderServiceActive = OrderServiceActive(BaseUrl().BASE_URL);
+    orderServicePast = OrderServicePast(BaseUrl().BASE_URL);
     fetchOrders(); 
-    //_loadMoreOrders();
     _scrollController = ScrollController();
     _scrollController.addListener(_onScroll);
-
   }
 
-@override
-void dispose() {
-  _scrollController.dispose();
-  super.dispose();
-}
-
-void _onScroll() {
-  if (_scrollController.position.pixels >=
-          _scrollController.position.maxScrollExtent - 200 && 
-      !_isLoading &&
-      _hasMore) {
-    _loadMoreOrders();
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
-}
 
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 200 &&
+        !_isLoading &&
+        _hasMore) {
+      _loadMoreOrders();
+    }
+  }
 
-Future<List<String>> getProductNames(List<Map<String, dynamic>> items,List<Map<String, dynamic>> bundles) async {
+  Future<List<String>> getProductNames(List<Map<String, dynamic>> items, List<Map<String, dynamic>> bundles) async {
     List<String> productDetails = [];
-      try {
-        for (var item in items) {
-      final product = await _productService.getProductById(item['id']);
-      productDetails.add('${product.name} x ${item['quantity']}');
-    }
-    for (var bundle in bundles) {
-      final combo = await _comboService.getComboById(bundle['id']);
-      productDetails.add('${combo.name} x ${bundle['quantity']}');
-    }
-      } catch (e) {
-        productDetails.add('Producto no encontrado');
+    try {
+      for (var item in items) {
+        final product = await _productService.getProductById(item['id']);
+        productDetails.add('${product.name} x ${item['quantity']}');
       }
+      for (var bundle in bundles) {
+        final combo = await _comboService.getComboById(bundle['id']);
+        productDetails.add('${combo.name} x ${bundle['quantity']}');
+      }
+    } catch (e) {
+      productDetails.add('Producto no encontrado');
+    }
     return productDetails;
   }
 
   Future<void> fetchOrders() async {
     try {
-      List<Order>  fetchedOrders = await orderService.getOrdersActive();
-      setState(() {
-        orders = fetchedOrders;
-      });
+      if (_isActiveTab) {
+        List<Order> fetchedOrders = await orderServiceActive.getOrdersActive();
+        setState(() {
+          activeOrders = fetchedOrders;
+        });
+      } else {
+        List<Order> fetchedOrders = await orderServicePast.getOrdersPast();
+        setState(() {
+          pastOrders = fetchedOrders;
+        });
+      }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error al cargar las órdenes: $e')),
@@ -86,59 +96,33 @@ Future<List<String>> getProductNames(List<Map<String, dynamic>> items,List<Map<S
     }
   }
 
-void _loadMoreOrders() async {
-  if (_isLoading || !_hasMore) return;
-  setState(() => _isLoading = true);
-  try {
-    List<Order> newOrders = await orderService.getOrdersActive();
-    setState(() {
+  void _loadMoreOrders() async {
+    if (_isLoading || !_hasMore) return;
+    setState(() => _isLoading = true);
+    try {
+      List<Order> newOrders = _isActiveTab
+          ? await orderServiceActive.getOrdersActive()
+          : await orderServicePast.getOrdersPast();
+      setState(() {
         if (newOrders.isEmpty) {
           _hasMore = false;
         } else {
-          orders.addAll(newOrders);
+          if (_isActiveTab) {
+            activeOrders.addAll(newOrders);
+          } else {
+            pastOrders.addAll(newOrders);
+          }
           _page++;
         }
       });
-
-  } catch (e) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Error al cargar más órdenes: $e')),
-    );
-  } finally {
-    setState(() => _isLoading = false);
-  }
-}
-
-/*
- Future<void> _loadMoreProducts() async {
-    if (_isLoading || !_hasMore) return;
-    setState(() {
-      _isLoading = true;
-    });
-    try {
-      List<Product> newProducts = await _productService.getProducts(_page);
-      setState(() {
-        if (newProducts.isEmpty) {
-          _hasMore = false;
-        } else {
-          _product.addAll(newProducts);
-          _page++;
-        }
-      });
-    } catch (error) {
-      print('Error al obtener productos: $error');
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al cargar más órdenes: $e')),
+      );
+    } finally {
+      setState(() => _isLoading = false);
     }
-
-    setState(() {
-      _isLoading = false;
-    });
   }
-
-
-
-*/
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -153,143 +137,296 @@ void _loadMoreOrders() async {
             child: Row(
               children: [
                 Expanded(
-                  child: RoundButton(
-                    title: "Activas",
-                    onPressed: () {},
+                  child: GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _isActiveTab = true;
+                        _hasMore = true;
+                        fetchOrders();
+                      });
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: _isActiveTab ? Colors.orange : Colors.grey[300],
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 12.0),
+                        child: Center(
+                          child: Text(
+                            "Activas",
+                            style: TextStyle(
+                              color: _isActiveTab ? Colors.white : Colors.black,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
                 ),
+                const SizedBox(width: 8),
                 Expanded(
-                  child: RoundButton(
-                    title: "Pasadas",
-                    type: RoundButtonType.textPrimary,
-                    onPressed: () {
-                                Navigator.push(context,
-                                  MaterialPageRoute(builder: (context) => OrderHistoryScreenPast()));
-                              },
+                  child: GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _isActiveTab = false;
+                        _hasMore = true;
+                        fetchOrders();
+                      });
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: !_isActiveTab ? Colors.orange : Colors.grey[300],
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 12.0),
+                        child: Center(
+                          child: Text(
+                            "Pasadas",
+                            style: TextStyle(
+                              color: !_isActiveTab ? Colors.white : Colors.black,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ],
             ),
           ),
           Expanded(
-            child: 
-            orders.isEmpty ? const Center(child: CircularProgressIndicator()) : 
-            ListView.builder(
-              controller: _scrollController,
-              itemCount: _hasMore ? orders.length + 1 : orders.length,
-              itemBuilder: (context, index) {
-                if (index >= orders.length) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                final order = orders[index];
-                return InkWell(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => OrderDetailsView(
-                              orderId: order.orderId
-                            ),
-                          ),
-                        );
-                      },
-        child: Card(
-                  margin:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 4),
-                        Text("Orden #${order.orderId.substring(order.orderId.length - 4)}",
-                            style: const TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold)),
-                        const SizedBox(height: 4),
-                        Text(
-                          "\$ ${(order.totalAmount).toStringAsFixed(1)}",
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                         FutureBuilder<List<String>>(
-                                  future: getProductNames(order.items, order.bundles),  
-                                  builder: (context, snapshot) {
-                                    if (snapshot.connectionState == ConnectionState.waiting) {
-                                      return const CircularProgressIndicator();
-                                    }
-                                    if (snapshot.hasError) {
-                                      return Text('Error: ${snapshot.error}');
-                                    }
-                                    if (snapshot.hasData) {
-                                      return Text(
-                                        snapshot.data!.join(", \n"), 
+            child: _isActiveTab
+                ? activeOrders.isEmpty
+                    ? const Center(child: CircularProgressIndicator())
+                    : ListView.builder(
+                        controller: _scrollController,
+                        itemCount: _hasMore ? activeOrders.length + 1 : activeOrders.length,
+                        itemBuilder: (context, index) {
+                          if (index >= activeOrders.length) {
+                            return const Center(child: CircularProgressIndicator());
+                          }
+                          final order = activeOrders[index];
+                          return InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => OrderDetailsView(
+                                    orderId: order.orderId,
+                                  ),
+                                ),
+                              );
+                            },
+                            child: Card(
+                              margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const SizedBox(height: 4),
+                                    Text("Orden #${order.orderId.substring(order.orderId.length - 4)}",
                                         style: const TextStyle(
-                                          fontSize: 16,
+                                            fontSize: 16, fontWeight: FontWeight.bold)),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      "\$ ${(order.totalAmount).toStringAsFixed(1)}",
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    FutureBuilder<List<String>>(
+                                      future: getProductNames(order.items, order.bundles),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.connectionState == ConnectionState.waiting) {
+                                          return const CircularProgressIndicator();
+                                        }
+                                        if (snapshot.hasError) {
+                                          return Text('Error: ${snapshot.error}');
+                                        }
+                                        if (snapshot.hasData) {
+                                          return Text(
+                                            snapshot.data!.join(", \n"),
+                                            style: const TextStyle(
+                                              fontSize: 16,
+                                            ),
+                                          );
+                                        }
+                                        return const Text('No hay productos');
+                                      },
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Row(
+                                      children: [
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                          decoration: BoxDecoration(
+                                            color: order.status == "CREATED"
+                                                ? Colors.green[100]
+                                                : Colors.orange[100],
+                                            borderRadius: BorderRadius.circular(4),
+                                          ),
+                                          child: Text(
+                                            order.status,
+                                            style: TextStyle(
+                                              color: order.status == "CREATED"
+                                                  ? Colors.green
+                                                  : Colors.orange,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
                                         ),
-                                      );
-                                    }
-                                    return const Text('No hay productos');
-                                  },
+                                        const Spacer(),
+                                        TextButton(
+                                          onPressed: () {
+                                            cancelOrder(context, order.orderId);
+                                            fetchOrders();
+                                          },
+                                          child: Text("Cancelar Orden",
+                                              style: TextStyle(color: TColor.secondaryText)),
+                                        ),
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) => TrackOrderView(
+                                                        orderId: order.orderId,
+                                                      )),
+                                            );
+                                          },
+                                          child: Text("Track orden", style: TextStyle(color: TColor.primary)),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
                                 ),
-                        const SizedBox(height: 8),
-                        Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: order.status == "CREATED"
-                                    ? Colors.green[100]
-                                    : Colors.orange[100],
-                                borderRadius: BorderRadius.circular(4),
                               ),
-                              child: Text(
-                                order.status,
-                                style: TextStyle(
-                                  color: order.status == "CREATED"
-                                      ? Colors.green
-                                      : Colors.orange,
-                                  fontWeight: FontWeight.bold,
+                            ),
+                          );
+                        },
+                      )
+                : pastOrders.isEmpty
+                    ? const Center(child: CircularProgressIndicator())
+                    : ListView.builder(
+                        controller: _scrollController,
+                        itemCount: _hasMore ? pastOrders.length + 1 : pastOrders.length,
+                        itemBuilder: (context, index) {
+                          if (index >= pastOrders.length) {
+                            return const Center(child: CircularProgressIndicator());
+                          }
+                          final order = pastOrders[index];
+                          return InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => OrderDetailsView(
+                                    orderId: order.orderId,
+                                  ),
+                                ),
+                              );
+                            },
+                            child: Card(
+                              margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const SizedBox(height: 4),
+                                    Text("Orden #${order.orderId.substring(order.orderId.length - 4)}",
+                                        style: const TextStyle(
+                                            fontSize: 16, fontWeight: FontWeight.bold)),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      "\$ ${(order.totalAmount).toStringAsFixed(1)}",
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    FutureBuilder<List<String>>(
+                                      future: getProductNames(order.items, order.bundles),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.connectionState == ConnectionState.waiting) {
+                                          return const CircularProgressIndicator();
+                                        }
+                                        if (snapshot.hasError) {
+                                          return Text('Error: ${snapshot.error}');
+                                        }
+                                        if (snapshot.hasData) {
+                                          return Text(
+                                            snapshot.data!.join(", \n"),
+                                            style: const TextStyle(
+                                              fontSize: 16,
+                                            ),
+                                          );
+                                        }
+                                        return const Text('No hay productos');
+                                      },
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Row(
+                                      children: [
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                          decoration: BoxDecoration(
+                                            color: order.status == "CREATED"
+                                                ? Colors.green[100]
+                                                : Colors.orange[100],
+                                            borderRadius: BorderRadius.circular(4),
+                                          ),
+                                          child: Text(
+                                            order.status,
+                                            style: TextStyle(
+                                              color: order.status == "CREATED"
+                                                  ? Colors.green
+                                                  : Colors.orange,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                        const Spacer(),
+                                        TextButton(
+                                          onPressed: () {
+                                            cancelOrder(context, order.orderId);
+                                            fetchOrders();
+                                          },
+                                          child: Text("Cancelar Orden",
+                                              style: TextStyle(color: TColor.secondaryText)),
+                                        ),
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) => TrackOrderView(
+                                                        orderId: order.orderId,
+                                                      )),
+                                            );
+                                          },
+                                          child: Text("Track orden", style: TextStyle(color: TColor.primary)),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
-                            const Spacer(),
-                            TextButton(
-                              onPressed: () {
-                                cancelOrder(context, order.orderId);
-                                fetchOrders();
-                              },
-                              child: Text("Cancelar Orden",
-                                  style:
-                                      TextStyle(color: TColor.secondaryText)),
-                            ),
-                            TextButton(
-                              onPressed: () {
-                                Navigator.push(context,
-                                  MaterialPageRoute(builder: (context) => TrackOrderView(orderId: order.orderId)));
-                              },
-                              child: Text("Track orden",
-                                  style: TextStyle(color: TColor.primary)),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                );
-              },
-            ),
+                          );
+                        },
+                      ),
           ),
         ],
       ),
     );
   }
 }
-
-
-
-
