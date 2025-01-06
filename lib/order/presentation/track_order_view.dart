@@ -178,7 +178,7 @@ class _TrackOrderViewState extends State<TrackOrderView> {
                             Flexible(
                             fit: FlexFit.loose,
                             child:Text(
-                              "Orden #${order.orderId}",
+                              "Orden #${order.orderId.substring(order.orderId.length - 4)}",
                               style: TextStyle(
                                   fontSize: 16, fontWeight: FontWeight.bold),
                                   overflow: TextOverflow.ellipsis,
@@ -188,7 +188,8 @@ class _TrackOrderViewState extends State<TrackOrderView> {
                             Text(
                               "Total: \$${order.totalAmount}",
                               style:
-                                  TextStyle(fontSize: 14, color: Colors.grey[600]),
+                                  TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                                  
                             ),
                           ],
                         ),
