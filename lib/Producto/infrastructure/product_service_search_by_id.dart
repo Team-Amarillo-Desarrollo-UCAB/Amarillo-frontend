@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import '../../common/infrastructure/tokenUser.dart';
 import '../domain/product_data.dart';
-import '../domain/popular_product.dart';
+import '../domain/product.dart';
 
 class ProductServiceSearchbyId {
   final String baseUrl;

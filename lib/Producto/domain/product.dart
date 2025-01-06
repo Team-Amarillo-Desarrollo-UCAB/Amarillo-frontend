@@ -1,7 +1,7 @@
 class Product {
   final String id_product;
   final String name;
-  final double price;
+  final String price;
   final String description;
   final String peso;
   final List<dynamic> images;

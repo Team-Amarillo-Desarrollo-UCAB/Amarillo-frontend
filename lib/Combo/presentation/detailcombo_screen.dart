@@ -1,5 +1,5 @@
 import 'package:desarrollo_frontend/Combo/domain/combo.dart';
-import 'package:desarrollo_frontend/Producto/domain/popular_product.dart';
+import 'package:desarrollo_frontend/Producto/domain/product.dart';
 import 'package:desarrollo_frontend/Producto/infrastructure/product_service_search_by_id.dart';
 import 'package:flutter/material.dart';
 
