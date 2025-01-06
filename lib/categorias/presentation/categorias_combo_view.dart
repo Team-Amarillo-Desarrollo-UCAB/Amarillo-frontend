@@ -1,24 +1,27 @@
 import 'package:desarrollo_frontend/Carrito/presentation/cart_screen.dart';
 import 'package:desarrollo_frontend/Combo/domain/combo.dart';
-import 'package:desarrollo_frontend/Combo/infrastructure/combo_service.dart';
+import 'package:desarrollo_frontend/Combo/infrastructure/combo_category_service.dart';
+import 'package:desarrollo_frontend/Combo/presentation/combo_view.dart';
 import 'package:desarrollo_frontend/Combo/presentation/combo_widget.dart';
 import 'package:desarrollo_frontend/Descuento/Infrastructure/descuento_service_search_by_id.dart';
 import 'package:desarrollo_frontend/categorias/domain/category.dart';
 import 'package:desarrollo_frontend/categorias/infrasestructure/category_service.dart';
 import 'package:desarrollo_frontend/common/infrastructure/base_url.dart';
 import 'package:desarrollo_frontend/common/presentation/common_widget/category_cell.dart';
-import 'package:desarrollo_frontend/common/presentation/main_tabview.dart';
 import 'package:flutter/material.dart';
 import '../../Carrito/domain/cart_item.dart';
 import '../../Carrito/infrastructure/cart_service.dart';
 
-class ComboView extends StatefulWidget {
-  const ComboView({super.key});
+class CategoriasComboView extends StatefulWidget {
+  final String idCategory;
+  final String idName;
+  const CategoriasComboView(
+      {super.key, required this.idCategory, required this.idName});
   @override
-  State<ComboView> createState() => _ComboViewState();
+  State<CategoriasComboView> createState() => _CategoriasComboViewState();
 }
 
-class _ComboViewState extends State<ComboView> {
+class _CategoriasComboViewState extends State<CategoriasComboView> {
   List<Category> _categories = [];
   List<Combo> _combo = [];
   int _page = 1;
@@ -26,7 +29,8 @@ class _ComboViewState extends State<ComboView> {
   bool _hasMore = true;
   bool _isSearching = false;
   final CartService _cartService = CartService();
-  final ComboService _comboService = ComboService(BaseUrl().BASE_URL);
+  final ComboCategoryService _comboService =
+      ComboCategoryService(BaseUrl().BASE_URL);
   final CategoryService _categoryService = CategoryService(BaseUrl().BASE_URL);
   final DescuentoServiceSearchById _descuentoServiceSearchById =
       DescuentoServiceSearchById(BaseUrl().BASE_URL);
@@ -44,7 +48,8 @@ class _ComboViewState extends State<ComboView> {
       _isLoading = true;
     });
     try {
-      List<Combo> newProducts = await _comboService.getCombo(_page);
+      List<Combo> newProducts =
+          await _comboService.getCombo(_page, [widget.idCategory]);
       setState(() {
         if (newProducts.isEmpty) {
           _hasMore = false;
@@ -122,10 +127,8 @@ class _ComboViewState extends State<ComboView> {
           leading: IconButton(
               icon: const Icon(Icons.arrow_back),
               onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const MainTabView()));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => const ComboView()));
               }),
           actions: [
             IconButton(
@@ -175,6 +178,14 @@ class _ComboViewState extends State<ComboView> {
                               );
                             }),
                           ),
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    "Categoria: ${widget.idName}",
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: 20),
                   Text(

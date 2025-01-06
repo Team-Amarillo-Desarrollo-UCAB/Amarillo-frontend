@@ -12,17 +12,11 @@ class DescuentoService {
   DescuentoService(this.baseUrl);
 
   Future<List<Descuento>> getDescuento(int page) async {
-
     final token = await TokenUser().getToken();
-  //Future<List<Descuento>> getDescuento() async {
-    final response =
-        await http.get(
-          Uri.parse('$baseUrl/discount/many?page=$page'),
-          headers:{
-            'Authorization': 'Bearer $token',
-          }
-        );
-        //await http.get(Uri.parse('$baseUrl/discount/many'));
+    final response = await http
+        .get(Uri.parse('$baseUrl/discount/many?page=$page'), headers: {
+      'Authorization': 'Bearer $token',
+    });
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(response.body);
@@ -30,7 +24,7 @@ class DescuentoService {
       final discountsList = data.values.toList();
       return discountsList.map((json) {
         final descuentoData = DescuentoData.fromJson(json);
-        
+
         return Descuento(
             id: descuentoData.id,
             name: descuentoData.name,

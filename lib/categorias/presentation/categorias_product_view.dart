@@ -1,37 +1,42 @@
+import 'package:desarrollo_frontend/Carrito/domain/cart_item.dart';
+import 'package:desarrollo_frontend/Carrito/infrastructure/cart_service.dart';
 import 'package:desarrollo_frontend/Carrito/presentation/cart_screen.dart';
+import 'package:desarrollo_frontend/Producto/domain/popular_product.dart';
+import 'package:desarrollo_frontend/Producto/infrastructure/product_category_service.dart';
+import 'package:desarrollo_frontend/Producto/infrastructure/product_service_search.dart';
+import 'package:desarrollo_frontend/Producto/presentation/popular_product_widget.dart';
+import 'package:desarrollo_frontend/Producto/presentation/product_view.dart';
 import 'package:desarrollo_frontend/categorias/domain/category.dart';
 import 'package:desarrollo_frontend/categorias/infrasestructure/category_service.dart';
-import 'package:desarrollo_frontend/common/presentation/common_widget/category_cell.dart';
-import 'package:desarrollo_frontend/common/presentation/main_tabview.dart';
+import 'package:desarrollo_frontend/common/infrastructure/base_url.dart';
 import 'package:flutter/material.dart';
-import '../../common/infrastructure/base_url.dart';
-import '../../Producto/infrastructure/product_service.dart';
-import '../../Producto/infrastructure/product_service_search.dart';
-import '../../Carrito/domain/cart_item.dart';
-import '../../Carrito/infrastructure/cart_service.dart';
-import '../../Producto/domain/popular_product.dart';
-import '../../Producto/presentation/popular_product_widget.dart';
+import '../../common/presentation/common_widget/category_cell.dart';
 
-class ProductListView extends StatefulWidget {
+class CategoriasProductView extends StatefulWidget {
   final String? searchQuery;
-  const ProductListView({super.key, this.searchQuery});
+  final String idCategory;
+  final String idName;
+  const CategoriasProductView(
+      {super.key,
+      required this.idCategory,
+      required this.idName,
+      this.searchQuery});
 
   @override
-  State<ProductListView> createState() => _ProductListViewState();
+  State<CategoriasProductView> createState() => _CategoriasProductViewState();
 }
 
-class _ProductListViewState extends State<ProductListView> {
+class _CategoriasProductViewState extends State<CategoriasProductView> {
   TextEditingController _searchController = TextEditingController();
-
   List<Category> _categories = [];
   List<Product> _product = [];
   int _page = 1;
   bool _isLoading = false;
   bool _hasMore = true;
   bool _isSearching = false;
-
   final CartService _cartService = CartService();
-  final ProductService _productService = ProductService(BaseUrl().BASE_URL);
+  final ProductCategoryService _productService =
+      ProductCategoryService(BaseUrl().BASE_URL);
   final ProductServiceSearch _productServiceSearch =
       ProductServiceSearch(BaseUrl().BASE_URL);
   final CategoryService _categoryService = CategoryService(BaseUrl().BASE_URL);
@@ -64,7 +69,8 @@ class _ProductListViewState extends State<ProductListView> {
       _isLoading = true;
     });
     try {
-      List<Product> newProducts = await _productService.getProducts(_page);
+      List<Product> newProducts =
+          await _productService.getProducts(_page, [widget.idCategory]);
       setState(() {
         if (newProducts.isEmpty) {
           _hasMore = false;
@@ -140,16 +146,14 @@ class _ProductListViewState extends State<ProductListView> {
   }
 
   void onAdd(CartItem item) async {
-    await _cartService.loadCartItems(); 
-    bool isProductInCart = _cartService.cartItems.any((cartItem) =>
-        cartItem.name ==
-        item.name); 
+    await _cartService.loadCartItems();
+    bool isProductInCart =
+        _cartService.cartItems.any((cartItem) => cartItem.name == item.name);
     if (isProductInCart) {
       CartItem existingItem = _cartService.cartItems
           .firstWhere((cartItem) => cartItem.name == item.name);
       existingItem.incrementQuantity();
     } else {
-     
       _cartService.cartItems.add(item);
     }
     await _cartService.saveCartItems();
@@ -175,7 +179,7 @@ class _ProductListViewState extends State<ProductListView> {
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
               Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => const MainTabView()));
+                  MaterialPageRoute(builder: (context) => const ProductView()));
             }),
         actions: [
           IconButton(
@@ -242,11 +246,21 @@ class _ProductListViewState extends State<ProductListView> {
                               cObj: {
                                 'image': category.categoryImage,
                                 'name': category.categoryName,
+                                'id': category.categoryID
                               },
                               onTap: () {},
+                              isCombo: false,
                             );
                           }),
                         ),
+                ),
+                const SizedBox(height: 15),
+                Text(
+                  "Categoria: ${widget.idName}",
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 const SizedBox(height: 15),
                 Text(
@@ -261,8 +275,7 @@ class _ProductListViewState extends State<ProductListView> {
                     ? const Center(child: CircularProgressIndicator())
                     : ListView.builder(
                         shrinkWrap: true,
-                        physics:
-                            const NeverScrollableScrollPhysics(),
+                        physics: const NeverScrollableScrollPhysics(),
                         itemCount: _product.length,
                         itemBuilder: (context, index) {
                           final product = _product[index];

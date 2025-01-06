@@ -1,32 +1,28 @@
 import 'package:desarrollo_frontend/Combo/domain/combo.dart';
-import 'package:desarrollo_frontend/Combo/infrastructure/combo_service.dart';
+import 'package:desarrollo_frontend/Combo/infrastructure/combo_popular_service.dart';
 import 'package:desarrollo_frontend/Combo/presentation/combo_view.dart';
 import 'package:desarrollo_frontend/Combo/presentation/combo_widget.dart';
 import 'package:desarrollo_frontend/Descuento/Domain/descuento.dart';
 import 'package:desarrollo_frontend/Descuento/Infrastructure/descuento_service.dart';
 import 'package:desarrollo_frontend/Descuento/Infrastructure/descuento_service_search_by_id.dart';
+import 'package:desarrollo_frontend/Producto/infrastructure/product_popular_service.dart';
 import 'package:desarrollo_frontend/Promociones/promocion_screen.dart';
 import 'package:desarrollo_frontend/categorias/domain/category.dart';
 import 'package:desarrollo_frontend/categorias/infrasestructure/category_service.dart';
-import 'package:desarrollo_frontend/categorias/presentation/category_items_view.dart';
+import 'package:desarrollo_frontend/Producto/presentation/product_view.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../Cupon/presentation/cupon_screen.dart';
 import '../../Users/domain/user_profile.dart';
 import '../../common/infrastructure/base_url.dart';
 import '../../common/presentation/color_extension.dart';
 import '../../common/presentation/common_widget/category_cell.dart';
-import '../../common/presentation/common_widget/most_popular_cell.dart';
-import '../../common/presentation/common_widget/round_textfield.dart';
 import '../../common/presentation/common_widget/view_all_title_row.dart';
-import '../../Producto/infrastructure/product_service.dart';
 import '../../Carrito/domain/cart_item.dart';
 import '../../Carrito/infrastructure/cart_service.dart';
 import '../../Producto/domain/popular_product.dart';
 import '../../Producto/presentation/popular_product_widget.dart';
 import '../../common/presentation/logout_dialog.dart';
-import 'drawer_screen.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -43,8 +39,10 @@ class _HomeViewState extends State<HomeView> {
   List<Descuento> _descuentos = [];
   late UserProfile userProfile = Provider.of<UserProfile?>(context)!;
   final CartService _cartService = CartService();
-  final ProductService _productService = ProductService(BaseUrl().BASE_URL);
-  final ComboService _comboService = ComboService(BaseUrl().BASE_URL);
+  final ProductPopularService _productService =
+      ProductPopularService(BaseUrl().BASE_URL);
+  final ComboPopularService _comboService =
+      ComboPopularService(BaseUrl().BASE_URL);
   final DescuentoServiceSearchById _descuentoServiceSearchById =
       DescuentoServiceSearchById(BaseUrl().BASE_URL);
   final DescuentoService _descuentoService =
@@ -71,11 +69,9 @@ class _HomeViewState extends State<HomeView> {
 
   Future<void> _fetchProducts() async {
     try {
-      List<Product> products = await _productService.getProducts(1);
+      List<Product> products = await _productService.getProducts();
       setState(() {
         _product = products;
-        _product.shuffle();
-        _product = _product.take(5).toList();
       });
     } catch (error) {
       print('Error al obtener productos: $error');
@@ -84,11 +80,9 @@ class _HomeViewState extends State<HomeView> {
 
   Future<void> _fetchCombos() async {
     try {
-      List<Combo> Combos = await _comboService.getCombo(1);
+      List<Combo> Combos = await _comboService.getCombo();
       setState(() {
         _combo = Combos;
-        _combo.shuffle();
-        _combo = _combo.take(5).toList();
       });
     } catch (error) {
       print('Error al obtener productos: $error');
@@ -108,7 +102,7 @@ class _HomeViewState extends State<HomeView> {
 
   Future<void> _fetchDescuentos() async {
     try {
-      List<Descuento> descuentos = await _descuentoService.getDescuento(2);
+      List<Descuento> descuentos = await _descuentoService.getDescuento(1);
       const List<String> idsFiltrar = [
         'd4b64ba1-3470-4289-b4e3-2b14aa6894b9',
         '217bf967-b7cd-4992-b9c5-ca56fc789109',
@@ -288,7 +282,7 @@ class _HomeViewState extends State<HomeView> {
                             context,
                             MaterialPageRoute(
                               builder: (context) =>
-                                  ProductListView(searchQuery: value.trim()),
+                                  ProductView(searchQuery: value.trim()),
                             ),
                           );
                         }
@@ -313,15 +307,24 @@ class _HomeViewState extends State<HomeView> {
                               );
                             },
                           ),
-                        ),*/
+                        ),
+                  SizedBox(height: media.height * 0.01),
                   Padding(
                     padding:
                         EdgeInsets.symmetric(horizontal: media.width * 0.05),
-                    child: ViewAllTitleRow(
-                      title: "Categorías",
-                      onView: () {},
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        "Categorías",
+                        style: TextStyle(
+                          color: TColor.primaryText,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
                     ),
                   ),
+                  SizedBox(height: media.height * 0.01),
                   SizedBox(
                     height: media.height * 0.13,
                     child: _categories.isEmpty
@@ -340,6 +343,7 @@ class _HomeViewState extends State<HomeView> {
                                   'id': category.categoryID,
                                 },
                                 onTap: () {},
+                                isCombo: false,
                               );
                             }),
                           ),
@@ -402,7 +406,7 @@ class _HomeViewState extends State<HomeView> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => ProductListView()));
+                                builder: (context) => ProductView()));
                       },
                     ),
                   ),
@@ -499,7 +503,7 @@ class _HomeViewState extends State<HomeView> {
                     color: Colors.white, fontWeight: FontWeight.bold)),
             onTap: () {
               showLogoutConfirmationDialog(context);
-            }, // onTap
+            },
           ),
         ],
       ),

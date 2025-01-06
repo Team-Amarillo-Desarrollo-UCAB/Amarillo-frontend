@@ -6,7 +6,7 @@ class ProductData {
   final double quantity;
   final String description;
   final List<dynamic> images;
-  final List<String> category;
+  final List<dynamic> category;
   final String discount;
 
   ProductData(

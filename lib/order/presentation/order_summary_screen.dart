@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../../Combo/infrastructure/combo_service_search_by_id.dart';
 import '../../Producto/infrastructure/product_service_search_by_id.dart';
 import '../../common/infrastructure/base_url.dart';
-import '../../common/presentation/color_extension.dart';
 import '../domain/order.dart';
 import '../infrastructure/order_service_search_by_id.dart';
 
@@ -25,7 +24,7 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
   final ProductServiceSearchbyId _productService = ProductServiceSearchbyId(BaseUrl().BASE_URL);
   final ComboServiceSearchById _comboService = ComboServiceSearchById(BaseUrl().BASE_URL);
 
-    @override
+  @override
   void initState() {
     super.initState();
     _fetchOrderDetails();
@@ -64,7 +63,8 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
 
   Future<void> _fetchOrderDetails() async {
     try {
-      final fetchedOrder = await orderServiceSearchById.getOrderById(widget.orderId);
+      final fetchedOrder =
+          await orderServiceSearchById.getOrderById(widget.orderId);
       setState(() {
         order = fetchedOrder; 
         isOrderLoading = false;
@@ -111,7 +111,8 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
                     elevation: 3,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8.0),
-                      side: BorderSide(color: const Color(0xFFFF7622), width: 2),
+                      side:
+                          BorderSide(color: const Color(0xFFFF7622), width: 2),
                     ),
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
@@ -234,7 +235,8 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
                     elevation: 3,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8.0),
-                      side: BorderSide(color: const Color(0xFFFF7622), width: 2),
+                      side:
+                          BorderSide(color: const Color(0xFFFF7622), width: 2),
                     ),
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
@@ -277,8 +279,7 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: ElevatedButton(
-                onPressed: () {
-                },
+                onPressed: () {},
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.grey,
                   shape: RoundedRectangleBorder(
@@ -309,11 +310,11 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
             label,
             style: TextStyle(
               fontSize: 14,
-              fontWeight: isTotal ? FontWeight.bold : FontWeight.normal, 
+              fontWeight: isTotal ? FontWeight.bold : FontWeight.normal,
             ),
           ),
           Text(
-            "\$${value.toStringAsFixed(2)}", 
+            "\$${value.toStringAsFixed(2)}",
             style: TextStyle(
               fontSize: 14,
               fontWeight: isTotal ? FontWeight.bold : FontWeight.normal,
@@ -324,7 +325,7 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
       ),
     );
   }
-  
+
   Map<String, dynamic> _getOrderStatusDetails(String status) {
     switch (status) {
       case "Entregado":

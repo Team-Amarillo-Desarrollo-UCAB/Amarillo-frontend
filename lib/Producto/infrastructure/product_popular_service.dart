@@ -5,21 +5,21 @@ import '../domain/product_data.dart';
 import '../domain/popular_product.dart';
 import 'package:desarrollo_frontend/common/infrastructure/tokenUser.dart';
 
-class ProductCategoryService {
+class ProductPopularService {
   final String baseUrl;
 
-  ProductCategoryService(this.baseUrl);
+  ProductPopularService(this.baseUrl);
 
-  Future<List<Product>> getProducts(int page, List<String> categories) async {
+  Future<List<Product>> getProducts() async {
     try {
       final token = await TokenUser().getToken();
 
       if (token == null) {
         throw Exception('No se encontró un token para el usuario.');
       }
-      final categoriesParam = categories.join(',');
+
       final response = await http.get(
-        Uri.parse('$baseUrl/product/many?page=$page&category=$categoriesParam'),
+        Uri.parse('$baseUrl/product/many?popular=si'),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
