@@ -30,8 +30,9 @@ class OrderService {
       return Order(
         orderId: orderData.id,
         items: orderData.products,
-        latitude: double.parse(orderData.orderDirection['lat']),
-        longitude: double.parse(orderData.orderDirection['long']),
+        bundles: orderData.bundles,
+        latitude: orderData.latitude,
+        longitude: orderData.longitude,
         directionName: orderData.directionName,
         status: orderData.orderState,
         totalAmount: orderData.totalAmount,
@@ -39,6 +40,7 @@ class OrderService {
         deliveryFee: orderData.shippingFee,
         discount: orderData.orderDiscount,
         currency: orderData.currency,
+        paymentMethod: orderData.orderPayment['paymentMethod'],
         creationDate: orderData.orderCreatedDate.toString(),
       );
     }).toList();

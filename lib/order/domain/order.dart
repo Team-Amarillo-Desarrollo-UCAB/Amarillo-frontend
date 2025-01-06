@@ -1,6 +1,7 @@
 class Order {
   final String orderId;
   final List<Map<String, dynamic>> items;
+  final List<Map<String, dynamic>> bundles;
   final double latitude;
   final double longitude;
   final String directionName;
@@ -10,6 +11,7 @@ class Order {
   final double deliveryFee;
   final int discount;
   final String currency;
+  final String paymentMethod;
   final String creationDate;
 
   Order({
@@ -23,7 +25,9 @@ class Order {
     required this.subTotal,
     required this.orderId,
     required this.items,
+    required this.bundles,
     required this.totalAmount,
+    required this.paymentMethod,
     required this.creationDate,
   });
 

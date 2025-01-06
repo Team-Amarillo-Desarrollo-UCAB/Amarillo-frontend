@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../../Combo/infrastructure/combo_service_search_by_id.dart';
+import '../../Producto/infrastructure/product_service_search_by_id.dart';
 import '../../common/infrastructure/base_url.dart';
 import '../domain/order.dart';
 import '../infrastructure/order_service_search_by_id.dart';
@@ -14,16 +16,52 @@ class OrderDetailsView extends StatefulWidget {
 
 class _OrderDetailsViewState extends State<OrderDetailsView> {
   final String orderStatus = "Entregado";
-  final String paymentMethod = "PayPal";
+  bool isOrderLoading = true;
 
   late Order order;
   final OrderServiceSearchById orderServiceSearchById =
       OrderServiceSearchById(BaseUrl().BASE_URL);
+  final ProductServiceSearchbyId _productService =
+      ProductServiceSearchbyId(BaseUrl().BASE_URL);
+  final ComboServiceSearchById _comboService =
+      ComboServiceSearchById(BaseUrl().BASE_URL);
 
   @override
   void initState() {
     super.initState();
     _fetchOrderDetails();
+  }
+
+  Future<List<Map<String, String>>> getProductDetails(
+      List<Map<String, dynamic>> items,
+      List<Map<String, dynamic>> bundles) async {
+    List<Map<String, String>> productDetails = [];
+    try {
+      for (var item in items) {
+        final product = await _productService.getProductById(item['id']);
+        final double quantity = double.parse(item['quantity']);
+        final double total = product.price * quantity;
+        productDetails.add({
+          'name': product.name,
+          'quantity': item['quantity'],
+          'price': total.toString(),
+        });
+      }
+      for (var bundle in bundles) {
+        final combo = await _comboService.getComboById(bundle['id']);
+        final double quantity = double.parse(bundle['quantity']);
+        final double total = double.parse(combo.price) * quantity;
+        productDetails.add({
+          'name': combo.name,
+          'quantity': bundle['quantity'],
+          'price': total.toString(),
+        });
+      }
+    } catch (e) {
+      productDetails.add(
+          {'name': 'Producto no encontrado', 'quantity': '0', 'price': '0'});
+    }
+    return productDetails;
   }
 
   Future<void> _fetchOrderDetails() async {
@@ -32,6 +70,7 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
           await orderServiceSearchById.getOrderById(widget.orderId);
       setState(() {
         order = fetchedOrder;
+        isOrderLoading = false;
       });
     } catch (e) {
       print('Error obteniendo detalles de la orden: $e');
@@ -40,8 +79,18 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
 
   @override
   Widget build(BuildContext context) {
+    if (isOrderLoading) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text('Detalle orden'),
+          centerTitle: true,
+        ),
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
     final orderStatusDetails = _getOrderStatusDetails(orderStatus);
-
     return Scaffold(
       appBar: AppBar(
         title: Text("Detalle orden"),
@@ -77,7 +126,8 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Expanded(
-                                child: Text("Orden #${order.orderId}",
+                                child: Text(
+                                    "Orden #${order.orderId.substring(order.orderId.length - 4)}",
                                     style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold),
@@ -114,7 +164,7 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
                           ),
                           SizedBox(height: 8),
                           Text(
-                            "Método de pago: $paymentMethod",
+                            "Método de pago: ${order.paymentMethod}",
                             style: TextStyle(
                                 fontSize: 14, color: Colors.grey[600]),
                           ),
@@ -128,30 +178,51 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
                       style:
                           TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                   SizedBox(height: 8),
-                  ListView.builder(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemCount: order.items.length,
-                    itemBuilder: (context, index) {
-                      final item = order.items[index];
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 4.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: Text(
-                                "${item['id']} x ${item['quantity']}",
-                                style: TextStyle(fontSize: 14),
-                                overflow: TextOverflow.ellipsis,
+                  FutureBuilder<List<Map<String, String>>>(
+                    future: getProductDetails(order.items, order.bundles),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const CircularProgressIndicator();
+                      }
+                      if (snapshot.hasError) {
+                        return Text('Error: ${snapshot.error}');
+                      }
+                      if (snapshot.hasData) {
+                        return ListView.builder(
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemCount: snapshot.data!.length,
+                          itemBuilder: (context, index) {
+                            final product = snapshot.data![index];
+                            return Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 4.0),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      "${product['name']} x ${product['quantity']}",
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ),
+                                  Text(
+                                    "\$${product['price']}",
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ),
-                            Text("el precio es 10",
-                                style: TextStyle(
-                                    fontSize: 14, fontWeight: FontWeight.w500)),
-                          ],
-                        ),
-                      );
+                            );
+                          },
+                        );
+                      }
+                      return const Text('No hay productos');
                     },
                   ),
                   Divider(),

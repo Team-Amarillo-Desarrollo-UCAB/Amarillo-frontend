@@ -29,8 +29,9 @@ class OrderServiceSearchById {
       return Order(
         orderId: orderData.id,
         items: orderData.products,
-        latitude: orderData.orderDirection['lat'],
-        longitude: orderData.orderDirection['long'],
+        bundles: orderData.bundles,
+        latitude: orderData.latitude,
+        longitude: orderData.longitude,
         directionName: orderData.directionName,
         status: orderData.orderState,
         totalAmount: orderData.totalAmount,
@@ -38,6 +39,7 @@ class OrderServiceSearchById {
         deliveryFee: orderData.shippingFee,
         discount: orderData.orderDiscount,
         currency: orderData.currency,
+        paymentMethod: orderData.orderPayment['paymentMethod'],
         creationDate: orderData.orderCreatedDate.toString(),
       );
     }else {

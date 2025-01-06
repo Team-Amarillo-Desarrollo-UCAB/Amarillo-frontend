@@ -17,7 +17,8 @@ class _TrackOrderViewState extends State<TrackOrderView> {
   int currentStep = 0;
 
   final LatLng origin = LatLng(10.491, -66.902);
-  Order? order;
+  late Order order;
+  bool isLoading = true;
   final OrderServiceSearchById orderServiceSearchById =
       OrderServiceSearchById(BaseUrl().BASE_URL);
       
@@ -37,6 +38,7 @@ class _TrackOrderViewState extends State<TrackOrderView> {
       final fetchedOrder = await orderServiceSearchById.getOrderById(widget.orderId);
       setState(() {
         order = fetchedOrder; 
+        isLoading = false;
       });
     } catch (e) {
       print('Error obteniendo detalles de la orden: $e');
@@ -45,7 +47,19 @@ class _TrackOrderViewState extends State<TrackOrderView> {
 
   @override
   Widget build(BuildContext context) {
-    final deliveryLatLng = LatLng(order!.latitude, order!.longitude);
+    if (isLoading) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text('Track orden'),
+          centerTitle: true,
+        ),
+        body: Center(
+          child: CircularProgressIndicator(), 
+        ),
+      );
+    }
+    final deliveryLatLng = LatLng(order.latitude, order.longitude);
+    print(deliveryLatLng);
     return Scaffold(
       appBar: AppBar(
         title: Text('Track orden'),
@@ -58,11 +72,11 @@ class _TrackOrderViewState extends State<TrackOrderView> {
         ),
       ),
       body: Column(
+        mainAxisSize: MainAxisSize.min, 
         children: [
           Expanded(
             child: ListView(
               children: [
-                // Card con la información de entrega
                 Card(
                   elevation: 3,
                   shape: RoundedRectangleBorder(
@@ -79,7 +93,7 @@ class _TrackOrderViewState extends State<TrackOrderView> {
                             Icon(Icons.access_time, size: 16),
                             SizedBox(width: 8),
                             Text(
-                              order!.creationDate,
+                              order.creationDate,
                               style: TextStyle(fontSize: 14),
                             ),
                           ],
@@ -91,7 +105,7 @@ class _TrackOrderViewState extends State<TrackOrderView> {
                             SizedBox(width: 8),
                             Expanded(
                               child: Text(
-                                order!.directionName,
+                                order.directionName,
                                 style: TextStyle(fontSize: 14),
                               ),
                             ),
@@ -158,22 +172,27 @@ class _TrackOrderViewState extends State<TrackOrderView> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Column(
+                          mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              "Orden #${order!.orderId}",
+                            Flexible(
+                            fit: FlexFit.loose,
+                            child:Text(
+                              "Orden #${order.orderId}",
                               style: TextStyle(
                                   fontSize: 16, fontWeight: FontWeight.bold),
+                                  overflow: TextOverflow.ellipsis,
+                            ),
                             ),
                             SizedBox(height: 8),
                             Text(
-                              "Total: \$${order!.totalAmount}",
+                              "Total: \$${order.totalAmount}",
                               style:
                                   TextStyle(fontSize: 14, color: Colors.grey[600]),
                             ),
                           ],
                         ),
-                        ElevatedButton(
+                       /* ElevatedButton(
                           onPressed: () {},
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.red,
@@ -185,7 +204,7 @@ class _TrackOrderViewState extends State<TrackOrderView> {
                             "Cancelar",
                             style: TextStyle(color: Colors.white),
                           ),
-                        ),
+                        ),*/
                       ],
                     ),
                   ),
