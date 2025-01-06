@@ -29,8 +29,8 @@ class OrderServiceSearchById {
       return Order(
         orderId: orderData.id,
         items: orderData.products,
-        latitude: orderData.orderDirection['lat'],
-        longitude: orderData.orderDirection['long'],
+        latitude: orderData.latitude,
+        longitude: orderData.longitude,
         directionName: orderData.directionName,
         status: orderData.orderState,
         totalAmount: orderData.totalAmount,

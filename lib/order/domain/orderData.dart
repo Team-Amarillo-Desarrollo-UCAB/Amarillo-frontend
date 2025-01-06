@@ -6,7 +6,8 @@ class OrderData {
   final double subTotal;
   final double shippingFee;
   final String currency;
-  final Map<String, dynamic> orderDirection;
+  final double latitude;
+  final double longitude;
   final String directionName;
   final List<Map<String, dynamic>> products;
   final List<dynamic> bundles;
@@ -23,7 +24,8 @@ class OrderData {
     required this.subTotal,
     required this.shippingFee,
     required this.currency,
-    required this.orderDirection,
+    required this.latitude,
+    required this.longitude,
     required this.directionName,
     required this.products,
     required this.bundles,
@@ -42,10 +44,8 @@ class OrderData {
       subTotal: double.parse(json['sub_total'] ?? '0.0'),
       shippingFee: double.parse(json['shipping_fee'] ?? '0.0'),
       currency: json['currency'] ?? 'USD',
-      orderDirection: {
-        "lat": json['orderDirection']['lat']  ?? '0.0',
-        "long": json['orderDirection']['long'] ?? '0.0',
-      },
+      latitude: double.tryParse(json['orderDirection']['lat']) ?? 0.0,
+      longitude: double.tryParse(json['orderDirection']['long']) ?? 0.0,
       directionName: json['directionName'] ?? ' ',
       products: List<Map<String, dynamic>>.from(json['products'] ?? []),
       bundles: List<dynamic>.from(json['bundles'] ?? []),
