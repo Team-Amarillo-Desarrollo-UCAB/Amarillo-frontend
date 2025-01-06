@@ -10,7 +10,7 @@ class OrderData {
   final double longitude;
   final String directionName;
   final List<Map<String, dynamic>> products;
-  final List<dynamic> bundles;
+  final List<Map<String, dynamic>> bundles;
   final DateTime orderReciviedDate;
   final String orderReport;
   final Map<String, dynamic> orderPayment;
@@ -48,7 +48,7 @@ class OrderData {
       longitude: double.tryParse(json['orderDirection']['long']) ?? 0.0,
       directionName: json['directionName'] ?? ' ',
       products: List<Map<String, dynamic>>.from(json['products'] ?? []),
-      bundles: List<dynamic>.from(json['bundles'] ?? []),
+      bundles: List<Map<String, dynamic>>.from(json['bundles'] ?? []),
       orderReciviedDate: DateTime.parse(json['orderReciviedDate'] ?? ' '),
       orderReport: json['orderReport'] ?? ' ',
       orderPayment: Map<String, dynamic>.from(json['orderPayment'] ?? {}),

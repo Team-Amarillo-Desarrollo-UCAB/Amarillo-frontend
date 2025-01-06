@@ -1,8 +1,10 @@
+import 'package:desarrollo_frontend/Combo/infrastructure/combo_service_search_by_id.dart';
 import 'package:desarrollo_frontend/common/presentation/color_extension.dart';
 import 'package:desarrollo_frontend/common/presentation/common_widget/round_button.dart';
 import 'package:desarrollo_frontend/order/presentation/track_order_view.dart';
 import 'package:flutter/material.dart';
 
+import '../../Producto/infrastructure/product_service_search_by_id.dart';
 import '../../common/infrastructure/base_url.dart';
 import '../domain/order.dart';
 import '../infrastructure/order-service.dart';
@@ -18,6 +20,8 @@ class OrderHistoryScreen extends StatefulWidget {
 class _HistoryOrderScreenState extends State<OrderHistoryScreen> {
   List<Order> orders = [];
   late final OrderService orderService;
+  final ProductServiceSearchbyId _productService = ProductServiceSearchbyId(BaseUrl().BASE_URL);
+  final ComboServiceSearchById _comboService = ComboServiceSearchById(BaseUrl().BASE_URL);
   int _page = 1;
   bool _isLoading = false;
   bool _hasMore = true;
@@ -49,7 +53,22 @@ void _onScroll() {
 }
 
 
-
+Future<List<String>> getProductNames(List<Map<String, dynamic>> items,List<Map<String, dynamic>> bundles) async {
+    List<String> productDetails = [];
+      try {
+        for (var item in items) {
+      final product = await _productService.getProductById(item['id']);
+      productDetails.add('${product.name} x ${item['quantity']}');
+    }
+    for (var bundle in bundles) {
+      final combo = await _comboService.getComboById(bundle['id']);
+      productDetails.add('${combo.name} x ${bundle['quantity']}');
+    }
+      } catch (e) {
+        productDetails.add('Producto no encontrado');
+      }
+    return productDetails;
+  }
 
   Future<void> fetchOrders() async {
     try {
@@ -177,23 +196,38 @@ void _loadMoreOrders() async {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const SizedBox(height: 4),
-                        Text("Orden",
-                            style: const TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold)),
-                        const SizedBox(height: 4),
-                        Text("Nº${order.orderId}",
+                        Text("Orden #${order.orderId.substring(order.orderId.length - 4)}",
                             style: const TextStyle(
                                 fontSize: 16, fontWeight: FontWeight.bold)),
                         const SizedBox(height: 4),
                         Text(
                           "\$ ${(order.totalAmount).toStringAsFixed(1)}",
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                         const SizedBox(height: 8),
-                        Text(
-                          "Productos",
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold),
-                        ),
+                         FutureBuilder<List<String>>(
+                                  future: getProductNames(order.items, order.bundles),  
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState == ConnectionState.waiting) {
+                                      return const CircularProgressIndicator();
+                                    }
+                                    if (snapshot.hasError) {
+                                      return Text('Error: ${snapshot.error}');
+                                    }
+                                    if (snapshot.hasData) {
+                                      return Text(
+                                        snapshot.data!.join(", \n"), 
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                        ),
+                                      );
+                                    }
+                                    return const Text('No hay productos');
+                                  },
+                                ),
                         const SizedBox(height: 8),
                         Row(
                           children: [

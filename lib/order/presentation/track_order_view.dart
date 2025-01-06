@@ -72,11 +72,11 @@ class _TrackOrderViewState extends State<TrackOrderView> {
         ),
       ),
       body: Column(
+        mainAxisSize: MainAxisSize.min, 
         children: [
           Expanded(
             child: ListView(
               children: [
-                // Card con la información de entrega
                 Card(
                   elevation: 3,
                   shape: RoundedRectangleBorder(
@@ -172,13 +172,17 @@ class _TrackOrderViewState extends State<TrackOrderView> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Column(
+                          mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
+                            Flexible(
+                            fit: FlexFit.loose,
+                            child:Text(
                               "Orden #${order.orderId}",
                               style: TextStyle(
                                   fontSize: 16, fontWeight: FontWeight.bold),
                                   overflow: TextOverflow.ellipsis,
+                            ),
                             ),
                             SizedBox(height: 8),
                             Text(
@@ -188,7 +192,7 @@ class _TrackOrderViewState extends State<TrackOrderView> {
                             ),
                           ],
                         ),
-                        ElevatedButton(
+                       /* ElevatedButton(
                           onPressed: () {},
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.red,
@@ -200,7 +204,7 @@ class _TrackOrderViewState extends State<TrackOrderView> {
                             "Cancelar",
                             style: TextStyle(color: Colors.white),
                           ),
-                        ),
+                        ),*/
                       ],
                     ),
                   ),

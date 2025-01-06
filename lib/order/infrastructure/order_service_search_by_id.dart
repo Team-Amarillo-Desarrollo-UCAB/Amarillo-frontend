@@ -29,6 +29,7 @@ class OrderServiceSearchById {
       return Order(
         orderId: orderData.id,
         items: orderData.products,
+        bundles: orderData.bundles,
         latitude: orderData.latitude,
         longitude: orderData.longitude,
         directionName: orderData.directionName,
@@ -38,6 +39,7 @@ class OrderServiceSearchById {
         deliveryFee: orderData.shippingFee,
         discount: orderData.orderDiscount,
         currency: orderData.currency,
+        paymentMethod: orderData.orderPayment['paymentMethod'],
         creationDate: orderData.orderCreatedDate.toString(),
       );
     }else {
