@@ -2,24 +2,24 @@ import 'package:desarrollo_frontend/Combo/infrastructure/combo_service_search_by
 import 'package:desarrollo_frontend/common/presentation/color_extension.dart';
 import 'package:desarrollo_frontend/common/presentation/common_widget/round_button.dart';
 import 'package:desarrollo_frontend/order/presentation/track_order_view.dart';
+import 'package:desarrollo_frontend/order/presentation/order_summary_screen.dart';
 import 'package:flutter/material.dart';
-
 import '../../Producto/infrastructure/product_service_search_by_id.dart';
 import '../../common/infrastructure/base_url.dart';
 import '../domain/order.dart';
-import '../infrastructure/order-service.dart';
-import 'order_summary_screen.dart'; 
+import '../infrastructure/order_service_past.dart';
+import 'order_history_active.dart';
 
-class OrderHistoryScreen extends StatefulWidget {
-  OrderHistoryScreen({super.key});
+class OrderHistoryScreenPast extends StatefulWidget {
+  OrderHistoryScreenPast({super.key});
 
   @override
   _HistoryOrderScreenState createState() => _HistoryOrderScreenState();
 }
 
-class _HistoryOrderScreenState extends State<OrderHistoryScreen> {
+class _HistoryOrderScreenState extends State<OrderHistoryScreenPast> {
   List<Order> orders = [];
-  late final OrderService orderService;
+  late final OrderServicePast orderServicePast;
   final ProductServiceSearchbyId _productService = ProductServiceSearchbyId(BaseUrl().BASE_URL);
   final ComboServiceSearchById _comboService = ComboServiceSearchById(BaseUrl().BASE_URL);
   int _page = 1;
@@ -29,7 +29,7 @@ class _HistoryOrderScreenState extends State<OrderHistoryScreen> {
   @override
   void initState() {
     super.initState();
-    orderService = OrderService(BaseUrl().BASE_URL);
+    orderServicePast = OrderServicePast(BaseUrl().BASE_URL);
     fetchOrders(); 
     //_loadMoreOrders();
     _scrollController = ScrollController();
@@ -72,7 +72,7 @@ Future<List<String>> getProductNames(List<Map<String, dynamic>> items,List<Map<S
 
   Future<void> fetchOrders() async {
     try {
-      List<Order>  fetchedOrders = await orderService.getOrders(1);
+      List<Order>  fetchedOrders = await orderServicePast.getOrdersPast();
       setState(() {
         orders = fetchedOrders;
       });
@@ -87,7 +87,7 @@ void _loadMoreOrders() async {
   if (_isLoading || !_hasMore) return;
   setState(() => _isLoading = true);
   try {
-    List<Order> newOrders = await orderService.getOrders(_page);
+    List<Order> newOrders = await orderServicePast.getOrdersPast();
     setState(() {
         if (newOrders.isEmpty) {
           _hasMore = false;
@@ -152,13 +152,16 @@ void _loadMoreOrders() async {
                 Expanded(
                   child: RoundButton(
                     title: "Activas",
-                    onPressed: () {},
+                    type: RoundButtonType.textPrimary,
+                    onPressed: () {
+                                Navigator.push(context,
+                                  MaterialPageRoute(builder: (context) => OrderHistoryScreen()));
+                              },
                   ),
                 ),
                 Expanded(
                   child: RoundButton(
                     title: "Pasadas",
-                    type: RoundButtonType.textPrimary,
                     onPressed: () {},
                   ),
                 ),
@@ -170,11 +173,11 @@ void _loadMoreOrders() async {
             orders.isEmpty ? const Center(child: CircularProgressIndicator()) : 
             ListView.builder(
               controller: _scrollController,
-              itemCount: _hasMore ? orders.length + 1 : orders.length,
+              itemCount: orders.length + (_hasMore ? 1 : 0),
               itemBuilder: (context, index) {
-                if (index >= orders.length) {
-                  return const Center(child: CircularProgressIndicator());
-                }
+                 if (index >= orders.length) {
+              return const Center(child: CircularProgressIndicator());
+            }
                 final order = orders[index];
                 return InkWell(
                       onTap: () {

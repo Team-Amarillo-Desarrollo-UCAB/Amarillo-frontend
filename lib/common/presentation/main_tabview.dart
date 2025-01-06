@@ -5,7 +5,7 @@ import '../../Carrito/presentation/cart_screen.dart';
 import 'color_extension.dart';
 import 'common_widget/tab_button.dart';
 import '../../home/presentation/home_view.dart';
-import '../../order/presentation/order_history.dart';
+import '../../order/presentation/order_history_active.dart';
 
 class MainTabView extends StatefulWidget {
   const MainTabView({super.key});

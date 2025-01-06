@@ -290,7 +290,7 @@ class _HomeViewState extends State<HomeView> {
                     ),
                   ),
                   SizedBox(height: media.height * 0.03),
-                 /* _descuentos.isEmpty
+                  _descuentos.isEmpty
                       ? const Center(child: CircularProgressIndicator())
                       : SizedBox(
                           height: media.height * 0.17,
