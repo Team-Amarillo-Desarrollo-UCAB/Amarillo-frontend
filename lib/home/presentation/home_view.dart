@@ -1,32 +1,28 @@
 import 'package:desarrollo_frontend/Combo/domain/combo.dart';
-import 'package:desarrollo_frontend/Combo/infrastructure/combo_service.dart';
+import 'package:desarrollo_frontend/Combo/infrastructure/combo_popular_service.dart';
 import 'package:desarrollo_frontend/Combo/presentation/combo_view.dart';
 import 'package:desarrollo_frontend/Combo/presentation/combo_widget.dart';
 import 'package:desarrollo_frontend/Descuento/Domain/descuento.dart';
 import 'package:desarrollo_frontend/Descuento/Infrastructure/descuento_service.dart';
 import 'package:desarrollo_frontend/Descuento/Infrastructure/descuento_service_search_by_id.dart';
+import 'package:desarrollo_frontend/Producto/infrastructure/product_popular_service.dart';
 import 'package:desarrollo_frontend/Promociones/promocion_screen.dart';
 import 'package:desarrollo_frontend/categorias/domain/category.dart';
 import 'package:desarrollo_frontend/categorias/infrasestructure/category_service.dart';
-import 'package:desarrollo_frontend/categorias/presentation/category_items_view.dart';
+import 'package:desarrollo_frontend/Producto/presentation/product_view.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../Cupon/presentation/cupon_screen.dart';
 import '../../Users/domain/user_profile.dart';
 import '../../common/infrastructure/base_url.dart';
 import '../../common/presentation/color_extension.dart';
 import '../../common/presentation/common_widget/category_cell.dart';
-import '../../common/presentation/common_widget/most_popular_cell.dart';
-import '../../common/presentation/common_widget/round_textfield.dart';
 import '../../common/presentation/common_widget/view_all_title_row.dart';
-import '../../Producto/infrastructure/product_service.dart';
 import '../../Carrito/domain/cart_item.dart';
 import '../../Carrito/infrastructure/cart_service.dart';
-import '../../Producto/domain/popular_product.dart';
-import '../../Producto/presentation/popular_product_widget.dart';
+import '../../Producto/domain/product.dart';
+import '../../Producto/presentation/product_widget.dart';
 import '../../common/presentation/logout_dialog.dart';
-import 'drawer_screen.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -43,8 +39,10 @@ class _HomeViewState extends State<HomeView> {
   List<Descuento> _descuentos = [];
   late UserProfile userProfile = Provider.of<UserProfile?>(context)!;
   final CartService _cartService = CartService();
-  final ProductService _productService = ProductService(BaseUrl().BASE_URL);
-  final ComboService _comboService = ComboService(BaseUrl().BASE_URL);
+  final ProductPopularService _productService =
+      ProductPopularService(BaseUrl().BASE_URL);
+  final ComboPopularService _comboService =
+      ComboPopularService(BaseUrl().BASE_URL);
   final DescuentoServiceSearchById _descuentoServiceSearchById =
       DescuentoServiceSearchById(BaseUrl().BASE_URL);
   final DescuentoService _descuentoService =
@@ -58,11 +56,11 @@ class _HomeViewState extends State<HomeView> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-    final userProfile = Provider.of<UserProfile>(context, listen: false);
-    userProfile.reloadFromPreferences().then((_) {
-      setState(() {}); // Forzar reconstrucción
+      final userProfile = Provider.of<UserProfile>(context, listen: false);
+      userProfile.reloadFromPreferences().then((_) {
+        setState(() {}); // Forzar reconstrucción
+      });
     });
-  });
     _fetchProducts();
     _fetchCombos();
     _fetchCategories();
@@ -71,11 +69,9 @@ class _HomeViewState extends State<HomeView> {
 
   Future<void> _fetchProducts() async {
     try {
-      List<Product> products = await _productService.getProducts(1);
+      List<Product> products = await _productService.getProducts();
       setState(() {
         _product = products;
-        _product.shuffle();
-        _product = _product.take(5).toList();
       });
     } catch (error) {
       print('Error al obtener productos: $error');
@@ -84,11 +80,9 @@ class _HomeViewState extends State<HomeView> {
 
   Future<void> _fetchCombos() async {
     try {
-      List<Combo> Combos = await _comboService.getCombo(1);
+      List<Combo> Combos = await _comboService.getCombo();
       setState(() {
         _combo = Combos;
-        _combo.shuffle();
-        _combo = _combo.take(5).toList();
       });
     } catch (error) {
       print('Error al obtener productos: $error');
@@ -97,7 +91,7 @@ class _HomeViewState extends State<HomeView> {
 
   Future<void> _fetchCategories() async {
     try {
-      List<Category> categories = await _categoryService.getCategories(1);
+      List<Category> categories = await _categoryService.getCategories();
       setState(() {
         _categories = categories;
       });
@@ -108,29 +102,16 @@ class _HomeViewState extends State<HomeView> {
 
   Future<void> _fetchDescuentos() async {
     try {
-      List<Descuento> descuentos = await _descuentoService.getDescuento(2);
-      const List<String> idsFiltrar = [
-        'd4b64ba1-3470-4289-b4e3-2b14aa6894b9',
-        '217bf967-b7cd-4992-b9c5-ca56fc789109',
-        '44f31904-d26d-4041-b8b1-7024e5d18eb5',
-      ];
-      print('Descuentos: ${descuentos.map((d) => d.id).toList()}');
-      List<Descuento> descuentosFiltrados = descuentos
-          .where((descuento) => idsFiltrar.contains(descuento.id))
-          .toList();
-      print(
-          'Descuentos Filtrados: ${descuentosFiltrados.map((d) => d.id).toList()}');
-
+      List<Descuento> descuentos = await _descuentoService.getDescuento(1);
       setState(() {
-        _descuentos = descuentosFiltrados;
-        _descuentos = _descuentos.take(3).toList();
+        _descuentos = descuentos;
       });
     } catch (error) {
       print('Error al obtener descuentos: $error');
     }
   }
 
-  Future<double> _getDiscountedPrice(Combo combo) async {
+  Future<double> _getDiscountedPriceCombo(Combo combo) async {
     if (combo.discount != "9bd9532c-5033-4621-be8a-87de4934a0be") {
       try {
         final descuento =
@@ -141,6 +122,19 @@ class _HomeViewState extends State<HomeView> {
       }
     }
     return double.parse(combo.price);
+  }
+
+  Future<double> _getDiscountedPriceProduct(Product product) async {
+    if (product.discount != "9bd9532c-5033-4621-be8a-87de4934a0be") {
+      try {
+        final descuento = await _descuentoServiceSearchById
+            .getDescuentoById(product.discount);
+        return double.parse(product.price) * (1 - descuento.percentage / 100);
+      } catch (error) {
+        print('Error al obtener el descuento: $error');
+      }
+    }
+    return double.parse(product.price);
   }
 
   void onAdd(CartItem item) async {
@@ -233,15 +227,14 @@ class _HomeViewState extends State<HomeView> {
                     child: Row(
                       children: [
                         ClipOval(
-                          child: Image.network(
-                            userProfile.image,
-                            width: media.width * 0.12,
-                            height: media.width * 0.12,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) {
-                              // Widget a mostrar en caso de error al cargar la imagen
-                              return Icon(Icons.error);
-                            }),
+                          child: Image.network(userProfile.image,
+                              width: media.width * 0.12,
+                              height: media.width * 0.12,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                            // Widget a mostrar en caso de error al cargar la imagen
+                            return Icon(Icons.error);
+                          }),
                         ),
                         SizedBox(width: media.width * 0.03),
                         Column(
@@ -289,7 +282,7 @@ class _HomeViewState extends State<HomeView> {
                             context,
                             MaterialPageRoute(
                               builder: (context) =>
-                                  ProductListView(searchQuery: value.trim()),
+                                  ProductView(searchQuery: value.trim()),
                             ),
                           );
                         }
@@ -315,14 +308,23 @@ class _HomeViewState extends State<HomeView> {
                             },
                           ),
                         ),
+                  SizedBox(height: media.height * 0.01),
                   Padding(
                     padding:
                         EdgeInsets.symmetric(horizontal: media.width * 0.05),
-                    child: ViewAllTitleRow(
-                      title: "Categorías",
-                      onView: () {},
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        "Categorías",
+                        style: TextStyle(
+                          color: TColor.primaryText,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
                     ),
                   ),
+                  SizedBox(height: media.height * 0.01),
                   SizedBox(
                     height: media.height * 0.13,
                     child: _categories.isEmpty
@@ -338,8 +340,10 @@ class _HomeViewState extends State<HomeView> {
                                 cObj: {
                                   'image': category.categoryImage,
                                   'name': category.categoryName,
+                                  'id': category.categoryID,
                                 },
                                 onTap: () {},
+                                isCombo: false,
                               );
                             }),
                           ),
@@ -366,7 +370,7 @@ class _HomeViewState extends State<HomeView> {
                             itemBuilder: (context, index) {
                               final combo = _combo[index];
                               return FutureBuilder<double>(
-                                future: _getDiscountedPrice(combo),
+                                future: _getDiscountedPriceCombo(combo),
                                 builder: (context, snapshot) {
                                   if (snapshot.connectionState ==
                                       ConnectionState.waiting) {
@@ -402,7 +406,7 @@ class _HomeViewState extends State<HomeView> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => ProductListView()));
+                                builder: (context) => ProductView()));
                       },
                     ),
                   ),
@@ -414,15 +418,29 @@ class _HomeViewState extends State<HomeView> {
                             itemCount: _product.length,
                             itemBuilder: (context, index) {
                               final product = _product[index];
-                              return ProductCard(
-                                product: product,
-                                onAdd: () => onAdd(CartItem(
-                                    id_product: product.id_product,
-                                    imageUrl: product.image,
-                                    name: product.name,
-                                    price: product.price,
-                                    description: product.description,
-                                    peso: product.peso)),
+                              return FutureBuilder<double>(
+                                future: _getDiscountedPriceProduct(product),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return Center(
+                                        child: CircularProgressIndicator());
+                                  } else if (snapshot.hasError) {
+                                    return Text('Error: ${snapshot.error}');
+                                  } else {
+                                    final discountedPrice = snapshot.data!;
+                                    return ProductCard2(
+                                      product: product,
+                                      onAdd: () => onAdd(CartItem(
+                                          id_product: product.id_product,
+                                          imageUrl: product.images[0],
+                                          name: product.name,
+                                          price: discountedPrice,
+                                          description: product.description,
+                                          peso: product.peso)),
+                                    );
+                                  }
+                                },
                               );
                             },
                           ),
@@ -499,7 +517,7 @@ class _HomeViewState extends State<HomeView> {
                     color: Colors.white, fontWeight: FontWeight.bold)),
             onTap: () {
               showLogoutConfirmationDialog(context);
-            }, // onTap
+            },
           ),
         ],
       ),

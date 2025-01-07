@@ -15,12 +15,14 @@ class TrackOrderView extends StatefulWidget {
 
 class _TrackOrderViewState extends State<TrackOrderView> {
   int currentStep = 0;
+
   final LatLng origin = LatLng(10.491, -66.902);
   late Order order;
-  final LatLng destination = LatLng(10.496, -66.845);
-  final String deliveryLocation = "Universidad Católica Andrés Bello";
+  bool isLoading = true;
   final OrderServiceSearchById orderServiceSearchById =
       OrderServiceSearchById(BaseUrl().BASE_URL);
+      
+  
 
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
@@ -36,6 +38,7 @@ class _TrackOrderViewState extends State<TrackOrderView> {
       final fetchedOrder = await orderServiceSearchById.getOrderById(widget.orderId);
       setState(() {
         order = fetchedOrder; 
+        isLoading = false;
       });
     } catch (e) {
       print('Error obteniendo detalles de la orden: $e');
@@ -44,6 +47,19 @@ class _TrackOrderViewState extends State<TrackOrderView> {
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text('Track orden'),
+          centerTitle: true,
+        ),
+        body: Center(
+          child: CircularProgressIndicator(), 
+        ),
+      );
+    }
+    final deliveryLatLng = LatLng(order.latitude, order.longitude);
+    print(deliveryLatLng);
     return Scaffold(
       appBar: AppBar(
         title: Text('Track orden'),
@@ -56,11 +72,11 @@ class _TrackOrderViewState extends State<TrackOrderView> {
         ),
       ),
       body: Column(
+        mainAxisSize: MainAxisSize.min, 
         children: [
           Expanded(
             child: ListView(
               children: [
-                // Card con la información de entrega
                 Card(
                   elevation: 3,
                   shape: RoundedRectangleBorder(
@@ -89,7 +105,7 @@ class _TrackOrderViewState extends State<TrackOrderView> {
                             SizedBox(width: 8),
                             Expanded(
                               child: Text(
-                                deliveryLocation,
+                                order.directionName,
                                 style: TextStyle(fontSize: 14),
                               ),
                             ),
@@ -100,7 +116,6 @@ class _TrackOrderViewState extends State<TrackOrderView> {
                   ),
                 ),
                 SizedBox(height: 16),
-                // Card con información del repartidor
                 Card(
                   elevation: 3,
                   shape: RoundedRectangleBorder(
@@ -111,7 +126,6 @@ class _TrackOrderViewState extends State<TrackOrderView> {
                     padding: const EdgeInsets.all(10.0),
                     child: Row(
                       children: [
-                        // Imagen circular del delivery
                         ClipOval(
                           child: Image.asset(
                             'assets/img/perfil.png',
@@ -146,7 +160,6 @@ class _TrackOrderViewState extends State<TrackOrderView> {
                   ),
                 ),
                 Divider(),
-                // Card con información de la orden
                 Card(
                   elevation: 3,
                   shape: RoundedRectangleBorder(
@@ -159,22 +172,28 @@ class _TrackOrderViewState extends State<TrackOrderView> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Column(
+                          mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              "Orden #${order.orderId}",
+                            Flexible(
+                            fit: FlexFit.loose,
+                            child:Text(
+                              "Orden #${order.orderId.substring(order.orderId.length - 4)}",
                               style: TextStyle(
                                   fontSize: 16, fontWeight: FontWeight.bold),
+                                  overflow: TextOverflow.ellipsis,
+                            ),
                             ),
                             SizedBox(height: 8),
                             Text(
                               "Total: \$${order.totalAmount}",
                               style:
-                                  TextStyle(fontSize: 14, color: Colors.grey[600]),
+                                  TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                                  
                             ),
                           ],
                         ),
-                        ElevatedButton(
+                       /* ElevatedButton(
                           onPressed: () {},
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.red,
@@ -186,13 +205,12 @@ class _TrackOrderViewState extends State<TrackOrderView> {
                             "Cancelar",
                             style: TextStyle(color: Colors.white),
                           ),
-                        ),
+                        ),*/
                       ],
                     ),
                   ),
                 ),
                 Divider(),
-                // Stepper con seguimiento de la orden
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Column(
@@ -244,12 +262,12 @@ class _TrackOrderViewState extends State<TrackOrderView> {
                                       position: origin),
                                   Marker(
                                       markerId: MarkerId('destination'),
-                                      position: destination),
+                                      position: deliveryLatLng),
                                 },
                                 polylines: {
                                   Polyline(
                                     polylineId: PolylineId('route'),
-                                    points: [origin, destination],
+                                    points: [origin, deliveryLatLng],
                                     color: Colors.blue,
                                     width: 5,
                                   ),

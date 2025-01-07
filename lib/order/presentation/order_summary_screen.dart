@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import '../../Combo/infrastructure/combo_service_search_by_id.dart';
+import '../../Producto/infrastructure/product_service_search_by_id.dart';
 import '../../common/infrastructure/base_url.dart';
-import '../../common/presentation/color_extension.dart';
 import '../domain/order.dart';
 import '../infrastructure/order_service_search_by_id.dart';
 
@@ -14,29 +15,61 @@ class OrderDetailsView extends StatefulWidget {
 }
 
 class _OrderDetailsViewState extends State<OrderDetailsView> {
-  final String orderStatus = "Entregado"; 
-  final String paymentMethod = "PayPal"; 
-  final List<Map<String, dynamic>> items = [];
-  final double subtotal = 14.50;
-  final double shippingFee = 0.00;
-  final double discount = 0.00;
-  final String deliveryLocation = "Universidad Católica Andrés Bello";
+  bool isOrderLoading = true;
 
   late Order order;
   final OrderServiceSearchById orderServiceSearchById =
       OrderServiceSearchById(BaseUrl().BASE_URL);
+  final ProductServiceSearchbyId _productService =
+      ProductServiceSearchbyId(BaseUrl().BASE_URL);
+  final ComboServiceSearchById _comboService =
+      ComboServiceSearchById(BaseUrl().BASE_URL);
 
-    @override
+  @override
   void initState() {
     super.initState();
     _fetchOrderDetails();
   }
 
+  Future<List<Map<String, String>>> getProductDetails(
+      List<Map<String, dynamic>> items,
+      List<Map<String, dynamic>> bundles) async {
+    List<Map<String, String>> productDetails = [];
+    try {
+      for (var item in items) {
+        final product = await _productService.getProductById(item['id']);
+        final double quantity = double.parse(item['quantity']);
+        final double total = double.parse(product.price) * quantity;
+        productDetails.add({
+          'name': product.name,
+          'quantity': item['quantity'],
+          'price': total.toString(),
+        });
+      }
+      for (var bundle in bundles) {
+        final combo = await _comboService.getComboById(bundle['id']);
+        final double quantity = double.parse(bundle['quantity']);
+        final double total = double.parse(combo.price) * quantity;
+        productDetails.add({
+          'name': combo.name,
+          'quantity': bundle['quantity'],
+          'price': total.toString(),
+        });
+      }
+    } catch (e) {
+      productDetails.add(
+          {'name': 'Producto no encontrado', 'quantity': '0', 'price': '0'});
+    }
+    return productDetails;
+  }
+
   Future<void> _fetchOrderDetails() async {
     try {
-      final fetchedOrder = await orderServiceSearchById.getOrderById(widget.orderId);
+      final fetchedOrder =
+          await orderServiceSearchById.getOrderById(widget.orderId);
       setState(() {
-        order = fetchedOrder; 
+        order = fetchedOrder;
+        isOrderLoading = false;
       });
     } catch (e) {
       print('Error obteniendo detalles de la orden: $e');
@@ -45,13 +78,22 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
 
   @override
   Widget build(BuildContext context) {
-    
-    final double total = subtotal + shippingFee - discount;
-    final orderStatusDetails = _getOrderStatusDetails(orderStatus);
-
+    if (isOrderLoading) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text('Detalle orden'),
+          centerTitle: true,
+        ),
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+    final orderStatusDetails = _getOrderStatusDetails(order.status);
     return Scaffold(
       appBar: AppBar(
         title: Text("Detalle orden"),
+        centerTitle: true,
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
@@ -71,7 +113,8 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
                     elevation: 3,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8.0),
-                      side: BorderSide(color: const Color(0xFFFF7622), width: 2),
+                      side:
+                          BorderSide(color: const Color(0xFFFF7622), width: 2),
                     ),
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
@@ -81,10 +124,14 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text("Orden #${order.orderId}",
-                                  style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold)),
+                              Expanded(
+                                child: Text(
+                                    "Orden #${order.orderId.substring(order.orderId.length - 4)}",
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold),
+                                    overflow: TextOverflow.ellipsis),
+                              ),
                               Container(
                                 padding: EdgeInsets.symmetric(
                                     horizontal: 10.0, vertical: 5.0),
@@ -101,13 +148,10 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
                                     ),
                                     SizedBox(width: 5),
                                     Text(
-                                      orderStatus,
+                                      order.status,
                                       style: TextStyle(
                                           fontSize: 14,
-                                          fontWeight: FontWeight.w600,
-                                          color: orderStatus == "Entregado"
-                                              ? Colors.green
-                                              : Colors.orange),
+                                          fontWeight: FontWeight.w600,),
                                     ),
                                   ],
                                 ),
@@ -116,7 +160,7 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
                           ),
                           SizedBox(height: 8),
                           Text(
-                            "Método de pago: $paymentMethod",
+                            "Método de pago: ${order.paymentMethod}",
                             style: TextStyle(
                                 fontSize: 14, color: Colors.grey[600]),
                           ),
@@ -130,48 +174,71 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
                       style:
                           TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                   SizedBox(height: 8),
-                  ListView.builder(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemCount: order.items?.length,
-                    itemBuilder: (context, index) {
-                      final item = order.items![index];
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 4.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              "${item['name']} x ${item['quantity']}",
-                              style: TextStyle(fontSize: 14),
-                            ),
-                            Text("\$${item['price']}",
-                                style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500)),
-                          ],
-                        ),
-                      );
+                  FutureBuilder<List<Map<String, String>>>(
+                    future: getProductDetails(order.items, order.bundles),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const CircularProgressIndicator();
+                      }
+                      if (snapshot.hasError) {
+                        return Text('Error: ${snapshot.error}');
+                      }
+                      if (snapshot.hasData) {
+                        return ListView.builder(
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemCount: snapshot.data!.length,
+                          itemBuilder: (context, index) {
+                            final product = snapshot.data![index];
+                            return Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 4.0),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      "${product['name']} x ${product['quantity']}",
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ),
+                                  Text(
+                                    "\$${product['price']}",
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        );
+                      }
+                      return const Text('No hay productos');
                     },
                   ),
                   Divider(),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildPriceRow("Subtotal", subtotal),
-                      _buildPriceRow("Shipping fee", shippingFee),
-                      _buildPriceRow("Descuento", discount),
+                      _buildPriceRow("Subtotal", order.subTotal),
+                      _buildPriceRow("Shipping fee", order.deliveryFee),
+                      _buildPriceRow("Descuento", order.discount.toDouble()),
                       Divider(),
-                      _buildPriceRow("Total", total, isTotal: true),
+                      _buildPriceRow("Total", order.totalAmount, isTotal: true),
                     ],
                   ),
                   SizedBox(height: 16),
-                  // Hora y lugar
                   Card(
                     elevation: 3,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8.0),
-                      side: BorderSide(color: const Color(0xFFFF7622), width: 2),
+                      side:
+                          BorderSide(color: const Color(0xFFFF7622), width: 2),
                     ),
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
@@ -195,7 +262,7 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
                               SizedBox(width: 8),
                               Expanded(
                                 child: Text(
-                                  deliveryLocation,
+                                  order.directionName,
                                   style: TextStyle(fontSize: 14),
                                 ),
                               ),
@@ -210,12 +277,11 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
             ),
           ),
           // Botón Reordenar
-          if (orderStatus == "Entregado")
+          if (order.status == "Entregada")
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: ElevatedButton(
-                onPressed: () {
-                },
+                onPressed: () {},
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.grey,
                   shape: RoundedRectangleBorder(
@@ -246,11 +312,11 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
             label,
             style: TextStyle(
               fontSize: 14,
-              fontWeight: isTotal ? FontWeight.bold : FontWeight.normal, 
+              fontWeight: isTotal ? FontWeight.bold : FontWeight.normal,
             ),
           ),
           Text(
-            "\$${value.toStringAsFixed(2)}", 
+            "\$${value.toStringAsFixed(2)}",
             style: TextStyle(
               fontSize: 14,
               fontWeight: isTotal ? FontWeight.bold : FontWeight.normal,
@@ -261,10 +327,17 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
       ),
     );
   }
-  
+
   Map<String, dynamic> _getOrderStatusDetails(String status) {
     switch (status) {
-      case "Entregado":
+      case "Creada" :
+        return {
+          "icon": Icons.check_circle,
+          "iconColor": Colors.green,
+          "textColor": Colors.green,
+          "backgroundColor": Colors.green[100],
+        };
+      case "Entregada":
         return {
           "icon": Icons.check_circle,
           "iconColor": Colors.green,
@@ -278,20 +351,19 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
           "textColor": Colors.orange,
           "backgroundColor": Colors.orange[100],
         };
-      case "Cancelado":
+      case "Cancelada":
         return {
           "icon": Icons.cancel,
           "iconColor": Colors.red,
           "textColor": Colors.red,
           "backgroundColor": Colors.red[100],
         };
-      case "En proceso":
       default:
         return {
-          "icon": Icons.pending,
-          "iconColor": Colors.blue,
-          "textColor": Colors.blue,
-          "backgroundColor": Colors.blue[100],
+          "icon": Icons.help,
+          "iconColor": Colors.grey,
+          "textColor": Colors.grey,
+          "backgroundColor": Colors.grey[100],
         };
     }
   }

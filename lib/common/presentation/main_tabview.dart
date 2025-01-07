@@ -1,13 +1,11 @@
+import 'package:desarrollo_frontend/Producto/presentation/product_view.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../../Users/domain/user_profile.dart';
 import '../../Users/presentation/profile_screen.dart';
 import '../../Carrito/presentation/cart_screen.dart';
-import '../../categorias/presentation/categorias_view.dart';
 import 'color_extension.dart';
 import 'common_widget/tab_button.dart';
 import '../../home/presentation/home_view.dart';
-import '../../order/presentation/order_history.dart';
+import '../../order/presentation/order_history_active.dart';
 
 class MainTabView extends StatefulWidget {
   const MainTabView({super.key});
@@ -65,7 +63,7 @@ class _MainTabViewState extends State<MainTabView> {
                 onTap: () {
                   if (selctTab != 0) {
                     selctTab = 0;
-                    selectPageView = const CategoryView();
+                    selectPageView = const ProductView();
                   }
                   if (mounted) {
                     setState(() {});

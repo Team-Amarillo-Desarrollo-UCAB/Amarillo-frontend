@@ -5,15 +5,15 @@ import '../../common/infrastructure/tokenUser.dart';
 import '../domain/order.dart';
 import '../domain/orderData.dart';
 
-class OrderService {
+class OrderServicePast {
   final String baseUrl;
 
-  OrderService(this.baseUrl);
+  OrderServicePast(this.baseUrl);
 
-  Future<List<Order>> getOrders(int page) async {
+  Future<List<Order>> getOrdersPast(int page) async {
   final token = await TokenUser().getToken();
   final response = await http.get(
-    Uri.parse('$baseUrl/order/many?page=$page'),
+    Uri.parse('$baseUrl/order/many/past?page=$page'),
     headers: {
             'Authorization': 'Bearer $token',
           }

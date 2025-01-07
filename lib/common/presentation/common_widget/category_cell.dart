@@ -1,12 +1,18 @@
+import 'package:desarrollo_frontend/categorias/presentation/categorias_combo_view.dart';
+import 'package:desarrollo_frontend/categorias/presentation/categorias_product_view.dart';
 import 'package:flutter/material.dart';
 import 'package:desarrollo_frontend/common/presentation/color_extension.dart';
-
-import '../../../categorias/presentation/category_items_view.dart';
 
 class CategoryCell extends StatelessWidget {
   final Map cObj;
   final VoidCallback onTap;
-  const CategoryCell({super.key, required this.cObj, required this.onTap});
+  final bool isCombo;
+
+  const CategoryCell(
+      {super.key,
+      required this.cObj,
+      required this.onTap,
+      required this.isCombo});
   @override
   Widget build(BuildContext context) {
     var media = MediaQuery.of(context).size;
@@ -14,10 +20,27 @@ class CategoryCell extends StatelessWidget {
       margin: EdgeInsets.symmetric(horizontal: media.width * 0.02),
       child: InkWell(
         onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const ProductListView()),
-          );
+          if (isCombo) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => CategoriasComboView(
+                  idCategory: cObj["id"],
+                  idName: cObj["name"],
+                ),
+              ),
+            );
+          } else {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => CategoriasProductView(
+                  idCategory: cObj["id"],
+                  idName: cObj["name"],
+                ),
+              ),
+            );
+          }
         },
         child: Column(
           children: [

@@ -6,26 +6,24 @@ import 'package:http/http.dart' as http;
 
 import '../../common/infrastructure/tokenUser.dart';
 
-class ComboService {
+class ComboServiceSearchById {
   final String baseUrl;
 
-  ComboService(this.baseUrl);
+  ComboServiceSearchById(this.baseUrl);
 
-  Future<List<Combo>> getCombo(int page) async {
+  Future<Combo> getComboById(String comboId) async {
     final token = await TokenUser().getToken();
     final response = await http.get(
-      Uri.parse('$baseUrl/bundle/many?page=$page'),
+      Uri.parse('$baseUrl/bundle/one/$comboId'),
       headers: {
         'Authorization': 'Bearer $token',
       },
     );
-
     if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body);
-      return data.map((json) {
-        final comboData = ComboData.fromJson(json);
-        return Combo(
-            id_product: comboData.id,
+      final Map<String, dynamic> data = json.decode(response.body);
+      final comboData = ComboData.fromJson(data);
+      return Combo(
+        id_product: comboData.id,
             images: comboData.images
                 .map((imageUrl) => NetworkImage(imageUrl))
                 .toList(),
@@ -35,10 +33,10 @@ class ComboService {
             description: comboData.description,
             peso: '${comboData.weight} ${comboData.measurement}',
             discount: comboData.discount,
-            category: comboData.category);
-      }).toList();
+            category: comboData.category
+      );
     } else {
-      throw Exception('Error al obtener la lista de productos');
+      throw Exception('Error al obtener el combo');
     }
   }
 }

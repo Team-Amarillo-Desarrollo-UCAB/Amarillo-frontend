@@ -5,12 +5,12 @@ import '../domain/product_data.dart';
 import '../domain/product.dart';
 import 'package:desarrollo_frontend/common/infrastructure/tokenUser.dart';
 
-class ProductService {
+class ProductPopularService {
   final String baseUrl;
 
-  ProductService(this.baseUrl);
+  ProductPopularService(this.baseUrl);
 
-  Future<List<Product>> getProducts(int page) async {
+  Future<List<Product>> getProducts() async {
     try {
       final token = await TokenUser().getToken();
 
@@ -19,7 +19,7 @@ class ProductService {
       }
 
       final response = await http.get(
-        Uri.parse('$baseUrl/product/many?page=$page'),
+        Uri.parse('$baseUrl/product/many?popular=si'),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',

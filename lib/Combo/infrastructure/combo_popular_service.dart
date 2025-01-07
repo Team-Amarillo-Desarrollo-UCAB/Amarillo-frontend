@@ -6,15 +6,15 @@ import 'package:http/http.dart' as http;
 
 import '../../common/infrastructure/tokenUser.dart';
 
-class ComboService {
+class ComboPopularService {
   final String baseUrl;
 
-  ComboService(this.baseUrl);
+  ComboPopularService(this.baseUrl);
 
-  Future<List<Combo>> getCombo(int page) async {
+  Future<List<Combo>> getCombo() async {
     final token = await TokenUser().getToken();
     final response = await http.get(
-      Uri.parse('$baseUrl/bundle/many?page=$page'),
+      Uri.parse('$baseUrl/bundle/many?popular=si'),
       headers: {
         'Authorization': 'Bearer $token',
       },

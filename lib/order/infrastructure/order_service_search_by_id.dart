@@ -24,13 +24,23 @@ class OrderServiceSearchById {
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(response.body);
 
-      final orderdata = OrderData.fromJson(data);
+      final orderData = OrderData.fromJson(data);
 
       return Order(
-        orderId: orderId,
-        items: orderdata.products,
-        totalAmount: orderdata.totalAmount,
-        creationDate: orderdata.creationDate,
+        orderId: orderData.id,
+        items: orderData.products,
+        bundles: orderData.bundles,
+        latitude: orderData.latitude,
+        longitude: orderData.longitude,
+        directionName: orderData.directionName,
+        status: orderData.orderState,
+        totalAmount: orderData.totalAmount,
+        subTotal: orderData.subTotal,
+        deliveryFee: orderData.shippingFee,
+        discount: orderData.orderDiscount,
+        currency: orderData.currency,
+        paymentMethod: orderData.orderPayment['paymentMethod'],
+        creationDate: orderData.orderCreatedDate.toString(),
       );
     }else {
       throw Exception('Error al obtener la orden');

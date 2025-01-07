@@ -1,4 +1,4 @@
-import 'package:desarrollo_frontend/Producto/domain/popular_product.dart';
+import 'package:desarrollo_frontend/Producto/domain/product.dart';
 import 'package:flutter/material.dart';
 
 void showDetailProductDialog(
@@ -29,7 +29,7 @@ void showDetailProductDialog(
                 ),
                 SizedBox(height: media.height * 0.02),
                 CircleAvatar(
-                  backgroundImage: product.image as ImageProvider<Object>,
+                  backgroundImage: product.images[0] as ImageProvider<Object>,
                   radius: media.width * 0.2,
                 ),
                 SizedBox(height: media.height * 0.02),
@@ -58,24 +58,6 @@ void showDetailProductDialog(
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text(
-                      'Precio:',
-                      style: TextStyle(
-                        fontFamily: 'Inter',
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                    SizedBox(width: media.width * 0.02),
-                    Text(
-                      '${product.price} USD',
-                      style: TextStyle(
-                        fontFamily: 'Inter',
-                        fontWeight: FontWeight.w900,
-                        fontSize: media.width * 0.04,
-                        color: Colors.green,
-                      ),
-                    ),
-                    SizedBox(width: media.width * 0.02),
                     Text(
                       product.peso,
                       style: TextStyle(
