@@ -4,6 +4,7 @@ import 'Users/domain/user_profile.dart';
 import 'api/firebase_api.dart';
 import 'common/presentation/startup_view.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'common/presentation/main_tabview.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
