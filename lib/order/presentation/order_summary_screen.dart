@@ -15,7 +15,6 @@ class OrderDetailsView extends StatefulWidget {
 }
 
 class _OrderDetailsViewState extends State<OrderDetailsView> {
-  final String orderStatus = "Entregado";
   bool isOrderLoading = true;
 
   late Order order;
@@ -90,7 +89,7 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
         ),
       );
     }
-    final orderStatusDetails = _getOrderStatusDetails(orderStatus);
+    final orderStatusDetails = _getOrderStatusDetails(order.status);
     return Scaffold(
       appBar: AppBar(
         title: Text("Detalle orden"),
@@ -149,13 +148,10 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
                                     ),
                                     SizedBox(width: 5),
                                     Text(
-                                      orderStatus,
+                                      order.status,
                                       style: TextStyle(
                                           fontSize: 14,
-                                          fontWeight: FontWeight.w600,
-                                          color: orderStatus == "Entregado"
-                                              ? Colors.green
-                                              : Colors.orange),
+                                          fontWeight: FontWeight.w600,),
                                     ),
                                   ],
                                 ),
@@ -281,7 +277,7 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
             ),
           ),
           // Botón Reordenar
-          if (orderStatus == "Entregado")
+          if (order.status == "Entregada")
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: ElevatedButton(
@@ -334,7 +330,14 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
 
   Map<String, dynamic> _getOrderStatusDetails(String status) {
     switch (status) {
-      case "Entregado":
+      case "Creada" :
+        return {
+          "icon": Icons.check_circle,
+          "iconColor": Colors.green,
+          "textColor": Colors.green,
+          "backgroundColor": Colors.green[100],
+        };
+      case "Entregada":
         return {
           "icon": Icons.check_circle,
           "iconColor": Colors.green,
@@ -348,20 +351,19 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
           "textColor": Colors.orange,
           "backgroundColor": Colors.orange[100],
         };
-      case "Cancelado":
+      case "Cancelada":
         return {
           "icon": Icons.cancel,
           "iconColor": Colors.red,
           "textColor": Colors.red,
           "backgroundColor": Colors.red[100],
         };
-      case "En proceso":
       default:
         return {
-          "icon": Icons.pending,
-          "iconColor": Colors.blue,
-          "textColor": Colors.blue,
-          "backgroundColor": Colors.blue[100],
+          "icon": Icons.help,
+          "iconColor": Colors.grey,
+          "textColor": Colors.grey,
+          "backgroundColor": Colors.grey[100],
         };
     }
   }

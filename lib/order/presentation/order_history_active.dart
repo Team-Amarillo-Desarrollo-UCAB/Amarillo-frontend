@@ -1,17 +1,14 @@
 import 'package:desarrollo_frontend/Combo/infrastructure/combo_service_search_by_id.dart';
 import 'package:desarrollo_frontend/common/presentation/color_extension.dart';
-import 'package:desarrollo_frontend/common/presentation/common_widget/round_button.dart';
 import 'package:desarrollo_frontend/order/infrastructure/order_service_active.dart';
 import 'package:desarrollo_frontend/order/infrastructure/order_service_past.dart';
 import 'package:desarrollo_frontend/order/presentation/track_order_view.dart';
 import 'package:flutter/material.dart';
-
 import '../../Producto/infrastructure/product_service_search_by_id.dart';
 import '../../common/infrastructure/base_url.dart';
 import '../application/order_cancel.dart';
 import '../domain/order.dart';
 import '../infrastructure/order-service.dart';
-import 'order_history_past.dart';
 import 'order_summary_screen.dart';
 
 class OrderHistoryScreen extends StatefulWidget {
@@ -79,12 +76,12 @@ class _HistoryOrderScreenState extends State<OrderHistoryScreen> {
   Future<void> fetchOrders() async {
     try {
       if (_isActiveTab) {
-        List<Order> fetchedOrders = await orderServiceActive.getOrdersActive();
+        List<Order> fetchedOrders = await orderServiceActive.getOrdersActive(1);
         setState(() {
           activeOrders = fetchedOrders;
         });
       } else {
-        List<Order> fetchedOrders = await orderServicePast.getOrdersPast();
+        List<Order> fetchedOrders = await orderServicePast.getOrdersPast(1);
         setState(() {
           pastOrders = fetchedOrders;
         });
@@ -101,8 +98,8 @@ class _HistoryOrderScreenState extends State<OrderHistoryScreen> {
     setState(() => _isLoading = true);
     try {
       List<Order> newOrders = _isActiveTab
-          ? await orderServiceActive.getOrdersActive()
-          : await orderServicePast.getOrdersPast();
+          ? await orderServiceActive.getOrdersActive(_page)
+          : await orderServicePast.getOrdersPast(_page);
       setState(() {
         if (newOrders.isEmpty) {
           _hasMore = false;

@@ -10,10 +10,10 @@ class OrderServiceActive {
 
   OrderServiceActive(this.baseUrl);
 
-  Future<List<Order>> getOrdersActive() async {
+  Future<List<Order>> getOrdersActive(int page) async {
   final token = await TokenUser().getToken();
   final response = await http.get(
-    Uri.parse('$baseUrl/order/many/active'),
+    Uri.parse('$baseUrl/order/many/active?page=$page'),
     headers: {
             'Authorization': 'Bearer $token',
           }
