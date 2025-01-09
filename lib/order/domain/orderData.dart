@@ -14,7 +14,7 @@ class OrderData {
   final DateTime orderReciviedDate;
   final String orderReport;
   final Map<String, dynamic> orderPayment;
-  final int orderDiscount;
+  final double orderDiscount;
 
   OrderData({
     required this.id,
@@ -52,7 +52,7 @@ class OrderData {
       orderReciviedDate: DateTime.parse(json['orderReciviedDate'] ?? ' '),
       orderReport: json['orderReport'] ?? ' ',
       orderPayment: Map<String, dynamic>.from(json['orderPayment'] ?? {}),
-      orderDiscount: int.parse(json['orderDiscount'] ?? '0'),
+      orderDiscount: double.parse(json['orderDiscount'] ?? '0.0'),
     );
   }
 }

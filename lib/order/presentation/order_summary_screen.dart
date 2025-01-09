@@ -227,7 +227,7 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
                     children: [
                       _buildPriceRow("Subtotal", order.subTotal),
                       _buildPriceRow("Shipping fee", order.deliveryFee),
-                      _buildPriceRow("Descuento", order.discount.toDouble()),
+                      _buildPriceRow("Descuento", order.discount),
                       Divider(),
                       _buildPriceRow("Total", order.totalAmount, isTotal: true),
                     ],
@@ -330,33 +330,40 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
 
   Map<String, dynamic> _getOrderStatusDetails(String status) {
     switch (status) {
-      case "Creada" :
+      case "CREATED" :
         return {
           "icon": Icons.check_circle,
           "iconColor": Colors.green,
           "textColor": Colors.green,
           "backgroundColor": Colors.green[100],
         };
-      case "Entregada":
+      case "DELIVERED":
         return {
           "icon": Icons.check_circle,
           "iconColor": Colors.green,
           "textColor": Colors.green,
           "backgroundColor": Colors.green[100],
         };
-      case "En camino":
+      case "SHIPPED":
         return {
           "icon": Icons.access_time,
           "iconColor": Colors.orange,
           "textColor": Colors.orange,
           "backgroundColor": Colors.orange[100],
         };
-      case "Cancelada":
+      case "CANCELLED":
         return {
           "icon": Icons.cancel,
           "iconColor": Colors.red,
           "textColor": Colors.red,
           "backgroundColor": Colors.red[100],
+        };
+        case "BEING PROCESSED":
+        return {
+          "icon": Icons.access_time,
+          "iconColor": Colors.orange,
+          "textColor": Colors.orange,
+          "backgroundColor": Colors.orange[100],
         };
       default:
         return {

@@ -9,7 +9,7 @@ class Order {
   final double totalAmount;
   final double subTotal;
   final double deliveryFee;
-  final int discount;
+  final double discount;
   final String currency;
   final String paymentMethod;
   final String creationDate;
