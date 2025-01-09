@@ -29,13 +29,13 @@ class ComboData {
       id: json['id'] ?? 'ERROR01',
       name: json['name'] ?? 'Nombre no disponible',
       description: json['description'] ?? '',
-      price: json['price'] ?? '0',
+      price: (json['price'] ?? 0).toString(),
       currency: json['currency'] ?? 'USD',
       images: List<dynamic>.from(json['images'] ?? []),
-      weight: json['weight'] ?? '0',
+      weight: (json['weight'] ?? 0).toString(),
       measurement: json['measurement'] ?? '',
-      category: List<dynamic>.from(json['category'] ?? []),
-      productId: List<dynamic>.from(json['productId'] ?? []),
+      category: List<dynamic>.from(json['categories'] ?? []),
+      productId: List<dynamic>.from(json['products'] ?? []),
       discount: json['discount'] ?? '0',
     );
   }

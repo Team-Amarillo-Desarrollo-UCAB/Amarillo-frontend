@@ -3,7 +3,7 @@ class ProductData {
   final String name;
   final String price;
   final String unitMeasure;
-  final double quantity;
+  final String quantity;
   final String description;
   final List<dynamic> images;
   final List<dynamic> category;
@@ -29,10 +29,10 @@ class ProductData {
           ]),
       name: json['name'] ?? 'Nombre no disponible',
       description: json['description'] ?? '',
-      price: json['price'] ?? '0',
+      price: (json['price'] ?? 0).toString(),
       unitMeasure: json['measurement'] ?? '',
-      quantity: double.parse(json['weight'] ?? '0'),
-      category: List<String>.from(json['category'] ?? []),
+      quantity: (json['weight'] ?? 0).toString(),
+      category: List<String>.from(json['categories'] ?? []),
       discount: json['discount'] ?? '0',
     );
   }

@@ -12,29 +12,25 @@ class CategoryService {
   CategoryService(this.baseUrl);
 
   Future<List<Category>> getCategories() async {
-
     final token = await TokenUser().getToken();
-    final response = await http.get(
-      Uri.parse('$baseUrl/category/many'),
-      headers: {
-          'Authorization': 'Bearer $token',
-        }
-      );
+    final response =
+        await http.get(Uri.parse('$baseUrl/category/many'), headers: {
+      'Authorization': 'Bearer $token',
+    });
 
     if (response.statusCode == 200) {
-      final Map<String, dynamic> data = json.decode(response.body);
-
-      final categoriesList = data.values.toList();
-
-      return categoriesList.map((json) {
-        final categoryData = CategoryData.fromJson(json);
+      final List<dynamic> data = json.decode(response.body);
+      return data.map((json) {
+        final categoryData =
+            CategoryData.fromJson(json as Map<String, dynamic>);
         return Category(
-            categoryID: categoryData.id,
-            categoryImage: NetworkImage(categoryData.image),
-            categoryName: categoryData.name);
+          categoryID: categoryData.id,
+          categoryImage: NetworkImage(categoryData.image),
+          categoryName: categoryData.name,
+        );
       }).toList();
     } else {
-      throw Exception('Error al obtener la lista de categorias');
+      throw Exception('Error al obtener la lista de categorías');
     }
   }
 }

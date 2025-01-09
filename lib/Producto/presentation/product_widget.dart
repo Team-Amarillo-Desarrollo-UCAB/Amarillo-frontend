@@ -30,8 +30,7 @@ class _ProductCard2State extends State<ProductCard2> {
   }
 
   Future<void> _fetchDescuento() async {
-    if (widget.product.discount != "9bd9532c-5033-4621-be8a-87de4934a0be" &&
-        mounted) {
+    if (widget.product.discount != "" && mounted) {
       setState(() {
         _isLoading = true;
       });
