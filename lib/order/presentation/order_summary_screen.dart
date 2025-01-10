@@ -31,32 +31,33 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
     _fetchOrderDetails();
   }
 
-  Future<List<Map<String, String>>> getProductDetails(
+  Future<List<Map<String, dynamic>>> getProductDetails(
       List<Map<String, dynamic>> items,
       List<Map<String, dynamic>> bundles) async {
-    List<Map<String, String>> productDetails = [];
+    List<Map<String, dynamic>> productDetails = [];
     try {
       for (var item in items) {
         final product = await _productService.getProductById(item['id']);
-        final double quantity = double.parse(item['quantity']);
+        final int quantity = (item['quantity']);
         final double total = double.parse(product.price) * quantity;
         productDetails.add({
           'name': product.name,
           'quantity': item['quantity'],
-          'price': total.toString(),
+          'price': total,
         });
       }
       for (var bundle in bundles) {
         final combo = await _comboService.getComboById(bundle['id']);
-        final double quantity = double.parse(bundle['quantity']);
+        final int quantity = (bundle['quantity']);
         final double total = double.parse(combo.price) * quantity;
         productDetails.add({
           'name': combo.name,
           'quantity': bundle['quantity'],
-          'price': total.toString(),
+          'price': total,
         });
       }
     } catch (e) {
+      print('Error obteniendo detalles del producto: $e');
       productDetails.add(
           {'name': 'Producto no encontrado', 'quantity': '0', 'price': '0'});
     }
@@ -174,7 +175,7 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
                       style:
                           TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                   SizedBox(height: 8),
-                  FutureBuilder<List<Map<String, String>>>(
+                  FutureBuilder<List<Map<String, dynamic>>>(
                     future: getProductDetails(order.items, order.bundles),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
