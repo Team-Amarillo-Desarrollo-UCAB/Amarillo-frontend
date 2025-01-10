@@ -102,7 +102,7 @@ class _ProductViewState extends State<ProductView> {
   }
 
   Future<double> _getDiscountedPrice(Product product) async {
-    if (product.discount != "9bd9532c-5033-4621-be8a-87de4934a0be") {
+    if (product.discount != "") {
       try {
         final descuento = await _descuentoServiceSearchById
             .getDescuentoById(product.discount);

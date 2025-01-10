@@ -19,11 +19,11 @@ class DescuentoService {
     });
 
     if (response.statusCode == 200) {
-      final Map<String, dynamic> data = json.decode(response.body);
+      final List<dynamic> data = json.decode(response.body);
 
-      final discountsList = data.values.toList();
-      return discountsList.map((json) {
-        final descuentoData = DescuentoData.fromJson(json);
+      return data.map((json) {
+        final descuentoData =
+            DescuentoData.fromJson(json as Map<String, dynamic>);
 
         return Descuento(
             id: descuentoData.id,

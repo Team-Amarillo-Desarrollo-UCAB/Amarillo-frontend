@@ -10,13 +10,19 @@ class OrderService {
 
   OrderService(this.baseUrl);
 
-  Future<List<Order>> getOrders(int page) async {
+  Future<List<Order>> getOrders(int page, List<String> status) async {
   final token = await TokenUser().getToken();
-  final response = await http.get(
-    Uri.parse('$baseUrl/order/many?page=$page'),
-    headers: {
-            'Authorization': 'Bearer $token',
-          }
+    
+    String url = '$baseUrl/order/many?page=$page';
+    
+  for (var s in status) {
+    url += '&status=$s';
+  }
+    final response = await http.get(
+      Uri.parse(url),
+      headers: {
+        'Authorization': 'Bearer $token',
+      }
     );
   print("Código de respuesta: ${response.statusCode}"); // Debug
 

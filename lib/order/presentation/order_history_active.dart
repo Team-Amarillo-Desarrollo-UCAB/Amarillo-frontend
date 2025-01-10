@@ -1,7 +1,5 @@
 import 'package:desarrollo_frontend/Combo/infrastructure/combo_service_search_by_id.dart';
 import 'package:desarrollo_frontend/common/presentation/color_extension.dart';
-import 'package:desarrollo_frontend/order/infrastructure/order_service_active.dart';
-import 'package:desarrollo_frontend/order/infrastructure/order_service_past.dart';
 import 'package:desarrollo_frontend/order/presentation/track_order_view.dart';
 import 'package:flutter/material.dart';
 import '../../Producto/infrastructure/product_service_search_by_id.dart';
@@ -21,21 +19,19 @@ class OrderHistoryScreen extends StatefulWidget {
 class _HistoryOrderScreenState extends State<OrderHistoryScreen> {
   List<Order> activeOrders = [];
   List<Order> pastOrders = [];
-  late final OrderServiceActive orderServiceActive;
-  late final OrderServicePast orderServicePast;
+  late final OrderService orderService;
   final ProductServiceSearchbyId _productService = ProductServiceSearchbyId(BaseUrl().BASE_URL);
   final ComboServiceSearchById _comboService = ComboServiceSearchById(BaseUrl().BASE_URL);
   int _page = 1;
   bool _isLoading = false;
   bool _hasMore = true;
-  bool _isActiveTab = true; // Variable para controlar qué lista se muestra
+  bool _isActiveTab = true; 
   late ScrollController _scrollController;
 
   @override
   void initState() {
     super.initState();
-    orderServiceActive = OrderServiceActive(BaseUrl().BASE_URL);
-    orderServicePast = OrderServicePast(BaseUrl().BASE_URL);
+    orderService = OrderService(BaseUrl().BASE_URL);
     fetchOrders(); 
     _scrollController = ScrollController();
     _scrollController.addListener(_onScroll);
@@ -76,12 +72,12 @@ class _HistoryOrderScreenState extends State<OrderHistoryScreen> {
   Future<void> fetchOrders() async {
     try {
       if (_isActiveTab) {
-        List<Order> fetchedOrders = await orderServiceActive.getOrdersActive(1);
+        List<Order> fetchedOrders = await orderService.getOrders(1, ["CREATED","BEING PROCESSED","SHIPPED"]);
         setState(() {
           activeOrders = fetchedOrders;
         });
       } else {
-        List<Order> fetchedOrders = await orderServicePast.getOrdersPast(1);
+        List<Order> fetchedOrders = await orderService.getOrders(1, ["DELIVERED","CANCELLED"]);
         setState(() {
           pastOrders = fetchedOrders;
         });
@@ -98,8 +94,8 @@ class _HistoryOrderScreenState extends State<OrderHistoryScreen> {
     setState(() => _isLoading = true);
     try {
       List<Order> newOrders = _isActiveTab
-          ? await orderServiceActive.getOrdersActive(_page)
-          : await orderServicePast.getOrdersPast(_page);
+          ? await orderService.getOrders(_page, ["CREATED","BEING PROCESSED","SHIPPED"])
+          : await orderService.getOrders(_page, ["DELIVERED","CANCELLED"]);
       setState(() {
         if (newOrders.isEmpty) {
           _hasMore = false;
@@ -114,7 +110,7 @@ class _HistoryOrderScreenState extends State<OrderHistoryScreen> {
       });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error al cargar más órdenes: $e')),
+        SnackBar(content: Text('Error al cargar más órdenes, ricardo: $e')),
       );
     } finally {
       setState(() => _isLoading = false);
@@ -231,7 +227,7 @@ class _HistoryOrderScreenState extends State<OrderHistoryScreen> {
                                             fontSize: 16, fontWeight: FontWeight.bold)),
                                     const SizedBox(height: 4),
                                     Text(
-                                      "\$ ${(order.totalAmount).toStringAsFixed(1)}",
+                                      "\$ ${(order.totalAmount)}",
                                       style: const TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold,
@@ -343,7 +339,7 @@ class _HistoryOrderScreenState extends State<OrderHistoryScreen> {
                                             fontSize: 16, fontWeight: FontWeight.bold)),
                                     const SizedBox(height: 4),
                                     Text(
-                                      "\$ ${(order.totalAmount).toStringAsFixed(1)}",
+                                      "\$ ${(order.totalAmount)}",
                                       style: const TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold,

@@ -112,11 +112,11 @@ class _HomeViewState extends State<HomeView> {
   }
 
   Future<double> _getDiscountedPriceCombo(Combo combo) async {
-    if (combo.discount != "9bd9532c-5033-4621-be8a-87de4934a0be") {
+    if (combo.discount != "") {
       try {
         final descuento =
             await _descuentoServiceSearchById.getDescuentoById(combo.discount);
-        return double.parse(combo.price) * (1 - descuento.percentage / 100);
+        return double.parse(combo.price) * (1 - descuento.percentage);
       } catch (error) {
         print('Error al obtener el descuento: $error');
       }
@@ -125,7 +125,7 @@ class _HomeViewState extends State<HomeView> {
   }
 
   Future<double> _getDiscountedPriceProduct(Product product) async {
-    if (product.discount != "9bd9532c-5033-4621-be8a-87de4934a0be") {
+    if (product.discount != "") {
       try {
         final descuento = await _descuentoServiceSearchById
             .getDescuentoById(product.discount);
@@ -297,12 +297,22 @@ class _HomeViewState extends State<HomeView> {
                           child: PageView.builder(
                             itemCount: _descuentos.length,
                             itemBuilder: (context, index) {
-                              return ClipRRect(
-                                child: Image.network(
-                                  _descuentos[index].image,
-                                  width: media.width * 0.9,
-                                  height: media.height * 0.17,
-                                  fit: BoxFit.cover,
+                              return GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => PromocionesView(),
+                                    ),
+                                  );
+                                },
+                                child: ClipRRect(
+                                  child: Image.network(
+                                    _descuentos[index].image,
+                                    width: media.width * 0.9,
+                                    height: media.height * 0.17,
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
                               );
                             },

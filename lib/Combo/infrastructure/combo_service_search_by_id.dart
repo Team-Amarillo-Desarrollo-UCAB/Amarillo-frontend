@@ -23,18 +23,17 @@ class ComboServiceSearchById {
       final Map<String, dynamic> data = json.decode(response.body);
       final comboData = ComboData.fromJson(data);
       return Combo(
-        id_product: comboData.id,
-            images: comboData.images
-                .map((imageUrl) => NetworkImage(imageUrl))
-                .toList(),
-            productId: comboData.productId,
-            name: comboData.name,
-            price: comboData.price,
-            description: comboData.description,
-            peso: '${comboData.weight} ${comboData.measurement}',
-            discount: comboData.discount,
-            category: comboData.category
-      );
+          id_product: comboData.id,
+          images: comboData.images
+              .map((imageUrl) => NetworkImage(imageUrl))
+              .toList(),
+          productId: comboData.productId,
+          name: comboData.name,
+          price: comboData.price,
+          description: comboData.description,
+          peso: '${comboData.weight} ${comboData.measurement}',
+          discount: comboData.discount,
+          category: comboData.category);
     } else {
       throw Exception('Error al obtener el combo');
     }

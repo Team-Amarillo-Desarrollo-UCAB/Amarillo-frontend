@@ -27,12 +27,11 @@ class ProductPopularService {
       );
 
       if (response.statusCode == 200) {
-        final Map<String, dynamic> data = json.decode(response.body);
+        final List<dynamic> data = json.decode(response.body);
 
-        final productsList = data.values.toList();
-
-        return productsList.map((json) {
-          final productData = ProductData.fromJson(json);
+        return data.map((json) {
+          final productData =
+              ProductData.fromJson(json as Map<String, dynamic>);
           return Product(
             id_product: productData.id_product,
             images: productData.images

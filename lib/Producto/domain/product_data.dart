@@ -3,7 +3,7 @@ class ProductData {
   final String name;
   final String price;
   final String unitMeasure;
-  final double quantity;
+  final String quantity;
   final String description;
   final List<dynamic> images;
   final List<dynamic> category;
@@ -22,17 +22,17 @@ class ProductData {
 
   factory ProductData.fromJson(Map<String, dynamic> json) {
     return ProductData(
-      id_product: json['id_product'] ?? 'ERROR01',
+      id_product: json['id'] ?? 'ERROR01',
       images: List<dynamic>.from(json['images'] ??
           [
             'https://t4.ftcdn.net/jpg/04/99/93/31/360_F_499933117_ZAUBfv3P1HEOsZDrnkbNCt4jc3AodArl.jpg'
           ]),
-      name: json['nombre'] ?? 'Nombre no disponible',
-      description: json['descripcion'] ?? '',
-      price: json['precio'] ?? '0',
-      unitMeasure: json['unidad_medida'] ?? '',
-      quantity: double.parse(json['cantidad_medida'] ?? '0'),
-      category: List<String>.from(json['category'] ?? []),
+      name: json['name'] ?? 'Nombre no disponible',
+      description: json['description'] ?? '',
+      price: (json['price'] ?? 0).toString(),
+      unitMeasure: json['measurement'] ?? '',
+      quantity: (json['weight'] ?? 0).toString(),
+      category: List<String>.from(json['categories'] ?? []),
       discount: json['discount'] ?? '0',
     );
   }

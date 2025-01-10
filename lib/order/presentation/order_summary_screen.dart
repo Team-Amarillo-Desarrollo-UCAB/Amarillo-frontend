@@ -225,11 +225,11 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildPriceRow("Subtotal", order.subTotal),
-                      _buildPriceRow("Shipping fee", order.deliveryFee),
-                      _buildPriceRow("Descuento", order.discount.toDouble()),
+                      _buildPriceRow("Subtotal", double.parse(order.subTotal)),
+                      _buildPriceRow("Shipping fee", double.parse(order.deliveryFee)),
+                      _buildPriceRow("Descuento", double.parse(order.discount)),
                       Divider(),
-                      _buildPriceRow("Total", order.totalAmount, isTotal: true),
+                      _buildPriceRow("Total", double.parse(order.totalAmount), isTotal: true),
                     ],
                   ),
                   SizedBox(height: 16),
@@ -330,33 +330,40 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
 
   Map<String, dynamic> _getOrderStatusDetails(String status) {
     switch (status) {
-      case "Creada" :
+      case "CREATED" :
         return {
           "icon": Icons.check_circle,
           "iconColor": Colors.green,
           "textColor": Colors.green,
           "backgroundColor": Colors.green[100],
         };
-      case "Entregada":
+      case "DELIVERED":
         return {
           "icon": Icons.check_circle,
           "iconColor": Colors.green,
           "textColor": Colors.green,
           "backgroundColor": Colors.green[100],
         };
-      case "En camino":
+      case "SHIPPED":
         return {
           "icon": Icons.access_time,
           "iconColor": Colors.orange,
           "textColor": Colors.orange,
           "backgroundColor": Colors.orange[100],
         };
-      case "Cancelada":
+      case "CANCELLED":
         return {
           "icon": Icons.cancel,
           "iconColor": Colors.red,
           "textColor": Colors.red,
           "backgroundColor": Colors.red[100],
+        };
+        case "BEING PROCESSED":
+        return {
+          "icon": Icons.access_time,
+          "iconColor": Colors.orange,
+          "textColor": Colors.orange,
+          "backgroundColor": Colors.orange[100],
         };
       default:
         return {
