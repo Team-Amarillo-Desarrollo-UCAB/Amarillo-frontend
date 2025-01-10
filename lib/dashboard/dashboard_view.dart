@@ -1,122 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'Users/domain/user_profile.dart';
-import 'api/firebase_api.dart';
-import 'common/presentation/startup_view.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'common/presentation/main_tabview.dart';
-
-Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  await FirebaseApi().initNotifications();
-  final userProfile = await UserProfile.loadFromPreferences();
-  runApp(MultiProvider(providers: [
-    ChangeNotifierProvider(create: (_) => userProfile),
-  ], child: MyApp()));
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'GoDely',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        fontFamily: "Metropolis",
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-      ),
-      home: const StartupView(),
-    );
-  }
-}
-
-
-
 // import 'package:flutter/material.dart';
 // import 'package:fl_chart/fl_chart.dart';
-
-// class NetProfitChart extends StatelessWidget {
-//   final List<ProfitData> data;
-
-//   const NetProfitChart({
-//     Key? key,
-//     required this.data,
-//   }) : super(key: key);
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return SizedBox(
-//       height: 300,
-//       child: Row(
-//         children: [
-//           Expanded(
-//             flex: 2,
-//             child: PieChart(
-//               PieChartData(
-//                 sectionsSpace: 2,
-//                 centerSpaceRadius: 40,
-//                 sections: data.map((item) {
-//                   return PieChartSectionData(
-//                     value: item.value,
-//                     title: '${item.value}',
-//                     titleStyle: const TextStyle(
-//                       fontSize: 12,
-//                       fontWeight: FontWeight.bold,
-//                       color: Colors.white,
-//                     ),
-//                     color: item.color,
-//                     radius: 100,
-//                     showTitle: true,
-//                   );
-//                 }).toList(),
-//               ),
-//             ),
-//           ),
-//           Expanded(
-//             flex: 1,
-//             child: Padding(
-//               padding: const EdgeInsets.only(left: 16.0),
-//               child: Column(
-//                 mainAxisAlignment: MainAxisAlignment.center,
-//                 crossAxisAlignment: CrossAxisAlignment.start,
-//                 children: data.map((item) {
-//                   return Padding(
-//                     padding: const EdgeInsets.symmetric(vertical: 4.0),
-//                     child: Row(
-//                       children: [
-//                         Container(
-//                           width: 12,
-//                           height: 12,
-//                           decoration: BoxDecoration(
-//                             color: item.color,
-//                             shape: BoxShape.circle,
-//                           ),
-//                         ),
-//                         const SizedBox(width: 8),
-//                         Expanded(
-//                           child: Text(
-//                             item.name,
-//                             style: const TextStyle(
-//                               fontSize: 12,
-//                             ),
-//                             overflow: TextOverflow.ellipsis,
-//                           ),
-//                         ),
-//                       ],
-//                     ),
-//                   );
-//                 }).toList(),
-//               ),
-//             ),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
 
 // class SalesAnalysisView extends StatelessWidget {
 //   final List<ProductData> productsData;
@@ -279,12 +162,26 @@ class MyApp extends StatelessWidget {
 //     );
 //   }
 
-// Widget _buildNetProfitCard() {
-//   return _buildCard(
-//     'Net Profit for This Month',
-//     NetProfitChart(data: profitData),
-//   );
-// }
+//   Widget _buildNetProfitCard() {
+//     return _buildCard(
+//       'Net Profit for This Month',
+//       SizedBox(
+//         height: 200,
+//         child: PieChart(
+//           PieChartData(
+//             sections: profitData.map((data) {
+//               return PieChartSectionData(
+//                 value: data.percentage,
+//                 color: data.color,
+//                 title: '${data.percentage.toStringAsFixed(1)}%',
+//                 radius: 60,
+//               );
+//             }).toList(),
+//           ),
+//         ),
+//       ),
+//     );
+//   }
 
 //   Widget _buildCard(String title, Widget child) {
 //     return Card(
@@ -342,13 +239,11 @@ class MyApp extends StatelessWidget {
 // }
 
 // class ProfitData {
-//   final String name;
-//   final double value;
+//   final double percentage;
 //   final Color color;
 
 //   ProfitData({
-//     required this.name,
-//     required this.value,
+//     required this.percentage,
 //     required this.color,
 //   });
 // }
@@ -364,24 +259,17 @@ class MyApp extends StatelessWidget {
 //       ],
 //       trendData: List.generate(
 //         6,
-//             (index) => TrendData(
+//         (index) => TrendData(
 //           x: index.toDouble(),
 //           actual: 400 + 200 * index.toDouble(),
 //           target: 300 + 250 * index.toDouble(),
 //         ),
 //       ),
 //       profitData: [
-//   ProfitData(name: 'Rosa', value: 169, color: Colors.pink[100]!),
-//   ProfitData(name: 'Lavanda', value: 143, color: Colors.purple[200]!),
-//   ProfitData(name: 'Benzil Benzoato', value: 124, color: Colors.blue[300]!),
-//   ProfitData(name: 'Almizole', value: 118, color: Colors.teal[300]!),
-//   ProfitData(name: 'Sandalo', value: 116, color: Colors.green[400]!),
-//   ProfitData(name: 'Alcohol', value: 110, color: Colors.indigo[900]!),
-//   ProfitData(name: 'Jazmin', value: 106, color: Colors.blueGrey),
-//   ProfitData(name: 'Pomelo', value: 92, color: Colors.grey[600]!),
-//   ProfitData(name: 'Limón', value: 72, color: Colors.lime[300]!),
-//   ProfitData(name: 'Naranja', value: 60, color: Colors.orange[200]!),
-// ],
+//         ProfitData(percentage: 41.49, color: Colors.blue),
+//         ProfitData(percentage: 34.98, color: Colors.pink),
+//         ProfitData(percentage: 23.47, color: Colors.cyan),
+//       ],
 //     ),
 //   ));
 // }

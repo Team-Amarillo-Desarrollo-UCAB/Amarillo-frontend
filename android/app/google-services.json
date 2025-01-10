@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "257728990800",
+    "project_id": "amarillo-backend-notification",
+    "storage_bucket": "amarillo-backend-notification.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:257728990800:android:aa094a7aa341612dc9cb55",
+        "android_client_info": {
+          "package_name": "com.example.desarrollo_frontend"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBkHL_rv1yDMk07rC_wwX-YiH51c8z2_EE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

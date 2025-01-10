@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../common/infrastructure/base_url.dart';
 import '../../common/presentation/color_extension.dart';
 import '../../common/presentation/common_widget/round_button.dart';
 import 'login_view.dart';
@@ -13,6 +14,27 @@ class WelcomeView extends StatefulWidget {
 }
 
 class _WelcomeViewState extends State<WelcomeView> {
+
+String _selectedBaseUrl = 'AMARILLO';
+
+  void _updateBaseUrl(String selected) {
+  setState(() {
+    _selectedBaseUrl = selected;
+    switch (selected) {
+      case 'AMARILLO':
+        BaseUrl().BASE_URL = BaseUrl().AMARILLO;
+        break;
+      case 'ORANGE':
+        BaseUrl().BASE_URL = BaseUrl().ORANGE;
+        break;
+      case 'VERDE':
+        BaseUrl().BASE_URL = BaseUrl().VERDE;
+        break;
+    }
+  });
+  print("Base URL seleccionada: ${BaseUrl().BASE_URL}");
+}
+
   @override
   Widget build(BuildContext context) {
     //var media = MediaQuery.of(context).size;
@@ -82,6 +104,20 @@ class _WelcomeViewState extends State<WelcomeView> {
                   ),
                 ),
                 const SizedBox(height: 20.0), 
+                          const SizedBox(height: 20),
+              DropdownButton<String>(
+                value: _selectedBaseUrl,
+                items: const [
+                  DropdownMenuItem(value: 'AMARILLO', child: Text('AMARILLO')),
+                  DropdownMenuItem(value: 'ORANGE', child: Text('ORANGE')),
+                  DropdownMenuItem(value: 'VERDE', child: Text('VERDE')),
+                ],
+                onChanged: (value) {
+                  if (value != null) {
+                    _updateBaseUrl(value);
+                  }
+                },
+              ),
               ],
             );
           },
