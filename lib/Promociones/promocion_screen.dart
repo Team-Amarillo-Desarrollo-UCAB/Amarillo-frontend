@@ -7,6 +7,8 @@ import 'package:desarrollo_frontend/Combo/presentation/combo_widget.dart';
 import 'package:desarrollo_frontend/Descuento/Domain/descuento.dart';
 import 'package:desarrollo_frontend/Descuento/Infrastructure/descuento_service.dart';
 import 'package:desarrollo_frontend/Descuento/Infrastructure/descuento_service_search_by_id.dart';
+import 'package:desarrollo_frontend/Producto/domain/product.dart';
+import 'package:desarrollo_frontend/Producto/infrastructure/product_service.dart';
 import 'package:desarrollo_frontend/common/infrastructure/base_url.dart';
 import 'package:desarrollo_frontend/common/presentation/main_tabview.dart';
 import 'package:flutter/material.dart';
@@ -151,7 +153,7 @@ class _PromocionesViewState extends State<PromocionesView> {
           onNotification: (ScrollNotification) {
             if (ScrollNotification.metrics.pixels ==
                 ScrollNotification.metrics.maxScrollExtent) {
-              //_loadMoreProducts();
+              _loadMoreProducts();
             }
             return true;
           },
