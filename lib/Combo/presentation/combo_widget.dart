@@ -118,7 +118,7 @@ class _ComboCardState extends State<ComboCard> {
                                         ),
                                       ),
                                       Text(
-                                        '${(double.parse(widget.combo.price) * (1 - _descuento!.percentage / 100)).toStringAsFixed(2)} \$',
+                                        '${(double.parse(widget.combo.price) * (1 - _descuento!.percentage)).toStringAsFixed(2)} \$',
                                         style: const TextStyle(
                                           fontSize: 18,
                                           fontWeight: FontWeight.bold,
