@@ -297,12 +297,22 @@ class _HomeViewState extends State<HomeView> {
                           child: PageView.builder(
                             itemCount: _descuentos.length,
                             itemBuilder: (context, index) {
-                              return ClipRRect(
-                                child: Image.network(
-                                  _descuentos[index].image,
-                                  width: media.width * 0.9,
-                                  height: media.height * 0.17,
-                                  fit: BoxFit.cover,
+                              return GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => PromocionesView(),
+                                    ),
+                                  );
+                                },
+                                child: ClipRRect(
+                                  child: Image.network(
+                                    _descuentos[index].image,
+                                    width: media.width * 0.9,
+                                    height: media.height * 0.17,
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
                               );
                             },
