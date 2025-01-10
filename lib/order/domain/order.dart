@@ -6,10 +6,10 @@ class Order {
   final double longitude;
   final String directionName;
   final String status;
-  final double totalAmount;
-  final double subTotal;
-  final double deliveryFee;
-  final double discount;
+  final String totalAmount;
+  final String subTotal;
+  final String deliveryFee;
+  final String discount;
   final String currency;
   final String paymentMethod;
   final String creationDate;

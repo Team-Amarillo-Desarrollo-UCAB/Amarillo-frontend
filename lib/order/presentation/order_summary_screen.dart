@@ -225,11 +225,11 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildPriceRow("Subtotal", order.subTotal),
-                      _buildPriceRow("Shipping fee", order.deliveryFee),
-                      _buildPriceRow("Descuento", order.discount),
+                      _buildPriceRow("Subtotal", double.parse(order.subTotal)),
+                      _buildPriceRow("Shipping fee", double.parse(order.deliveryFee)),
+                      _buildPriceRow("Descuento", double.parse(order.discount)),
                       Divider(),
-                      _buildPriceRow("Total", order.totalAmount, isTotal: true),
+                      _buildPriceRow("Total", double.parse(order.totalAmount), isTotal: true),
                     ],
                   ),
                   SizedBox(height: 16),

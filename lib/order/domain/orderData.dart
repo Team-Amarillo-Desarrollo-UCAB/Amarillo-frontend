@@ -2,9 +2,9 @@ class OrderData {
   final String id;
   final String orderState;
   final DateTime orderCreatedDate;
-  final double totalAmount;
-  final double subTotal;
-  final double shippingFee;
+  final String totalAmount;
+  final String subTotal;
+  final String shippingFee;
   final String currency;
   final double latitude;
   final double longitude;
@@ -14,7 +14,7 @@ class OrderData {
   final DateTime orderReciviedDate;
   final String orderReport;
   final Map<String, dynamic> orderPayment;
-  final double orderDiscount;
+  final String orderDiscount;
 
   OrderData({
     required this.id,
@@ -40,9 +40,9 @@ class OrderData {
       id: json['id']?? 'ERROR01',
       orderState: json['orderState'] ?? ' ',
       orderCreatedDate: DateTime.parse(json['orderCreatedDate'] ?? ' '),
-      totalAmount: double.parse(json['totalAmount'] ?? '0.0'),
-      subTotal: double.parse(json['sub_total'] ?? '0.0'),
-      shippingFee: double.parse(json['shipping_fee'] ?? '0.0'),
+      totalAmount: (json['totalAmount'] ?? 0.0).toString(),
+      subTotal: (json['sub_total'] ?? 0.0).toString(),
+      shippingFee: (json['shipping_fee'] ?? 0.0).toString(),
       currency: json['currency'] ?? 'USD',
       latitude: double.tryParse(json['orderDirection']['lat']) ?? 0.0,
       longitude: double.tryParse(json['orderDirection']['long']) ?? 0.0,
@@ -52,7 +52,7 @@ class OrderData {
       orderReciviedDate: DateTime.parse(json['orderReciviedDate'] ?? ' '),
       orderReport: json['orderReport'] ?? ' ',
       orderPayment: Map<String, dynamic>.from(json['orderPayment'] ?? {}),
-      orderDiscount: double.parse(json['orderDiscount'] ?? '0.0'),
+      orderDiscount: (json['orderDiscount'] ?? 0.0).toString(),
     );
   }
 }

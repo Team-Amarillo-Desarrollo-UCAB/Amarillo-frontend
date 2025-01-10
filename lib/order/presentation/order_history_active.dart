@@ -110,7 +110,7 @@ class _HistoryOrderScreenState extends State<OrderHistoryScreen> {
       });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error al cargar más órdenes: $e')),
+        SnackBar(content: Text('Error al cargar más órdenes, ricardo: $e')),
       );
     } finally {
       setState(() => _isLoading = false);
@@ -227,7 +227,7 @@ class _HistoryOrderScreenState extends State<OrderHistoryScreen> {
                                             fontSize: 16, fontWeight: FontWeight.bold)),
                                     const SizedBox(height: 4),
                                     Text(
-                                      "\$ ${(order.totalAmount).toStringAsFixed(1)}",
+                                      "\$ ${(order.totalAmount)}",
                                       style: const TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold,
@@ -339,7 +339,7 @@ class _HistoryOrderScreenState extends State<OrderHistoryScreen> {
                                             fontSize: 16, fontWeight: FontWeight.bold)),
                                     const SizedBox(height: 4),
                                     Text(
-                                      "\$ ${(order.totalAmount).toStringAsFixed(1)}",
+                                      "\$ ${(order.totalAmount)}",
                                       style: const TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold,
