@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../login/infrastructure/login_service.dart'; // Servicio de autenticación
 import '../../login/presentation/welcome_view.dart'; // Vista de bienvenida
+import '../infrastructure/base_url.dart';
 import 'main_tabview.dart'; // Vista principal
 
 class StartupView extends StatefulWidget {
@@ -12,6 +13,7 @@ class StartupView extends StatefulWidget {
 
 class _StartupViewState extends State<StartupView> {
   final AuthService _authService = AuthService(); 
+  
 
   @override
   void initState() {
@@ -50,6 +52,8 @@ class _StartupViewState extends State<StartupView> {
       MaterialPageRoute(builder: (context) => const WelcomeView()),
     );
   }
+
+
 
   @override
   Widget build(BuildContext context) {
