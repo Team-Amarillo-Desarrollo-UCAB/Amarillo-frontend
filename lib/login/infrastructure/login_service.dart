@@ -9,6 +9,7 @@ class AuthService {
   final String baseUrl = BaseUrl().BASE_URL;
   final SessionManager _sessionManager = SessionManager();
   late final UserProfile userProfile;
+  String url = '';
 
   AuthService() {
     _initializeUserProfile();
@@ -19,6 +20,7 @@ class AuthService {
   }
   Future<Map<String, dynamic>> login(String email, String password) async {
     final url = Uri.parse('$baseUrl/auth/login');
+    final token = '';
     try {
       final response = await http.post(
         url,
@@ -28,17 +30,17 @@ class AuthService {
           "password": password,
         }),
       );
-
+      print(response.statusCode);
       if (response.statusCode == 201) {
         final data = json.decode(response.body);
 
         if (data.containsKey("token")) {
           final token = data["token"];
-          final user = data["user"];
           print("Token recibido del servidor: $token");
           await TokenUser().setToken(token);
           await _sessionManager.saveToken(token);
-          isValidToken(token);
+          final id = data["user"]["id"];
+          getInfoUser(token, id);
         }
         return Future.value(data);
       } else {
@@ -50,30 +52,81 @@ class AuthService {
   }
 
   Future<bool> isValidToken(String token) async {
-    final url = Uri.parse('$baseUrl/auth/current');
-    try {
-      final response = await http.get(
-        url,
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Content-Type': 'application/json',
-        },
-      );
-      final data = json.decode(response.body);
-      final name = data['name'] ?? '';
-      final userEmail = data['email'] ?? '';
-      final phoneNumber = data['phone'] ?? '';
-      final userImage = data["image"] ?? 'https://cdn-icons-png.flaticon.com/512/10337/10337609.png';
-      userProfile.userProfile(name, phoneNumber, userEmail, userImage);
-      userProfile.reloadFromPreferences();
-      if (response.statusCode == 200) {
-        
-      return true;
+      final url = Uri.parse('$baseUrl/auth/current');
+      try {
+        final response = await http.get(
+          url,
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+        );
+        final data = json.decode(response.body);
+        final name = data['name'] ?? '';
+        final userEmail = data['email'] ?? '';
+        final phoneNumber = data['phone'] ?? '';
+        final userImage = data["image"] ?? 'https://cdn-icons-png.flaticon.com/512/10337/10337609.png';
+        userProfile.userProfile(name, phoneNumber, userEmail, userImage);
+        userProfile.reloadFromPreferences();
+        if (response.statusCode == 200) {
+          return true;
+        }
+        return response.statusCode == 200;
+      } catch (e) {
+        return false;
+      }
+  }
+Future<bool> getInfoUser(String token, String id) async {
+    if (BaseUrl().BASE_URL == BaseUrl().AMARILLO) {
+      final url = Uri.parse('$baseUrl/auth/current');
+      try {
+        final response = await http.get(
+          url,
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+        );
+        final data = json.decode(response.body);
+        final name = data['name'] ?? '';
+        final userEmail = data['email'] ?? '';
+        final phoneNumber = data['phone'] ?? '';
+        final userImage = data["image"] ?? 'https://cdn-icons-png.flaticon.com/512/10337/10337609.png';
+        userProfile.userProfile(name, phoneNumber, userEmail, userImage);
+        userProfile.reloadFromPreferences();
+        if (response.statusCode == 200) {
+          return true;
+        }
+        return response.statusCode == 200;
+      } catch (e) {
+        return false;
+      }
+    } else if (BaseUrl().BASE_URL == BaseUrl().ORANGE) {
+      final url = Uri.parse('$baseUrl/user/one/$id');
+      try {
+        final response = await http.get(
+          url,
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+        );
+        final data = json.decode(response.body);
+        final name = data['name'] ?? '';
+        final userEmail = data['email'] ?? '';
+        final phoneNumber = data['phone'] ?? '';
+        final userImage = data["image"] ?? 'https://cdn-icons-png.flaticon.com/512/10337/10337609.png';
+        userProfile.userProfile(name, phoneNumber, userEmail, userImage);
+        userProfile.reloadFromPreferences();
+        if (response.statusCode == 200) {
+          return true;
+        }
+        return response.statusCode == 200;
+      } catch (e) {
+        return false;
+      }
     }
-      return response.statusCode == 200;
-    } catch (e) {
-      return false;
-    }
+    return false;
   }
 
   Future<String> searchImage(String token) async {

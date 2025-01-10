@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../common/infrastructure/base_url.dart';
 import '../../common/presentation/color_extension.dart';
 import '../../common/presentation/common_widget/round_button.dart';
 import '../../common/presentation/common_widget/round_textfield.dart';
@@ -32,9 +33,11 @@ class _LoginViewState extends State<LoginView> {
   }
 
   void _checkSession() async {
+    
     final token = await _authService.getToken(); 
     print("Token recuperado: $token");
     if (token != null) {
+      if (BaseUrl().BASE_URL == BaseUrl().AMARILLO) {
       final isValid = await _authService.isValidToken(token);
       if (isValid) {
         Navigator.pushReplacement(
@@ -43,6 +46,11 @@ class _LoginViewState extends State<LoginView> {
         );
       }
     }
+    Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const MainTabView()),
+        );
+  }
   }
 
   void _login() async {

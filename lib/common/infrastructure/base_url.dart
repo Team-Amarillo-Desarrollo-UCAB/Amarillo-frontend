@@ -5,8 +5,8 @@ class BaseUrl {
 
   String BASE_URL = '';
   final String AMARILLO = 'https://amarillo-backend-production.up.railway.app';
-  final String ORANGE = 'https://orangeteam-deliverybackend-production.up.railway.app/api#/ ';
-  final String VERDE = 'https://godelybackverde.up.railway.app/docs#/ ';
+  final String ORANGE = 'https://orangeteam-deliverybackend-production.up.railway.app';
+  final String VERDE = 'https://godelybackgreen.up.railway.app/docs';
 
   factory BaseUrl() {
     return _instance;
