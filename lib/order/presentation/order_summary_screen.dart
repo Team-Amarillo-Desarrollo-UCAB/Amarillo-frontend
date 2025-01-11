@@ -169,7 +169,40 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 16),
+                  SizedBox(height: 8),
+                  if (order.orderReport != ' ' && order.orderReport.isNotEmpty)
+                    Container(
+                      margin: const EdgeInsets.symmetric(vertical: 16.0),
+                      padding: const EdgeInsets.all(16.0),
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Colors.orange[100], 
+                        borderRadius: BorderRadius.circular(8.0),
+                        border: Border.all(color: Colors.orange, width: 1.5),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Reporte de la Orden",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.orange[800],
+                            ),
+                          ),
+                          SizedBox(height: 8),
+                          Text(
+                            order.orderReport,
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey[800],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  SizedBox(height: 8),
                   // Items
                   Text("Items",
                       style:
@@ -278,13 +311,13 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
             ),
           ),
           // Botón Reordenar
-          if (order.status == "Entregada")
+          if (order.status == "DELIVERED")
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: ElevatedButton(
                 onPressed: () {},
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.grey,
+                  backgroundColor: Colors.orange,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8.0),
                   ),

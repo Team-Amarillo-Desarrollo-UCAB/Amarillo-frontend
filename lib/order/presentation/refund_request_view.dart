@@ -1,20 +1,56 @@
+import 'package:desarrollo_frontend/order/infrastructure/order_service_report_problem.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 
+import '../../common/infrastructure/base_url.dart';
+
 class RefundRequestView extends StatefulWidget {
+  final String orderId;
+
+  RefundRequestView({required this.orderId});
+
   @override
   _RefundRequestViewState createState() => _RefundRequestViewState();
 }
 
 class _RefundRequestViewState extends State<RefundRequestView> {
-  String? selectedProblem; 
+  String? selectedProblem;
   final TextEditingController commentController = TextEditingController();
+  final OrderServiceReportProblem orderService = OrderServiceReportProblem(BaseUrl().BASE_URL);
+
+  Future<void> _submitRefundRequest() async {
+    if (selectedProblem == null || commentController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Por favor, seleccione un problema y deje un comentario.'),
+      ));
+      return;
+    }
+    final String fullComment = '$selectedProblem: ${commentController.text}';
+    try {
+      final response = await orderService.reportProblem(widget.orderId, fullComment);
+
+      if (response.isSuccessful) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Reporte enviado con éxito.'),
+        ));
+        Navigator.pop(context);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Error: ${response.errorMessage}'),
+        ));
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Ocurrió un error, por favor intente nuevamente.'),
+      ));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Reembolso'),
+        title: Text('Reportar orden'),
         centerTitle: true,
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
@@ -93,7 +129,7 @@ class _RefundRequestViewState extends State<RefundRequestView> {
                     icon: Icon(Icons.clear),
                     onPressed: () {
                       setState(() {
-                        selectedProblem = null; 
+                        selectedProblem = null;
                       });
                     },
                   ),
@@ -103,6 +139,7 @@ class _RefundRequestViewState extends State<RefundRequestView> {
             TextField(
               controller: commentController,
               maxLines: 4,
+              maxLength: 150,
               decoration: InputDecoration(
                 hintText: 'Deja un comentario sobre el problema',
                 border: OutlineInputBorder(
@@ -115,10 +152,7 @@ class _RefundRequestViewState extends State<RefundRequestView> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {
-                  print('Problema seleccionado: $selectedProblem');
-                  print('Comentario: ${commentController.text}');
-                },
+                onPressed: _submitRefundRequest, 
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.orange,
                   shape: RoundedRectangleBorder(
@@ -127,7 +161,7 @@ class _RefundRequestViewState extends State<RefundRequestView> {
                   padding: EdgeInsets.symmetric(vertical: 16),
                 ),
                 child: Text(
-                  'Solicitar reembolso',
+                  'Reportar problema',
                   style: TextStyle(fontSize: 16, color: Colors.white),
                 ),
               ),

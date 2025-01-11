@@ -35,6 +35,7 @@ class OrderServiceActive {
         longitude: orderData.longitude,
         directionName: orderData.directionName,
         status: orderData.orderState,
+        orderReport: orderData.orderReport,
         totalAmount: orderData.totalAmount,
         subTotal: orderData.subTotal,
         deliveryFee: orderData.shippingFee,
