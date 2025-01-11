@@ -44,7 +44,6 @@ dependencies:
   google_maps_flutter: ^2.10.0
   dropdown_button2: ^2.0.1
   js: ^0.6.3
-  location: ^4.4.0
 
 dev_dependencies:
   flutter_test:
