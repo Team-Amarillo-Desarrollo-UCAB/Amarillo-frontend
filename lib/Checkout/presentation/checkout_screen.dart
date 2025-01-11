@@ -1,5 +1,6 @@
 import 'package:desarrollo_frontend/Checkout/domain/direccion.dart';
 import 'package:desarrollo_frontend/Checkout/infrastructure/payment_service.dart';
+import 'package:desarrollo_frontend/Checkout/presentation/Agregar_Direccion.dart';
 import 'package:desarrollo_frontend/Checkout/presentation/direcciones_screen.dart';
 import 'package:desarrollo_frontend/Checkout/presentation/fecha_hora_widget.dart';
 import 'package:desarrollo_frontend/Checkout/presentation/metodo_de_pago_widget.dart';
@@ -30,13 +31,9 @@ class CheckoutScreen extends StatefulWidget {
 
 class CheckoutScreenState extends State<CheckoutScreen> {
   OrderRepository orderRepository = OrderRepository();
-  final List<Direccion> direcciones = [
-    Direccion(
-      nombre: 'Home "Fiscal"',
-      direccionCompleta: 'Venezuela, Caracas...',
-    ),
-    Direccion(nombre: 'Oficina', direccionCompleta: 'Venezuela, Caracas...'),
-  ];
+  final List<Direccion> _direcciones = [];
+  DateTime? _selectedDateTime;
+
   void _clearCart() {
     setState(() {
       widget.listCartItems.clear();
@@ -55,11 +52,11 @@ class CheckoutScreenState extends State<CheckoutScreen> {
   final Map<String, TextEditingController> controllers = {};
   String selectedPaymentMethod = '';
   List<PaymentMethod> paymentFields = [];
-  
-  
+
   Future<void> _fetchPaymentMethods() async {
     try {
-      List<PaymentMethod> paymentMethod = await paymentService.getPaymentMethods(1);
+      List<PaymentMethod> paymentMethod =
+          await paymentService.getPaymentMethods(1);
       setState(() {
         paymentFields = paymentMethod;
       });
@@ -68,6 +65,18 @@ class CheckoutScreenState extends State<CheckoutScreen> {
         SnackBar(content: Text("Error al obtener los métodos de pago: $error")),
       );
     }
+  }
+
+  void _addDireccion(Direccion direccion) {
+    setState(() {
+      _direcciones.add(direccion);
+    });
+  }
+
+  void _removeDireccion(Direccion direccion) {
+    setState(() {
+      _direcciones.remove(direccion);
+    });
   }
 
   @override
@@ -110,9 +119,16 @@ class CheckoutScreenState extends State<CheckoutScreen> {
               ),
             ),
             ListaDirecciones(
-              direcciones: direcciones,
+              direcciones: _direcciones,
               onAddDireccion: () {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AddDireccionDialog(onAdd: _addDireccion);
+                  },
+                );
               },
+              onRemoveDireccion: _removeDireccion,
             ),
             const SizedBox(height: 10),
             const Divider(),
@@ -127,7 +143,13 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                 ),
               ),
             ),
-            const FechaHoraSelector(),
+            FechaHoraSelector(
+              onDateTimeSelected: (selectedDateTime) {
+                setState(() {
+                  _selectedDateTime = selectedDateTime;
+                });
+              },
+            ),
             const SizedBox(height: 10),
             const Divider(),
             const Padding(
@@ -141,7 +163,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                 ),
               ),
             ),
-              MetodosDePago(
+            MetodosDePago(
               paymentMethods: paymentFields,
               onSelectedMethod: (method) {
                 setState(() {
@@ -151,8 +173,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
               },
             ),
             const Divider(),
-            if (selectedPaymentMethod.isNotEmpty)
-              ..._buildPaymentFields(),
+            if (selectedPaymentMethod.isNotEmpty) ..._buildPaymentFields(),
           ],
         ),
       ),
@@ -171,10 +192,12 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                     onPressed: () async {
                       try {
                         if (!_validateFields()) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text("Por favor, complete todos los campos.")),
-                            );
-                          }
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                                content: Text(
+                                    "Por favor, complete todos los campos.")),
+                          );
+                        }
                         await widget.cartService
                             .createOrder(widget.listCartItems);
                         showDialog(
@@ -191,15 +214,14 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                   //   items: widget.cartService.orderItems,
                                   // ));
                                   _clearCart();
-                                Navigator.of(context)
-                                    .pop(); 
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => MainTabView()//OrderHistoryScreen(orderRepository: orderRepository,
-                                    ),
-                                  
-                                );
+                                  Navigator.of(context).pop();
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            MainTabView() //OrderHistoryScreen(orderRepository: orderRepository,
+                                        ),
+                                  );
                                 },
                                 child: const Text('Continuar'),
                               ),
@@ -216,8 +238,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                             actions: [
                               TextButton(
                                 onPressed: () {
-                                  Navigator.of(context)
-                                      .pop();
+                                  Navigator.of(context).pop();
                                 },
                                 child: const Text('Aceptar'),
                               ),
@@ -233,9 +254,10 @@ class CheckoutScreenState extends State<CheckoutScreen> {
       ),
     );
   }
+
   void _generatePaymentFields(String method) {
     setState(() {
-      controllers.clear(); 
+      controllers.clear();
       if (method == 'c9710a23-6748-4841-aaf3-007a0a4caf74') {
         controllers['email'] = TextEditingController();
       } else if (method == 'f8386cbb-c503-450c-9829-6548b2c60b7c') {
@@ -251,37 +273,40 @@ class CheckoutScreenState extends State<CheckoutScreen> {
       fields.add(
         TextField(
           controller: controllers['email'],
-           keyboardType: TextInputType.emailAddress,
+          keyboardType: TextInputType.emailAddress,
           decoration: InputDecoration(
             labelText: 'Paypal Email',
             border: OutlineInputBorder(),
           ),
         ),
       );
-    } else if (selectedPaymentMethod == 'f8386cbb-c503-450c-9829-6548b2c60b7c') {
+    } else if (selectedPaymentMethod ==
+        'f8386cbb-c503-450c-9829-6548b2c60b7c') {
       fields.add(
         TextField(
           controller: controllers['token'],
-                  keyboardType: TextInputType.text,
-                  decoration: const InputDecoration(
-                    labelText: 'Token de la tarjeta',
-                    border: OutlineInputBorder(),
-                  ),
-                ),
+          keyboardType: TextInputType.text,
+          decoration: const InputDecoration(
+            labelText: 'Token de la tarjeta',
+            border: OutlineInputBorder(),
+          ),
+        ),
       );
     }
     return fields;
   }
+
   bool _validateFields() {
-  if (selectedPaymentMethod == 'c9710a23-6748-4841-aaf3-007a0a4caf74') {
-    if (controllers['email'] == null || controllers['email']!.text.isEmpty) {
-      return false;
+    if (selectedPaymentMethod == 'c9710a23-6748-4841-aaf3-007a0a4caf74') {
+      if (controllers['email'] == null || controllers['email']!.text.isEmpty) {
+        return false;
+      }
+    } else if (selectedPaymentMethod ==
+        'f8386cbb-c503-450c-9829-6548b2c60b7c') {
+      if (controllers['token'] == null || controllers['token']!.text.isEmpty) {
+        return false;
+      }
     }
-  } else if (selectedPaymentMethod == 'f8386cbb-c503-450c-9829-6548b2c60b7c') {
-    if (controllers['token'] == null || controllers['token']!.text.isEmpty) {
-      return false;
-    }
+    return true;
   }
-  return true; 
-}
 }

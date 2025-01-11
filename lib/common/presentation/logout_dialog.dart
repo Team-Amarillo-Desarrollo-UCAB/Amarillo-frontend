@@ -50,7 +50,7 @@ void showLogoutConfirmationDialog(BuildContext context) {
               backgroundColor: Colors.orangeAccent,
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             ), // Estilo del botón
-            child: const Text("Sí, cerrar sesión"),
+            child: const Text("Sí, cerrar sesión", style: TextStyle(fontSize: 16, color: Colors.white)),
           ), // ElevatedButton
         ], // Botones del AlertDialog
       ); // AlertDialog

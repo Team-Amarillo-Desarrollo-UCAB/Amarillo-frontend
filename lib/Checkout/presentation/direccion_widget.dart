@@ -3,16 +3,14 @@ import 'package:flutter/material.dart';
 
 class DireccionWidget extends StatefulWidget {
   final Direccion direccion;
-  final VoidCallback onEdit;
+  final VoidCallback onRemove;
   final VoidCallback onSelect;
-
   const DireccionWidget({
     super.key,
     required this.direccion,
-    required this.onEdit,
+    required this.onRemove,
     required this.onSelect,
   });
-
   @override
   DireccionWidgetState createState() => DireccionWidgetState();
 }
@@ -47,8 +45,8 @@ class DireccionWidgetState extends State<DireccionWidget> {
             color: Colors.grey),
       ),
       trailing: IconButton(
-        icon: const Icon(Icons.edit, color: Colors.orange),
-        onPressed: widget.onEdit,
+        icon: const Icon(Icons.delete, color: Colors.orange),
+        onPressed: widget.onRemove,
       ),
       onTap: widget.onSelect,
     );

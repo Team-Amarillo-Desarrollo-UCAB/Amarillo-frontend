@@ -63,32 +63,37 @@ class _ProductViewState extends State<ProductView> {
   }
 
   Future<void> _loadMoreProducts() async {
-    if (_isLoading || !_hasMore) return;
+  if (_isLoading || !_hasMore) return;
+  setState(() {
+    _isLoading = true;
+  });
+  try {
+    List<Product> newProducts = await _productService.getProducts(_page);
     setState(() {
-      _isLoading = true;
-    });
-    try {
-      List<Product> newProducts = await _productService.getProducts(_page);
-      setState(() {
-        if (newProducts.isEmpty) {
-          _hasMore = false;
-        } else {
-          _product.addAll(newProducts);
-          for (var product in newProducts) {
-            _discountedPriceFutures[product.id_product] =
-                _getDiscountedPrice(product);
-          }
-          _page++;
-        }
-      });
-    } catch (error) {
-      print('Error al obtener productos: $error');
-    }
+      if (newProducts.isEmpty) {
+        _hasMore = false;
+      } else {
+        final filteredProducts = newProducts
+            .where((newProduct) => !_product.any((existingProduct) =>
+                existingProduct.id_product == newProduct.id_product))
+            .toList();
+        _product.addAll(filteredProducts);
 
-    setState(() {
-      _isLoading = false;
+        for (var product in filteredProducts) {
+          _discountedPriceFutures[product.id_product] =
+              _getDiscountedPrice(product);
+        }
+        _page++;
+      }
     });
+  } catch (error) {
+    print('Error al obtener productos: $error');
   }
+
+  setState(() {
+    _isLoading = false;
+  });
+}
 
   Future<void> _loadCategories() async {
     try {
@@ -115,32 +120,33 @@ class _ProductViewState extends State<ProductView> {
   }
 
   Future<void> _searchProductByName(String productName) async {
+  setState(() {
+    _isSearching = true;
+    _product.clear();
+    _discountedPriceFutures.clear(); 
+    _page = 1; 
+    _hasMore = true; 
+  });
+
+  String formattedProductName = Uri.encodeComponent(productName.trim());
+
+  try {
+    Product product =
+        await _productServiceSearch.getProductByName(formattedProductName);
     setState(() {
-      _isSearching = true;
+      _product = [product];
+      _discountedPriceFutures[product.id_product] =
+          _getDiscountedPrice(product); 
+      _isSearching = false;
+    });
+  } catch (error) {
+    setState(() {
+      _isSearching = false;
       _product.clear();
     });
-
-    String formattedProductName = productName
-        .toLowerCase()
-        .split(' ')
-        .map((word) => word[0].toUpperCase() + word.substring(1))
-        .join(' ');
-
-    try {
-      Product product =
-          await _productServiceSearch.getProductByName(formattedProductName);
-      setState(() {
-        _product = [product];
-        _isSearching = false;
-      });
-    } catch (error) {
-      setState(() {
-        _isSearching = false;
-        _product.clear();
-      });
-      print('Error al buscar producto: $error');
-    }
+    print('Error al buscar producto: $error');
   }
+}
 
   void _onSearchChanged() {
     if (_searchController.text.isNotEmpty) {

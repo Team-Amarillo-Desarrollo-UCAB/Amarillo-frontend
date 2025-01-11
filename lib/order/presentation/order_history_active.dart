@@ -1,5 +1,6 @@
 import 'package:desarrollo_frontend/Combo/infrastructure/combo_service_search_by_id.dart';
 import 'package:desarrollo_frontend/common/presentation/color_extension.dart';
+import 'package:desarrollo_frontend/order/presentation/refund_request_view.dart';
 import 'package:desarrollo_frontend/order/presentation/track_order_view.dart';
 import 'package:flutter/material.dart';
 import '../../Producto/infrastructure/product_service_search_by_id.dart';
@@ -282,7 +283,7 @@ class _HistoryOrderScreenState extends State<OrderHistoryScreen> {
                                             fetchOrders();
                                           },
                                           child: Text("Cancelar Orden",
-                                              style: TextStyle(color: TColor.secondaryText)),
+                                              style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
                                         ),
                                         TextButton(
                                           onPressed: () {
@@ -294,7 +295,7 @@ class _HistoryOrderScreenState extends State<OrderHistoryScreen> {
                                                       )),
                                             );
                                           },
-                                          child: Text("Track orden", style: TextStyle(color: TColor.primary)),
+                                          child: Text("Track orden", style: TextStyle(color: TColor.primary, fontWeight: FontWeight.bold)),
                                         ),
                                       ],
                                     ),
@@ -388,26 +389,28 @@ class _HistoryOrderScreenState extends State<OrderHistoryScreen> {
                                           ),
                                         ),
                                         const Spacer(),
-                                        TextButton(
-                                          onPressed: () {
-                                            cancelOrder(context, order.orderId);
-                                            fetchOrders();
-                                          },
-                                          child: Text("Cancelar Orden",
-                                              style: TextStyle(color: TColor.secondaryText)),
-                                        ),
+                                        if(order.status== 'CANCELLED')...[
                                         TextButton(
                                           onPressed: () {
                                             Navigator.push(
                                               context,
                                               MaterialPageRoute(
-                                                  builder: (context) => TrackOrderView(
+                                                  builder: (context) => RefundRequestView(
                                                         orderId: order.orderId,
                                                       )),
                                             );
                                           },
-                                          child: Text("Track orden", style: TextStyle(color: TColor.primary)),
+                                            child:
+                                            order.orderReport == ' ' 
+                                                ? Text("Reportar problema", style: TextStyle(fontSize: 16, color: TColor.primary, fontWeight: FontWeight.bold)) 
+                                                : Text("Reportar problema", style: TextStyle(fontSize: 14, color: Colors.grey, fontWeight: FontWeight.bold)),
                                         ),
+                                        ]else...[
+                                        TextButton(
+                                          onPressed: () {},
+                                          child: Text("Reordenar", style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 16)),
+                                        ),
+                                        ],
                                       ],
                                     ),
                                   ],

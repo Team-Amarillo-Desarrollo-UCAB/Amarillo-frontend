@@ -5,11 +5,13 @@ import 'package:flutter/material.dart';
 class ListaDirecciones extends StatefulWidget {
   final List<Direccion> direcciones;
   final VoidCallback onAddDireccion;
+  final Function(Direccion) onRemoveDireccion;
 
   const ListaDirecciones({
     super.key,
     required this.direcciones,
     required this.onAddDireccion,
+    required this.onRemoveDireccion,
   });
 
   @override
@@ -23,7 +25,8 @@ class ListaDireccionesState extends State<ListaDirecciones> {
       children: [
         ...widget.direcciones.map((direccion) => DireccionWidget(
               direccion: direccion,
-              onEdit: () {
+              onRemove: () {
+                widget.onRemoveDireccion(direccion);
               },
               onSelect: () {
                 setState(() {
