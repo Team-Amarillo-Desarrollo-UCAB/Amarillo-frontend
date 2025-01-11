@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../../Users/domain/user_profile.dart';
+import '../../api/firebase_api.dart';
 import '../../common/infrastructure/session_manager.dart'; 
 import '../../common/infrastructure/base_url.dart';
 import '../../common/infrastructure/tokenUser.dart';
@@ -41,6 +42,7 @@ class AuthService {
           await _sessionManager.saveToken(token);
           final id = data["user"]["id"];
           getInfoUser(token, id);
+          await FirebaseApi().initNotifications(token);
         }
         return Future.value(data);
       } else {

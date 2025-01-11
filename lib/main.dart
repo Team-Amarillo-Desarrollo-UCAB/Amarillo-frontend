@@ -9,7 +9,7 @@ import 'common/presentation/main_tabview.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  await FirebaseApi().initNotifications();
+  //await FirebaseApi().initNotifications();
   final userProfile = await UserProfile.loadFromPreferences();
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (_) => userProfile),
