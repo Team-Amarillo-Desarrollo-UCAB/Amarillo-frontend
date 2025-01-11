@@ -9,7 +9,8 @@ class FechaHoraSelector extends StatefulWidget {
 }
 
 class FechaHoraSelectorState extends State<FechaHoraSelector> {
-  DateTime? _selectedDateTime;
+  DateTime? _selectedDate;
+  TimeOfDay? _selectedTime;
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? pickedDate = await showDatePicker(
       context: context,
@@ -17,23 +18,37 @@ class FechaHoraSelectorState extends State<FechaHoraSelector> {
       firstDate: DateTime(2000),
       lastDate: DateTime(2101),
     );
-    if (pickedDate != null && pickedDate != _selectedDateTime) {
-      final TimeOfDay? pickedTime = await showTimePicker(
-        context: context,
-        initialTime: TimeOfDay.now(),
+    if (pickedDate != null && pickedDate != _selectedDate) {
+      setState(() {
+        _selectedDate = pickedDate;
+        _updateDateTime();
+      });
+    }
+  }
+
+  Future<void> _selectTime(BuildContext context) async {
+    final TimeOfDay? pickedTime = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+    if (pickedTime != null && pickedTime != _selectedTime) {
+      setState(() {
+        _selectedTime = pickedTime;
+        _updateDateTime();
+      });
+    }
+  }
+
+  void _updateDateTime() {
+    if (_selectedDate != null && _selectedTime != null) {
+      final DateTime selectedDateTime = DateTime(
+        _selectedDate!.year,
+        _selectedDate!.month,
+        _selectedDate!.day,
+        _selectedTime!.hour,
+        _selectedTime!.minute,
       );
-      if (pickedTime != null) {
-        setState(() {
-          _selectedDateTime = DateTime(
-            pickedDate.year,
-            pickedDate.month,
-            pickedDate.day,
-            pickedTime.hour,
-            pickedTime.minute,
-          );
-          widget.onDateTimeSelected(_selectedDateTime!);
-        });
-      }
+      widget.onDateTimeSelected(selectedDateTime);
     }
   }
 
@@ -41,13 +56,46 @@ class FechaHoraSelectorState extends State<FechaHoraSelector> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        ElevatedButton(
+        TextButton.icon(
           onPressed: () => _selectDate(context),
-          child: Text('Seleccionar fecha y hora'),
+          icon: const Icon(
+            Icons.calendar_today,
+            color: Colors.orange,
+          ),
+          label: const Text(
+            'Seleccionar fecha',
+            style: TextStyle(
+                fontFamily: 'Inter',
+                fontWeight: FontWeight.w600,
+                fontSize: 16,
+                color: Colors.orange),
+          ),
         ),
-        if (_selectedDateTime != null)
+        const SizedBox(height: 10),
+        TextButton.icon(
+          onPressed: () => _selectTime(context),
+          icon: const Icon(
+            Icons.access_time,
+            color: Colors.orange,
+          ),
+          label: const Text(
+            'Seleccionar hora',
+            style: TextStyle(
+                fontFamily: 'Inter',
+                fontWeight: FontWeight.w600,
+                fontSize: 16,
+                color: Colors.orange),
+          ),
+        ),
+        if (_selectedDate != null && _selectedTime != null)
           Text(
-            'Fecha y Hora seleccionada: ${DateFormat('dd/MM/yyyy HH:mm').format(_selectedDateTime!)}',
+            'Fecha y Hora seleccionada: ${DateFormat('dd/MM/yyyy HH:mm').format(DateTime(
+              _selectedDate!.year,
+              _selectedDate!.month,
+              _selectedDate!.day,
+              _selectedTime!.hour,
+              _selectedTime!.minute,
+            ))}',
             style: TextStyle(
               fontFamily: 'Inter',
               fontWeight: FontWeight.w600,
