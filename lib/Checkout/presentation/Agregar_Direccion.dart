@@ -19,14 +19,14 @@ class AddDireccionDialogState extends State<AddDireccionDialog> {
     final result = await Navigator.of(context).push(MaterialPageRoute(
       builder: (context) => MapScreen(
         onTap: (position) {
-          setState(() {
-            _selectedPosition = position;
-          });
+          Navigator.of(context).pop(position);
         },
       ),
     ));
     if (result != null) {
-      _selectedPosition = result;
+      setState(() {
+        _selectedPosition = result;
+      });
       _getAddressFromCoordinates(
           _selectedPosition!.latitude, _selectedPosition!.longitude);
     }
@@ -103,9 +103,15 @@ class AddDireccionDialogState extends State<AddDireccionDialog> {
   }
 }
 
-class MapScreen extends StatelessWidget {
+class MapScreen extends StatefulWidget {
   final Function(LatLng) onTap;
   MapScreen({required this.onTap});
+  @override
+  _MapScreenState createState() => _MapScreenState();
+}
+
+class _MapScreenState extends State<MapScreen> {
+  LatLng _selectedPosition = LatLng(10.464898, -66.953192);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -113,17 +119,21 @@ class MapScreen extends StatelessWidget {
         title: Text('Selecciona una ubicación'),
       ),
       body: GoogleMap(
-        onTap: onTap,
+        onTap: (position) {
+          setState(() {
+            _selectedPosition = position;
+          });
+          widget.onTap(position);
+        },
         initialCameraPosition: CameraPosition(
-          target: LatLng(10.464898, -66.953192),
+          target: _selectedPosition,
           zoom: 15,
         ),
         markers: {
-          if (onTap != null)
-            Marker(
-              markerId: MarkerId('selected-location'),
-              position: LatLng(10.464898, -66.953192),
-            ),
+          Marker(
+            markerId: MarkerId('selected-location'),
+            position: _selectedPosition,
+          ),
         },
       ),
     );
