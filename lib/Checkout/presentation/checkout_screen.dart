@@ -32,6 +32,8 @@ class CheckoutScreen extends StatefulWidget {
 class CheckoutScreenState extends State<CheckoutScreen> {
   OrderRepository orderRepository = OrderRepository();
   final List<Direccion> _direcciones = [];
+  DateTime? _selectedDateTime;
+
   void _clearCart() {
     setState(() {
       widget.listCartItems.clear();
@@ -141,7 +143,13 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                 ),
               ),
             ),
-            const FechaHoraSelector(),
+            FechaHoraSelector(
+              onDateTimeSelected: (selectedDateTime) {
+                setState(() {
+                  _selectedDateTime = selectedDateTime;
+                });
+              },
+            ),
             const SizedBox(height: 10),
             const Divider(),
             const Padding(

@@ -1,107 +1,59 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class FechaHoraSelector extends StatefulWidget {
-  const FechaHoraSelector({super.key});
+  final Function(DateTime) onDateTimeSelected;
+  const FechaHoraSelector({super.key, required this.onDateTimeSelected});
   @override
   FechaHoraSelectorState createState() => FechaHoraSelectorState();
 }
 
 class FechaHoraSelectorState extends State<FechaHoraSelector> {
-  final TextEditingController _dayController = TextEditingController();
-  final TextEditingController _monthController = TextEditingController();
-  final TextEditingController _hourController = TextEditingController();
-  final TextEditingController _minuteController = TextEditingController();
+  DateTime? _selectedDateTime;
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+    if (pickedDate != null && pickedDate != _selectedDateTime) {
+      final TimeOfDay? pickedTime = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay.now(),
+      );
+      if (pickedTime != null) {
+        setState(() {
+          _selectedDateTime = DateTime(
+            pickedDate.year,
+            pickedDate.month,
+            pickedDate.day,
+            pickedTime.hour,
+            pickedTime.minute,
+          );
+          widget.onDateTimeSelected(_selectedDateTime!);
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-              'Fecha:',
-              style: TextStyle(
-                fontFamily: 'Inter',
-                fontWeight: FontWeight.w600,
-                fontSize: 16,
-              ),
-            ),
-            const SizedBox(width: 50),
-            SizedBox(
-              width: 50,
-              child: TextField(
-                controller: _dayController,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(hintText: 'DD'),
-                style: const TextStyle(
-                    fontFamily: 'Inter',
-                    fontWeight: FontWeight.w600,
-                    fontSize: 16,
-                    color: Colors.grey),
-                textAlign: TextAlign.center,
-              ),
-            ),
-            const SizedBox(width: 20),
-            SizedBox(
-              width: 50,
-              child: TextField(
-                controller: _monthController,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(hintText: 'MM'),
-                style: const TextStyle(
-                    fontFamily: 'Inter',
-                    fontWeight: FontWeight.w600,
-                    fontSize: 16,
-                    color: Colors.grey),
-                textAlign: TextAlign.center,
-              ),
-            ),
-          ],
+        ElevatedButton(
+          onPressed: () => _selectDate(context),
+          child: Text('Seleccionar fecha y hora'),
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-              ' Hora:',
-              style: TextStyle(
-                fontFamily: 'Inter',
-                fontWeight: FontWeight.w600,
-                fontSize: 16,
-              ),
+        if (_selectedDateTime != null)
+          Text(
+            'Fecha y Hora seleccionada: ${DateFormat('dd/MM/yyyy HH:mm').format(_selectedDateTime!)}',
+            style: TextStyle(
+              fontFamily: 'Inter',
+              fontWeight: FontWeight.w600,
+              fontSize: 16,
             ),
-            const SizedBox(width: 50),
-            SizedBox(
-              width: 50,
-              child: TextField(
-                controller: _hourController,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(hintText: 'HH'),
-                style: const TextStyle(
-                    fontFamily: 'Inter',
-                    fontWeight: FontWeight.w600,
-                    fontSize: 16,
-                    color: Colors.grey),
-                textAlign: TextAlign.center,
-              ),
-            ),
-            const SizedBox(width: 20),
-            SizedBox(
-              width: 50,
-              child: TextField(
-                controller: _minuteController,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(hintText: 'MM'),
-                style: const TextStyle(
-                    fontFamily: 'Inter',
-                    fontWeight: FontWeight.w600,
-                    fontSize: 16,
-                    color: Colors.grey),
-                textAlign: TextAlign.center,
-              ),
-            ),
-          ],
-        ),
+          ),
       ],
     );
   }
