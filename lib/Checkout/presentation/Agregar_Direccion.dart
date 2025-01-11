@@ -1,7 +1,8 @@
 import 'package:desarrollo_frontend/Checkout/domain/direccion.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:geocoding/geocoding.dart';
+import 'package:geocoding/geocoding.dart' as geocoding;
+import 'package:location/location.dart' as loc;
 
 class AddDireccionDialog extends StatefulWidget {
   final Function(Direccion) onAdd;
@@ -12,16 +13,41 @@ class AddDireccionDialog extends StatefulWidget {
 
 class AddDireccionDialogState extends State<AddDireccionDialog> {
   final TextEditingController _nameController = TextEditingController();
-  LatLng _selectedPosition = LatLng(10.464898, -66.953192);
+  loc.LocationData? _currentLocation;
   String _selectedAddress = '';
-  void _onMapTap(LatLng position) async {
-    setState(() {
-      _selectedPosition = position;
-    });
-    List<Placemark> placemarks =
-        await placemarkFromCoordinates(position.latitude, position.longitude);
+  @override
+  void initState() {
+    super.initState();
+    _getLocation();
+  }
+
+  Future<void> _getLocation() async {
+    loc.Location location = loc.Location();
+    bool serviceEnabled;
+    loc.PermissionStatus permissionGranted;
+    serviceEnabled = await location.serviceEnabled();
+    if (!serviceEnabled) {
+      serviceEnabled = await location.requestService();
+      if (!serviceEnabled) {
+        return;
+      }
+    }
+    permissionGranted = await location.hasPermission();
+    if (permissionGranted == loc.PermissionStatus.denied) {
+      permissionGranted = await location.requestPermission();
+      if (permissionGranted != loc.PermissionStatus.granted) {
+        return;
+      }
+    }
+    _currentLocation = await location.getLocation();
+    _updateAddress(_currentLocation!.latitude!, _currentLocation!.longitude!);
+  }
+
+  Future<void> _updateAddress(double latitude, double longitude) async {
+    List<geocoding.Placemark> placemarks =
+        await geocoding.placemarkFromCoordinates(latitude, longitude);
     if (placemarks.isNotEmpty) {
-      Placemark place = placemarks[0];
+      geocoding.Placemark place = placemarks[0];
       setState(() {
         _selectedAddress =
             '${place.street}, ${place.locality}, ${place.country}';
@@ -40,26 +66,17 @@ class AddDireccionDialogState extends State<AddDireccionDialog> {
             controller: _nameController,
             decoration: InputDecoration(labelText: 'Nombre de la dirección'),
           ),
-          SizedBox(
-            width: double.infinity,
-            height: 300,
-            child: GoogleMap(
-              onMapCreated: (GoogleMapController controller) {},
-              initialCameraPosition: CameraPosition(
-                target: _selectedPosition,
-                zoom: 15,
-              ),
-              onTap: _onMapTap,
-              markers: {
-                Marker(
-                  markerId: MarkerId('selected-location'),
-                  position: _selectedPosition,
-                ),
-              },
-            ),
-          ),
-          SizedBox(height: 8),
-          Text('Dirección: $_selectedAddress'),
+          SizedBox(height: 16),
+          if (_currentLocation != null)
+            Column(
+              children: [
+                Text('Latitud: ${_currentLocation!.latitude}'),
+                Text('Longitud: ${_currentLocation!.longitude}'),
+                Text('Dirección: $_selectedAddress'),
+              ],
+            )
+          else
+            CircularProgressIndicator(),
         ],
       ),
       actions: [
@@ -76,8 +93,8 @@ class AddDireccionDialogState extends State<AddDireccionDialog> {
               final nuevaDireccion = Direccion(
                 nombre: nombre,
                 direccionCompleta: _selectedAddress,
-                latitude: _selectedPosition.latitude,
-                longitude: _selectedPosition.longitude,
+                latitude: _currentLocation!.latitude!,
+                longitude: _currentLocation!.longitude!,
                 isSelected: false,
               );
               widget.onAdd(nuevaDireccion);
