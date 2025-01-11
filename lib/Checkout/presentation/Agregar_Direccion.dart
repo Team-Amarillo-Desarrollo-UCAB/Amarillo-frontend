@@ -1,8 +1,8 @@
 import 'package:desarrollo_frontend/Checkout/domain/direccion.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:geocoding/geocoding.dart' as geocoding;
-import 'package:location/location.dart' as loc;
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class AddDireccionDialog extends StatefulWidget {
   final Function(Direccion) onAdd;
@@ -13,45 +13,38 @@ class AddDireccionDialog extends StatefulWidget {
 
 class AddDireccionDialogState extends State<AddDireccionDialog> {
   final TextEditingController _nameController = TextEditingController();
-  loc.LocationData? _currentLocation;
+  LatLng? _selectedPosition;
   String _selectedAddress = '';
-  @override
-  void initState() {
-    super.initState();
-    _getLocation();
+  void _selectCoordinates() async {
+    final result = await Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) => MapScreen(
+        onTap: (position) {
+          setState(() {
+            _selectedPosition = position;
+          });
+        },
+      ),
+    ));
+    if (result != null) {
+      _selectedPosition = result;
+      _getAddressFromCoordinates(
+          _selectedPosition!.latitude, _selectedPosition!.longitude);
+    }
   }
 
-  Future<void> _getLocation() async {
-    loc.Location location = loc.Location();
-    bool serviceEnabled;
-    loc.PermissionStatus permissionGranted;
-    serviceEnabled = await location.serviceEnabled();
-    if (!serviceEnabled) {
-      serviceEnabled = await location.requestService();
-      if (!serviceEnabled) {
-        return;
-      }
-    }
-    permissionGranted = await location.hasPermission();
-    if (permissionGranted == loc.PermissionStatus.denied) {
-      permissionGranted = await location.requestPermission();
-      if (permissionGranted != loc.PermissionStatus.granted) {
-        return;
-      }
-    }
-    _currentLocation = await location.getLocation();
-    _updateAddress(_currentLocation!.latitude!, _currentLocation!.longitude!);
-  }
-
-  Future<void> _updateAddress(double latitude, double longitude) async {
-    List<geocoding.Placemark> placemarks =
-        await geocoding.placemarkFromCoordinates(latitude, longitude);
-    if (placemarks.isNotEmpty) {
-      geocoding.Placemark place = placemarks[0];
+  Future<void> _getAddressFromCoordinates(
+      double latitude, double longitude) async {
+    final apiKey = 'pk.d24036d884f990ee74f8b4a9f2e46fbe';
+    final url =
+        'https://us1.locationiq.com/v1/reverse.php?key=$apiKey&lat=$latitude&lon=$longitude&format=json';
+    final response = await http.get(Uri.parse(url));
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
       setState(() {
-        _selectedAddress =
-            '${place.street}, ${place.locality}, ${place.country}';
+        _selectedAddress = data['display_name'];
       });
+    } else {
+      print('Failed to get address');
     }
   }
 
@@ -67,16 +60,18 @@ class AddDireccionDialogState extends State<AddDireccionDialog> {
             decoration: InputDecoration(labelText: 'Nombre de la dirección'),
           ),
           SizedBox(height: 16),
-          if (_currentLocation != null)
+          ElevatedButton(
+            onPressed: _selectCoordinates,
+            child: Text('Obtener coordenadas'),
+          ),
+          if (_selectedPosition != null)
             Column(
               children: [
-                Text('Latitud: ${_currentLocation!.latitude}'),
-                Text('Longitud: ${_currentLocation!.longitude}'),
-                Text('Dirección: $_selectedAddress'),
+                Text('Latitud: ${_selectedPosition!.latitude}'),
+                Text('Longitud: ${_selectedPosition!.longitude}'),
               ],
-            )
-          else
-            CircularProgressIndicator(),
+            ),
+          if (_selectedAddress.isNotEmpty) Text('Dirección: $_selectedAddress'),
         ],
       ),
       actions: [
@@ -93,8 +88,8 @@ class AddDireccionDialogState extends State<AddDireccionDialog> {
               final nuevaDireccion = Direccion(
                 nombre: nombre,
                 direccionCompleta: _selectedAddress,
-                latitude: _currentLocation!.latitude!,
-                longitude: _currentLocation!.longitude!,
+                latitude: _selectedPosition!.latitude,
+                longitude: _selectedPosition!.longitude,
                 isSelected: false,
               );
               widget.onAdd(nuevaDireccion);
@@ -104,6 +99,33 @@ class AddDireccionDialogState extends State<AddDireccionDialog> {
           child: Text('Añadir'),
         ),
       ],
+    );
+  }
+}
+
+class MapScreen extends StatelessWidget {
+  final Function(LatLng) onTap;
+  MapScreen({required this.onTap});
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Selecciona una ubicación'),
+      ),
+      body: GoogleMap(
+        onTap: onTap,
+        initialCameraPosition: CameraPosition(
+          target: LatLng(10.464898, -66.953192),
+          zoom: 15,
+        ),
+        markers: {
+          if (onTap != null)
+            Marker(
+              markerId: MarkerId('selected-location'),
+              position: LatLng(10.464898, -66.953192),
+            ),
+        },
+      ),
     );
   }
 }
