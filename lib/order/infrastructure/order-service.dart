@@ -42,6 +42,7 @@ class OrderService {
         directionName: orderData.directionName,
         status: orderData.orderState,
         totalAmount: orderData.totalAmount,
+        orderReport: orderData.orderReport,
         subTotal: orderData.subTotal,
         deliveryFee: orderData.shippingFee,
         discount: orderData.orderDiscount,

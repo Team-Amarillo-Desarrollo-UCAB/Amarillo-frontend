@@ -14,16 +14,15 @@ class ProductServiceSearch {
     final token = await TokenUser().getToken();
 
     final response = await http.get(
-        Uri.parse('$baseUrl/product/one/by/name?name=$productName'),
+        Uri.parse('$baseUrl/product/many?name=$productName'),
         headers: {
           'Authorization': 'Bearer $token',
         });
 
     if (response.statusCode == 200) {
-      final Map<String, dynamic> data = json.decode(response.body);
-
-      final productData = ProductData.fromJson(data);
-
+      print('Response: ${response.statusCode}');
+      final List<dynamic> data = json.decode(response.body);
+      final productData = ProductData.fromJson(data[0]);
       return Product(
         id_product: productData.id_product,
         images: productData.images

@@ -10,6 +10,7 @@ class Order {
   final String subTotal;
   final String deliveryFee;
   final String discount;
+  final String orderReport;
   final String currency;
   final String paymentMethod;
   final String creationDate;
@@ -23,6 +24,7 @@ class Order {
     required this.currency,
     required this.deliveryFee,
     required this.subTotal,
+    required this.orderReport,
     required this.orderId,
     required this.items,
     required this.bundles,

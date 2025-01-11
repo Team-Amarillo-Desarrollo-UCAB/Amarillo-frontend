@@ -34,7 +34,7 @@ class OrderServiceChangeState {
   Future<Response> cancelOrder(String orderId) async {
     final Map<String, dynamic> body = {
       "id_order": orderId,
-      "orderState": "Cancelada",
+      "orderState": "CANCELLED",
     };
     return await changeOrderState(body);
   }

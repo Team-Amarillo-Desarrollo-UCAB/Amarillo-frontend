@@ -241,7 +241,7 @@ class _HomeViewState extends State<HomeView> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              '¡HOLA ${userProfile.name.toUpperCase().substring(0, 7)}!',
+                              '¡HOLA ${userProfile.name.toUpperCase()}!',
                               style: TextStyle(
                                   color: TColor.primary,
                                   fontSize: media.width * 0.04,
