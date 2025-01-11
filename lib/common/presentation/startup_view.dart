@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../login/infrastructure/login_service.dart'; // Servicio de autenticación
 import '../../login/presentation/welcome_view.dart'; // Vista de bienvenida
-import '../infrastructure/base_url.dart';
 import 'main_tabview.dart'; // Vista principal
 
 class StartupView extends StatefulWidget {
@@ -12,8 +11,7 @@ class StartupView extends StatefulWidget {
 }
 
 class _StartupViewState extends State<StartupView> {
-  final AuthService _authService = AuthService(); 
-  
+  final AuthService _authService = AuthService();
 
   @override
   void initState() {
@@ -22,21 +20,20 @@ class _StartupViewState extends State<StartupView> {
   }
 
   void _checkSession() async {
-    await Future.delayed(const Duration(seconds: 3)); 
-    final token = await _authService.getToken(); 
+    await Future.delayed(const Duration(seconds: 3));
+    final token = await _authService.getToken();
     if (token != null) {
       print("Token encontrado: $token");
       final isValid = await _authService.isValidToken(token);
       print("¿Token válido? $isValid");
       if (isValid) {
-        _goToMainTabView(); 
+        _goToMainTabView();
         return;
       }
     }
     print("Sesión no válida. Redirigiendo a WelcomePage...");
-    _goToWelcomePage(); 
+    _goToWelcomePage();
   }
-
 
   void _goToMainTabView() {
     Navigator.pushReplacement(
@@ -45,15 +42,12 @@ class _StartupViewState extends State<StartupView> {
     );
   }
 
- 
   void _goToWelcomePage() {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => const WelcomeView()),
     );
   }
-
-
 
   @override
   Widget build(BuildContext context) {
