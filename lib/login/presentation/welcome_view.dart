@@ -15,7 +15,7 @@ class WelcomeView extends StatefulWidget {
 
 class _WelcomeViewState extends State<WelcomeView> {
 
-String _selectedBaseUrl = 'AMARILLO';
+String _selectedBaseUrl = 'Selecciona una API';
 
   void _updateBaseUrl(String selected) {
   setState(() {
@@ -108,6 +108,7 @@ String _selectedBaseUrl = 'AMARILLO';
               DropdownButton<String>(
                 value: _selectedBaseUrl,
                 items: const [
+                  DropdownMenuItem(value: 'Selecciona una API', child: Text('Selecciona una API')),
                   DropdownMenuItem(value: 'AMARILLO', child: Text('AMARILLO')),
                   DropdownMenuItem(value: 'ORANGE', child: Text('ORANGE')),
                   DropdownMenuItem(value: 'VERDE', child: Text('VERDE')),
