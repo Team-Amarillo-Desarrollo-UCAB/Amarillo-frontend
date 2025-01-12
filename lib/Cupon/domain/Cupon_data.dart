@@ -1,7 +1,7 @@
 class CuponData {
   final String code;
   final String expirationDate;
-  final String amount;
+  final double amount;
 
   CuponData({
     required this.code,
@@ -13,7 +13,7 @@ class CuponData {
     return CuponData(
       code: json['code'] ?? 'ERROR01',
       expirationDate: json['expiration_date'] ?? '1970-01-01T00:00:00.000Z',
-      amount: json['amount'] ?? '0',
+      amount: json['amount'] ?? 0,
     );
   }
 }

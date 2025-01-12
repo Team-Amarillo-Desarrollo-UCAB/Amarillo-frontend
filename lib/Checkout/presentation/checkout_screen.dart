@@ -53,7 +53,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
       if (cartItem.isCombo) {
         listCombos.add(Combo(
           id_product: cartItem.id_product,
-          images: cartItem.imageUrl,
+          images: [cartItem.imageUrl],
           name: cartItem.name,
           price: cartItem.price.toString(),
           productId: cartItem.productId!,
@@ -69,7 +69,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
           price: cartItem.price.toString(),
           description: cartItem.description,
           peso: cartItem.peso,
-          images: cartItem.imageUrl,
+          images: [cartItem.imageUrl],
           category: cartItem.category,
           discount: cartItem.discount,
         ));
