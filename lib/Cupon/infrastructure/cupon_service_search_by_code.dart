@@ -25,7 +25,7 @@ class CuponServiceSearchByCode {
         used: false,
       );
     } else {
-      throw Exception('Error al obtener el cupon');
+      throw Exception('Error al obtener el cupon, hola?');
     }
   }
 }

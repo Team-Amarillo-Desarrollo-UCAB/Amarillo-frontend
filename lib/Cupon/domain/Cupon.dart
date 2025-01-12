@@ -1,7 +1,7 @@
 class Cupon {
   final String code;
   final DateTime expirationDate;
-  final double amount;
+  final String amount;
   bool used;
 
   Cupon({
