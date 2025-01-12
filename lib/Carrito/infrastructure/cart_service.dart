@@ -58,11 +58,23 @@ class CartService {
       String ubicacion,
       double latitud,
       double longitud,
-      List<dynamic> products,
-      List<dynamic> bundles,
+      List<CartItem> products,
+      List<CartItem> bundles,
       String cuponCode,
       String instructions) async {
     final token = await TokenUser().getToken();
+    final List<Map<String, dynamic>> productItems = products
+        .map((item) => {
+              'id': item.id_product,
+              'quantity': item.quantity,
+            })
+        .toList();
+    final List<Map<String, dynamic>> bundleItems = bundles
+        .map((item) => {
+              'id': item.id_product,
+              'quantity': item.quantity,
+            })
+        .toList();
 
     final body = jsonEncode({
       'idPayment': idPayment,
@@ -71,11 +83,12 @@ class CartService {
       'ubicacion': ubicacion,
       'latitud': latitud,
       'longitud': longitud,
-      'products': products,
-      'bundles': bundles,
+      'products': productItems,
+      'bundles': bundleItems,
       'cupon_code': cuponCode,
       'instructions': instructions,
     });
+
     final Uri url = Uri.parse(BaseUrl().BASE_URL + '/order/create');
 
     final response = await http.post(url, body: body, headers: {
@@ -84,7 +97,8 @@ class CartService {
     });
 
     if (response.statusCode != 201) {
-      throw Exception('Error al crear la orden: ${response.statusCode}');
+      throw Exception(
+          'Error al crear la orden: ${response.statusCode}, ${body}');
     }
 
     final Map<String, dynamic> responseData = jsonDecode(response.body);
