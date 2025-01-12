@@ -6,12 +6,14 @@ class ListaDirecciones extends StatefulWidget {
   final List<Direccion> direcciones;
   final VoidCallback onAddDireccion;
   final Function(Direccion) onRemoveDireccion;
+  final Function(Direccion) onSelectDireccion;
 
   const ListaDirecciones({
     super.key,
     required this.direcciones,
     required this.onAddDireccion,
     required this.onRemoveDireccion,
+    required this.onSelectDireccion,
   });
 
   @override
@@ -35,6 +37,7 @@ class ListaDireccionesState extends State<ListaDirecciones> {
                   }
                   direccion.isSelected = true;
                 });
+                widget.onSelectDireccion(direccion);
               },
             )),
         const SizedBox(height: 10),
