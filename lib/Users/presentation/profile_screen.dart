@@ -49,7 +49,7 @@ class UserProfileScreen extends StatelessWidget {
             style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ), 
            Text(
-            userProfile.phoneNumber,
+            userProfile.email,
             style: TextStyle(color: Colors.grey),
           ), 
           const SizedBox(height: 30), // Espaciado

@@ -1,17 +1,74 @@
+import 'dart:math';
+
+import 'package:desarrollo_frontend/Users/infrastructure/user_service_update.dart';
 import 'package:flutter/material.dart';
+import '../../common/infrastructure/base_url.dart';
 import '../domain/user_profile.dart';
 import 'package:provider/provider.dart';
 
 
-class EditProfileScreen extends StatelessWidget {
-  const EditProfileScreen({Key? key}) : super(key: key);
+class EditProfileScreen extends StatefulWidget {
+
+  @override
+  _EditProfileViewState createState() => _EditProfileViewState();
+}
+
+
+  class _EditProfileViewState extends State<EditProfileScreen> {
+
+    late UserProfile userProfile;
+    late TextEditingController nameController;
+    late TextEditingController phoneNumberController;
+    late TextEditingController emailController;
+    final UserUpdate userUpdate = UserUpdate(BaseUrl().BASE_URL);
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    userProfile = Provider.of<UserProfile>(context, listen: false);
+    nameController = TextEditingController(text: userProfile.name);
+    phoneNumberController = TextEditingController(text: userProfile.phoneNumber);
+    emailController = TextEditingController(text: userProfile.email);
+  }
+
+  Future<void> _editProfile() async {
+  try {
+    Map<String, dynamic> updatedFields = {};
+
+    if (nameController.text != userProfile.name) {
+      updatedFields['name'] = nameController.text.trim();
+    }
+    if (phoneNumberController.text != userProfile.phoneNumber) {
+      updatedFields['phone'] = phoneNumberController.text.trim();
+    }
+    if (emailController.text != userProfile.email) {
+      updatedFields['email'] = emailController.text.trim();
+    }
+    if (updatedFields.isNotEmpty) {
+      final response = await userUpdate.update(updatedFields);
+      if (response.isSuccessful) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Se han actualizado los datos correctamente.'),
+        ));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Error: ${response.errorMessage}'),
+        ));
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('No hay cambios para guardar.'),
+      ));
+    }
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text('Ocurrió un error, por favor intente nuevamente.'),
+    ));
+  }
+}
 
   @override
   Widget build(BuildContext context) {
-    final userProfile = Provider.of<UserProfile>(context, listen: false);
-
-    final nameController = TextEditingController(text: userProfile.name);
-    final phoneNumberController = TextEditingController(text: userProfile.phoneNumber);
 
     return Scaffold(
       appBar: AppBar(
@@ -26,18 +83,26 @@ class EditProfileScreen extends StatelessWidget {
               controller: nameController,
               decoration: const InputDecoration(labelText: 'Nombre (s)'),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 16),
             TextField(
               controller: phoneNumberController,
               decoration: const InputDecoration(labelText: 'Número de celular'),
               keyboardType: TextInputType.phone,
             ),
-            const Spacer(),
+            const SizedBox(height: 16),
+            TextField(
+              controller: emailController,
+              decoration: const InputDecoration(labelText: 'Correo electrónico'),
+              keyboardType: TextInputType.emailAddress,
+            ),
+             Spacer(),
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
+                await _editProfile();
                 userProfile.updateProfile(
                   nameController.text,
-                  phoneNumberController.text
+                  phoneNumberController.text,
+                  emailController.text,
                 );
                 Navigator.pop(context);
               },
