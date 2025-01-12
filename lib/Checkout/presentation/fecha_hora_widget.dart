@@ -88,18 +88,21 @@ class FechaHoraSelectorState extends State<FechaHoraSelector> {
           ),
         ),
         if (_selectedDate != null && _selectedTime != null)
-          Text(
-            'Fecha y Hora seleccionada: ${DateFormat('dd/MM/yyyy HH:mm').format(DateTime(
-              _selectedDate!.year,
-              _selectedDate!.month,
-              _selectedDate!.day,
-              _selectedTime!.hour,
-              _selectedTime!.minute,
-            ))}',
-            style: TextStyle(
-              fontFamily: 'Inter',
-              fontWeight: FontWeight.w600,
-              fontSize: 16,
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
+              'Fecha y Hora seleccionada: ${DateFormat('dd/MM/yyyy HH:mm').format(DateTime(
+                _selectedDate!.year,
+                _selectedDate!.month,
+                _selectedDate!.day,
+                _selectedTime!.hour,
+                _selectedTime!.minute,
+              ))}',
+              style: TextStyle(
+                fontFamily: 'Inter',
+                fontWeight: FontWeight.w600,
+                fontSize: 16,
+              ),
             ),
           ),
       ],

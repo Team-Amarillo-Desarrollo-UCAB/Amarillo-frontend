@@ -63,37 +63,37 @@ class _ProductViewState extends State<ProductView> {
   }
 
   Future<void> _loadMoreProducts() async {
-  if (_isLoading || !_hasMore) return;
-  setState(() {
-    _isLoading = true;
-  });
-  try {
-    List<Product> newProducts = await _productService.getProducts(_page);
+    if (_isLoading || !_hasMore) return;
     setState(() {
-      if (newProducts.isEmpty) {
-        _hasMore = false;
-      } else {
-        final filteredProducts = newProducts
-            .where((newProduct) => !_product.any((existingProduct) =>
-                existingProduct.id_product == newProduct.id_product))
-            .toList();
-        _product.addAll(filteredProducts);
-
-        for (var product in filteredProducts) {
-          _discountedPriceFutures[product.id_product] =
-              _getDiscountedPrice(product);
-        }
-        _page++;
-      }
+      _isLoading = true;
     });
-  } catch (error) {
-    print('Error al obtener productos: $error');
-  }
+    try {
+      List<Product> newProducts = await _productService.getProducts(_page);
+      setState(() {
+        if (newProducts.isEmpty) {
+          _hasMore = false;
+        } else {
+          final filteredProducts = newProducts
+              .where((newProduct) => !_product.any((existingProduct) =>
+                  existingProduct.id_product == newProduct.id_product))
+              .toList();
+          _product.addAll(filteredProducts);
 
-  setState(() {
-    _isLoading = false;
-  });
-}
+          for (var product in filteredProducts) {
+            _discountedPriceFutures[product.id_product] =
+                _getDiscountedPrice(product);
+          }
+          _page++;
+        }
+      });
+    } catch (error) {
+      print('Error al obtener productos: $error');
+    }
+
+    setState(() {
+      _isLoading = false;
+    });
+  }
 
   Future<void> _loadCategories() async {
     try {
@@ -120,33 +120,33 @@ class _ProductViewState extends State<ProductView> {
   }
 
   Future<void> _searchProductByName(String productName) async {
-  setState(() {
-    _isSearching = true;
-    _product.clear();
-    _discountedPriceFutures.clear(); 
-    _page = 1; 
-    _hasMore = true; 
-  });
-
-  String formattedProductName = Uri.encodeComponent(productName.trim());
-
-  try {
-    Product product =
-        await _productServiceSearch.getProductByName(formattedProductName);
     setState(() {
-      _product = [product];
-      _discountedPriceFutures[product.id_product] =
-          _getDiscountedPrice(product); 
-      _isSearching = false;
-    });
-  } catch (error) {
-    setState(() {
-      _isSearching = false;
+      _isSearching = true;
       _product.clear();
+      _discountedPriceFutures.clear();
+      _page = 1;
+      _hasMore = true;
     });
-    print('Error al buscar producto: $error');
+
+    String formattedProductName = Uri.encodeComponent(productName.trim());
+
+    try {
+      Product product =
+          await _productServiceSearch.getProductByName(formattedProductName);
+      setState(() {
+        _product = [product];
+        _discountedPriceFutures[product.id_product] =
+            _getDiscountedPrice(product);
+        _isSearching = false;
+      });
+    } catch (error) {
+      setState(() {
+        _isSearching = false;
+        _product.clear();
+      });
+      print('Error al buscar producto: $error');
+    }
   }
-}
 
   void _onSearchChanged() {
     if (_searchController.text.isNotEmpty) {
@@ -306,12 +306,16 @@ class _ProductViewState extends State<ProductView> {
                                 return ProductCard2(
                                   product: product,
                                   onAdd: () => onAdd(CartItem(
-                                      id_product: product.id_product,
-                                      imageUrl: product.images[0],
-                                      name: product.name,
-                                      price: discountedPrice,
-                                      description: product.description,
-                                      peso: product.peso)),
+                                    id_product: product.id_product,
+                                    imageUrl: product.images[0],
+                                    name: product.name,
+                                    price: discountedPrice,
+                                    description: product.description,
+                                    peso: product.peso,
+                                    isCombo: false,
+                                    discount: product.discount,
+                                    category: product.category,
+                                  )),
                                 );
                               }
                             },

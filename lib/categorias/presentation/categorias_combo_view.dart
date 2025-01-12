@@ -218,13 +218,17 @@ class _CategoriasComboViewState extends State<CategoriasComboView> {
                                   return ComboCard(
                                     combo: combo,
                                     onAdd: () => onAdd(CartItem(
-                                        id_product: combo.id_product,
-                                        imageUrl: combo.images[0],
-                                        name: combo.name,
-                                        price: discountedPrice,
-                                        description: combo.description,
-                                        peso: combo.peso,
-                                        productId: combo.productId)),
+                                      id_product: combo.id_product,
+                                      imageUrl: combo.images[0],
+                                      name: combo.name,
+                                      price: discountedPrice,
+                                      description: combo.description,
+                                      peso: combo.peso,
+                                      productId: combo.productId,
+                                      isCombo: true,
+                                      discount: combo.discount,
+                                      category: combo.category,
+                                    )),
                                   );
                                 }
                               },
