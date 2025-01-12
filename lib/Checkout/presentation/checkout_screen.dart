@@ -37,8 +37,8 @@ class CheckoutScreenState extends State<CheckoutScreen> {
   OrderRepository orderRepository = OrderRepository();
   final List<Direccion> _direcciones = [];
   DateTime? _selectedDateTime;
-  List<Product> listProducts = [];
-  List<Combo> listCombos = [];
+  List<CartItem> listProducts = [];
+  List<CartItem> listCombos = [];
   Cupon? selectedCupon;
   PaymentMethod? selectedPaymentMethod;
   Direccion? selectedDireccion;
@@ -54,28 +54,9 @@ class CheckoutScreenState extends State<CheckoutScreen> {
   void _divideCartItems() {
     for (var cartItem in widget.listCartItems) {
       if (cartItem.isCombo) {
-        listCombos.add(Combo(
-          id_product: cartItem.id_product,
-          images: [cartItem.imageUrl],
-          name: cartItem.name,
-          price: cartItem.price.toString(),
-          productId: cartItem.productId!,
-          peso: cartItem.peso,
-          description: cartItem.description,
-          discount: cartItem.discount,
-          category: cartItem.category,
-        ));
+        listCombos.add(cartItem);
       } else {
-        listProducts.add(Product(
-          id_product: cartItem.id_product,
-          name: cartItem.name,
-          price: cartItem.price.toString(),
-          description: cartItem.description,
-          peso: cartItem.peso,
-          images: [cartItem.imageUrl],
-          category: cartItem.category,
-          discount: cartItem.discount,
-        ));
+        listProducts.add(cartItem);
       }
     }
   }
