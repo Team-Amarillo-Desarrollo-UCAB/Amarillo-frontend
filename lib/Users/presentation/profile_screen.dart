@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../statistics/presentation/views/statistics_screen.dart';
 import 'edit_profile_screen.dart';
 import '../../common/presentation/logout_dialog.dart';
 import '../domain/user_profile.dart';
@@ -98,10 +99,25 @@ class UserProfileScreen extends StatelessWidget {
               ), 
               const Divider(
                 thickness: 1,
-                color: Color(0xFFFFD4B2), // Barra anaranjada clara
+                color: Color(0xFFFFD4B2), 
               ), 
-            ], // Children de la columna
+            ], 
           ), 
+                    ListTile(
+            leading: const Icon(Icons.bar_chart, color: Color(0xFFFF7622)),
+            title: const Text('Estadísticas'),
+            trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const StatisticsScreen()),
+              );
+              },
+            ),
+            const Divider(
+              thickness: 1,
+              color: Color(0xFFFFD4B2),
+            ),
           ListTile(
             leading: const Icon(Icons.logout, color: Colors.red),
             title: const Text('Cerrar Sesión', style: TextStyle(color: Colors.red)),
@@ -109,6 +125,7 @@ class UserProfileScreen extends StatelessWidget {
               showLogoutConfirmationDialog(context);
             }, // onTap
           ), 
+
         ], // Children del Column principal
       ),
     ); 

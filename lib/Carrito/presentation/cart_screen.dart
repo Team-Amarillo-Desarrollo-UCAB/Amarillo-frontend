@@ -4,6 +4,7 @@ import '../../common/presentation/main_tabview.dart';
 import '../domain/cart_item.dart';
 import 'cart_item_widget.dart';
 import '../infrastructure/cart_service.dart';
+import 'error_cart_empty.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
@@ -141,7 +142,8 @@ class _CartScreenState extends State<CartScreen> {
                 const SizedBox(height: 10),
                 ElevatedButton(
                   onPressed: () {
-                     Navigator.push(
+                    if (_cartItems.length > 0){
+                                           Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => CheckoutScreen(
@@ -152,7 +154,10 @@ class _CartScreenState extends State<CartScreen> {
                                     ),
                                   ),
                                 );
-
+                    }
+                    else{
+                      showCartEmptyDialog(context);
+                    }
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.orange,

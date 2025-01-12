@@ -19,7 +19,7 @@ class ProductCategoryService {
       }
       final categoriesParam = categories.join(',');
       final response = await http.get(
-        Uri.parse('$baseUrl/product/many?page=$page&category=$categoriesParam'),
+        Uri.parse('$baseUrl/product/many?page=$page&perpage=40&category=$categoriesParam'),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
