@@ -45,6 +45,9 @@ dependencies:
   dropdown_button2: ^2.0.1
   js: ^0.6.3
   intl: ^0.17.0
+  flutter_stripe: ^11.3.0
+  flutter_paypal_payment: ^1.0.7
+  flutter_inappwebview: ^6.1.5
 
 dev_dependencies:
   flutter_test:

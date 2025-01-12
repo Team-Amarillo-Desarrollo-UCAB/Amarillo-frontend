@@ -4,6 +4,7 @@ import 'package:desarrollo_frontend/Checkout/presentation/Agregar_Direccion.dart
 import 'package:desarrollo_frontend/Checkout/presentation/direcciones_screen.dart';
 import 'package:desarrollo_frontend/Checkout/presentation/fecha_hora_widget.dart';
 import 'package:desarrollo_frontend/Checkout/presentation/metodo_de_pago_widget.dart';
+import 'package:desarrollo_frontend/Checkout/presentation/paypal_payment_page.dart';
 import 'package:desarrollo_frontend/Checkout/presentation/pie_pagina_widget.dart';
 import 'package:desarrollo_frontend/Combo/domain/combo.dart';
 import 'package:desarrollo_frontend/Cupon/domain/Cupon.dart';
@@ -16,6 +17,7 @@ import '../../Carrito/domain/cart_item.dart';
 import '../../Carrito/infrastructure/cart_service.dart';
 import '../../common/presentation/main_tabview.dart';
 import '../../order/application/order_repository.dart';
+import 'stripe_payment_view1.dart';
 
 class CheckoutScreen extends StatefulWidget {
   final int totalItems;
@@ -209,6 +211,21 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                   selectedPaymentMethod = method;
                   _generatePaymentFields(method.idPayment);
                 });
+                if(method.name == 'Stripe'){
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => StripePaymentView(amount: widget.totalPrice),
+                    ),
+                  );
+                }else{
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => PayPalPaymentPage(),
+                    ),
+                  );
+                }
               },
             ),
             const Divider(),

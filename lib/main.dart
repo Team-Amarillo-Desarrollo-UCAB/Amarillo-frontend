@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:provider/provider.dart';
 import 'Users/domain/user_profile.dart';
 import 'api/firebase_api.dart';
@@ -8,6 +9,8 @@ import 'common/presentation/main_tabview.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  Stripe.publishableKey = 'pk_test_51QgU4kD0dQ04HPD76rBHs2NHCCCkZzPNjbqimYXpqL7arJKeCEKokc4VYWsvyCXYVvQ1jQQl3KWXDURZNLlFPhLY00aIKtvDcv';
+  await Stripe.instance.applySettings();
   await Firebase.initializeApp();
   await FirebaseApi().initNotifications();
   final userProfile = await UserProfile.loadFromPreferences();
