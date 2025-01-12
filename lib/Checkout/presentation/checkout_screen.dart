@@ -40,6 +40,9 @@ class CheckoutScreenState extends State<CheckoutScreen> {
   List<Product> listProducts = [];
   List<Combo> listCombos = [];
   Cupon? selectedCupon;
+  PaymentMethod? selectedPaymentMethod;
+  Direccion? selectedDireccion;
+  String instructions = 'Entregar por la puerta roja de la esquina';
 
   @override
   void initState() {
@@ -87,11 +90,8 @@ class CheckoutScreenState extends State<CheckoutScreen> {
   }
 
   final PaymentService paymentService = PaymentService(BaseUrl().BASE_URL);
-
   final Map<String, TextEditingController> controllers = {};
-  String selectedPaymentMethod = '';
   List<PaymentMethod> paymentFields = [];
-
   Future<void> _fetchPaymentMethods() async {
     try {
       List<PaymentMethod> paymentMethod =
@@ -115,6 +115,12 @@ class CheckoutScreenState extends State<CheckoutScreen> {
   void _removeDireccion(Direccion direccion) {
     setState(() {
       _direcciones.remove(direccion);
+    });
+  }
+
+  void _selectDireccion(Direccion direccion) {
+    setState(() {
+      selectedDireccion = direccion;
     });
   }
 
@@ -180,6 +186,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                 );
               },
               onRemoveDireccion: _removeDireccion,
+              onSelectDireccion: _selectDireccion,
             ),
             const SizedBox(height: 10),
             const Divider(),
@@ -219,12 +226,12 @@ class CheckoutScreenState extends State<CheckoutScreen> {
               onSelectedMethod: (method) {
                 setState(() {
                   selectedPaymentMethod = method;
-                  _generatePaymentFields(method);
+                  _generatePaymentFields(method.idPayment);
                 });
               },
             ),
             const Divider(),
-            if (selectedPaymentMethod.isNotEmpty) ..._buildPaymentFields(),
+            if (selectedPaymentMethod != null) ..._buildPaymentFields(),
             const Divider(),
             Padding(
               padding: const EdgeInsets.all(16.0),
@@ -258,22 +265,19 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                           ),
                         ),
                   const SizedBox(height: 10),
-                  ElevatedButton(
+                  TextButton.icon(
                     onPressed: _selectCupon,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.orange[400],
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
+                    icon: const Icon(
+                      Icons.card_giftcard,
+                      color: Colors.orange,
                     ),
-                    child: const Text(
+                    label: const Text(
                       'Seleccionar cupón',
                       style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
+                          fontFamily: 'Inter',
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                          color: Colors.orange),
                     ),
                   ),
                 ],
@@ -293,60 +297,89 @@ class CheckoutScreenState extends State<CheckoutScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                RoundButton(
-                    title: "Confirmar Pedido",
-                    onPressed: () async {
-                      try {
-                        if (!_validateFields()) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                                content: Text(
-                                    "Por favor, complete todos los campos.")),
-                          );
-                        }
-                        await widget.cartService
-                            .createOrder(widget.listCartItems);
-                        showDialog(
-                          context: context,
-                          builder: (context) => AlertDialog(
-                            title: const Text('¡Orden creada con éxito!'),
-                            content: Text(
-                                'Tu pedido ha sido procesado. ID de la orden: ${widget.cartService.idOrder}. Pronto recibirás una confirmación.'),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  _clearCart();
-                                  Navigator.of(context).pop();
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => MainTabView()),
-                                  );
-                                },
-                                child: const Text('Continuar'),
-                              ),
-                            ],
-                          ),
-                        );
-                      } catch (error) {
-                        showDialog(
-                          context: context,
-                          builder: (context) => AlertDialog(
-                            title: const Text('Error al crear la orden'),
-                            content: const Text(
-                                'Ha ocurrido un error al procesar tu pedido. Por favor, inténtalo de nuevo más tarde.'),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                child: const Text('Aceptar'),
-                              ),
-                            ],
+                TextButton.icon(
+                  onPressed: () async {
+                    try {
+                      if (!_validateFields()) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content:
+                                Text("Por favor, complete todos los campos."),
                           ),
                         );
                       }
-                    }),
+                      await widget.cartService.createOrder(
+                          selectedPaymentMethod!.idPayment,
+                          selectedPaymentMethod!.name,
+                          _selectedDateTime!,
+                          selectedDireccion!.direccionCompleta,
+                          selectedDireccion!.latitude,
+                          selectedDireccion!.longitude,
+                          listProducts,
+                          listCombos,
+                          selectedCupon!.code,
+                          instructions);
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: const Text('¡Orden creada con éxito!'),
+                          content: Text(
+                              'Tu pedido ha sido procesado. ID de la orden: ${widget.cartService.idOrder}. Pronto recibirás una confirmación.'),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                _clearCart();
+                                Navigator.of(context).pop();
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => MainTabView()),
+                                );
+                              },
+                              child: const Text('Continuar'),
+                            ),
+                          ],
+                        ),
+                      );
+                    } catch (error) {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: const Text('Error al crear la orden'),
+                          content: const Text(
+                              'Ha ocurrido un error al procesar tu pedido. Por favor, inténtalo de nuevo más tarde.'),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text('Aceptar'),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+                  },
+                  icon: const Icon(
+                    Icons.check_circle,
+                    color: Colors.orange,
+                  ),
+                  label: const Text(
+                    'Confirmar Pedido',
+                    style: TextStyle(
+                      fontFamily: 'Inter',
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: Colors.orange,
+                    ),
+                  ),
+                  style: TextButton.styleFrom(
+                    side: const BorderSide(color: Colors.orange, width: 2),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                  ),
+                ),
               ],
             ),
           ],

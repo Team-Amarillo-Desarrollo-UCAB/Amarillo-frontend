@@ -2,16 +2,19 @@ import 'package:desarrollo_frontend/Checkout/infrastructure/payment_service.dart
 import 'package:flutter/material.dart';
 
 class MetodosDePago extends StatefulWidget {
-  final Function(String) onSelectedMethod;
-   final List<PaymentMethod> paymentMethods;
-  const MetodosDePago({super.key, required this.onSelectedMethod, required this.paymentMethods});
+  final Function(PaymentMethod) onSelectedMethod;
+  final List<PaymentMethod> paymentMethods;
+  const MetodosDePago({
+    super.key,
+    required this.onSelectedMethod,
+    required this.paymentMethods,
+  });
   @override
   MetodosDePagoState createState() => MetodosDePagoState();
 }
 
 class MetodosDePagoState extends State<MetodosDePago> {
   String? _selectedMethod;
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -30,7 +33,7 @@ class MetodosDePagoState extends State<MetodosDePago> {
           onChanged: (value) {
             setState(() {
               _selectedMethod = value as String;
-              widget.onSelectedMethod(_selectedMethod!);
+              widget.onSelectedMethod(method);
             });
           },
           activeColor: Colors.orange,
