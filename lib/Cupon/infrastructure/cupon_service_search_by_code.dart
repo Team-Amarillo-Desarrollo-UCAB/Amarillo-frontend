@@ -21,11 +21,11 @@ class CuponServiceSearchByCode {
       return Cupon(
         code: cuponData.code,
         expirationDate: DateTime.parse(cuponData.expirationDate),
-        amount: double.parse(cuponData.amount),
+        amount: cuponData.amount,
         used: false,
       );
     } else {
-      throw Exception('Error al obtener el producto');
+      throw Exception('Error al obtener el cupon');
     }
   }
 }
