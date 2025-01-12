@@ -319,7 +319,10 @@ class _CategoriasProductViewState extends State<CategoriasProductView> {
                                       name: product.name,
                                       price: discountedPrice,
                                       description: product.description,
-                                      peso: product.peso)),
+                                      peso: product.peso,
+                                      isCombo: false,
+                                      discount: product.discount,
+                                      category: product.category)),
                                 );
                               }
                             },

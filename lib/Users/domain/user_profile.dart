@@ -14,9 +14,10 @@ class UserProfile with ChangeNotifier {
     required this.image,
   });
 
-  void updateProfile(String newName, String newPhoneNumber) {
+  void updateProfile(String newName, String newPhoneNumber, String newEmail) {
     name = newName;
     phoneNumber = newPhoneNumber;
+    email = newEmail;
     notifyListeners();
     _saveToPreferences();
   }

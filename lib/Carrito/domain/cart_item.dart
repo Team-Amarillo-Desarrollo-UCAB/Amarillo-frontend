@@ -8,7 +8,10 @@ class CartItem {
   final dynamic description;
   final String peso;
   int quantity;
+  final bool isCombo;
   final List<dynamic>? productId;
+  final String discount;
+  final List<dynamic> category;
 
   CartItem({
     required this.id_product,
@@ -19,6 +22,9 @@ class CartItem {
     required this.peso,
     this.quantity = 1,
     this.productId,
+    required this.isCombo,
+    required this.discount,
+    required this.category,
   });
 
   void incrementQuantity() {
@@ -45,6 +51,9 @@ class CartItem {
       'peso': peso,
       'quantity': quantity,
       'productId': productId,
+      'isCombo': isCombo,
+      'category': category,
+      'discount': discount,
     };
   }
 
@@ -58,6 +67,9 @@ class CartItem {
       peso: json['peso'],
       quantity: json['quantity'],
       productId: json['productId'],
+      isCombo: json['isCombo'],
+      category: json['category'],
+      discount: json['discount'],
     );
   }
 }

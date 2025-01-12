@@ -5,6 +5,10 @@ import 'package:desarrollo_frontend/Checkout/presentation/direcciones_screen.dar
 import 'package:desarrollo_frontend/Checkout/presentation/fecha_hora_widget.dart';
 import 'package:desarrollo_frontend/Checkout/presentation/metodo_de_pago_widget.dart';
 import 'package:desarrollo_frontend/Checkout/presentation/pie_pagina_widget.dart';
+import 'package:desarrollo_frontend/Combo/domain/combo.dart';
+import 'package:desarrollo_frontend/Cupon/domain/Cupon.dart';
+import 'package:desarrollo_frontend/Cupon/presentation/cupon_screen.dart';
+import 'package:desarrollo_frontend/Producto/domain/product.dart';
 import 'package:flutter/material.dart';
 import '../../common/infrastructure/base_url.dart';
 import '../../common/presentation/common_widget/round_button.dart';
@@ -33,26 +37,42 @@ class CheckoutScreenState extends State<CheckoutScreen> {
   OrderRepository orderRepository = OrderRepository();
   final List<Direccion> _direcciones = [];
   DateTime? _selectedDateTime;
-
-  void _clearCart() {
-    setState(() {
-      widget.listCartItems.clear();
-      widget.cartService.clearCartItems();
-    });
-  }
+  List<CartItem> listProducts = [];
+  List<CartItem> listCombos = [];
+  Cupon? selectedCupon;
+  PaymentMethod? selectedPaymentMethod;
+  Direccion? selectedDireccion;
+  String instructions = 'Entregar por la puerta roja de la esquina';
 
   @override
   void initState() {
     super.initState();
     _fetchPaymentMethods();
+    _divideCartItems();
+  }
+
+  void _divideCartItems() {
+    for (var cartItem in widget.listCartItems) {
+      if (cartItem.isCombo) {
+        listCombos.add(cartItem);
+      } else {
+        listProducts.add(cartItem);
+      }
+    }
+  }
+
+  void _clearCart() {
+    setState(() {
+      widget.listCartItems.clear();
+      listProducts.clear();
+      listCombos.clear();
+      widget.cartService.clearCartItems();
+    });
   }
 
   final PaymentService paymentService = PaymentService(BaseUrl().BASE_URL);
-
   final Map<String, TextEditingController> controllers = {};
-  String selectedPaymentMethod = '';
   List<PaymentMethod> paymentFields = [];
-
   Future<void> _fetchPaymentMethods() async {
     try {
       List<PaymentMethod> paymentMethod =
@@ -79,6 +99,24 @@ class CheckoutScreenState extends State<CheckoutScreen> {
     });
   }
 
+  void _selectDireccion(Direccion direccion) {
+    setState(() {
+      selectedDireccion = direccion;
+    });
+  }
+
+  Future<void> _selectCupon() async {
+    final Cupon? cupon = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => CuponView()),
+    );
+    if (cupon != null && mounted) {
+      setState(() {
+        selectedCupon = cupon;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -91,8 +129,8 @@ class CheckoutScreenState extends State<CheckoutScreen> {
           'Checkout',
           style: TextStyle(
             fontFamily: 'Inter',
-            fontWeight: FontWeight.w600,
-            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
           ),
         ),
         leading: IconButton(
@@ -129,6 +167,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                 );
               },
               onRemoveDireccion: _removeDireccion,
+              onSelectDireccion: _selectDireccion,
             ),
             const SizedBox(height: 10),
             const Divider(),
@@ -168,12 +207,64 @@ class CheckoutScreenState extends State<CheckoutScreen> {
               onSelectedMethod: (method) {
                 setState(() {
                   selectedPaymentMethod = method;
-                  _generatePaymentFields(method);
+                  _generatePaymentFields(method.idPayment);
                 });
               },
             ),
             const Divider(),
-            if (selectedPaymentMethod.isNotEmpty) ..._buildPaymentFields(),
+            if (selectedPaymentMethod != null) ..._buildPaymentFields(),
+            const Divider(),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Cupones',
+                    style: TextStyle(
+                      fontFamily: 'Inter',
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  selectedCupon == null
+                      ? const Text(
+                          'No hay cupón seleccionado',
+                          style: TextStyle(
+                            fontFamily: 'Inter',
+                            fontWeight: FontWeight.w400,
+                            fontSize: 14,
+                          ),
+                        )
+                      : Text(
+                          'Cupón seleccionado: ${selectedCupon!.code} - ${selectedCupon!.amount}%',
+                          style: const TextStyle(
+                            fontFamily: 'Inter',
+                            fontWeight: FontWeight.w400,
+                            fontSize: 14,
+                          ),
+                        ),
+                  const SizedBox(height: 10),
+                  TextButton.icon(
+                    onPressed: _selectCupon,
+                    icon: const Icon(
+                      Icons.card_giftcard,
+                      color: Colors.orange,
+                    ),
+                    label: const Text(
+                      'Seleccionar cupón',
+                      style: TextStyle(
+                          fontFamily: 'Inter',
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                          color: Colors.orange),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Divider(),
           ],
         ),
       ),
@@ -187,66 +278,89 @@ class CheckoutScreenState extends State<CheckoutScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                RoundButton(
-                    title: "Confirmar Pedido",
-                    onPressed: () async {
-                      try {
-                        if (!_validateFields()) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                                content: Text(
-                                    "Por favor, complete todos los campos.")),
-                          );
-                        }
-                        await widget.cartService
-                            .createOrder(widget.listCartItems);
-                        showDialog(
-                          context: context,
-                          builder: (context) => AlertDialog(
-                            title: const Text('¡Orden creada con éxito!'),
-                            content: Text(
-                                'Tu pedido ha sido procesado. ID de la orden: ${widget.cartService.idOrder}. Pronto recibirás una confirmación.'),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  // orderRepository.addOrder(Order(
-                                  //   orderId: widget.cartService.idOrder,
-                                  //   items: widget.cartService.orderItems,
-                                  // ));
-                                  _clearCart();
-                                  Navigator.of(context).pop();
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            MainTabView() //OrderHistoryScreen(orderRepository: orderRepository,
-                                        ),
-                                  );
-                                },
-                                child: const Text('Continuar'),
-                              ),
-                            ],
-                          ),
-                        );
-                      } catch (error) {
-                        showDialog(
-                          context: context,
-                          builder: (context) => AlertDialog(
-                            title: const Text('Error al crear la orden'),
-                            content: const Text(
-                                'Ha ocurrido un error al procesar tu pedido. Por favor, inténtalo de nuevo más tarde.'),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                child: const Text('Aceptar'),
-                              ),
-                            ],
+                TextButton.icon(
+                  onPressed: () async {
+                    try {
+                      if (!_validateFields()) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content:
+                                Text("Por favor, complete todos los campos."),
                           ),
                         );
                       }
-                    }),
+                      await widget.cartService.createOrder(
+                          selectedPaymentMethod!.idPayment,
+                          selectedPaymentMethod!.name,
+                          _selectedDateTime!,
+                          selectedDireccion!.direccionCompleta,
+                          selectedDireccion!.latitude,
+                          selectedDireccion!.longitude,
+                          listProducts,
+                          listCombos,
+                          selectedCupon!.code,
+                          instructions);
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: const Text('¡Orden creada con éxito!'),
+                          content: Text(
+                              'Tu pedido ha sido procesado. ID de la orden: ${widget.cartService.idOrder}. Pronto recibirás una confirmación.'),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                _clearCart();
+                                Navigator.of(context).pop();
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => MainTabView()),
+                                );
+                              },
+                              child: const Text('Continuar'),
+                            ),
+                          ],
+                        ),
+                      );
+                    } catch (error) {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: const Text('Error al crear la orden'),
+                          content: const Text(
+                              'Ha ocurrido un error al procesar tu pedido. Por favor, inténtalo de nuevo más tarde.'),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text('Aceptar'),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+                  },
+                  icon: const Icon(
+                    Icons.check_circle,
+                    color: Colors.orange,
+                  ),
+                  label: const Text(
+                    'Confirmar Pedido',
+                    style: TextStyle(
+                      fontFamily: 'Inter',
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: Colors.orange,
+                    ),
+                  ),
+                  style: TextButton.styleFrom(
+                    side: const BorderSide(color: Colors.orange, width: 2),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                  ),
+                ),
               ],
             ),
           ],

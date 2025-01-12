@@ -4,6 +4,7 @@ import 'package:desarrollo_frontend/order/infrastructure/order_service_search_by
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../../common/infrastructure/base_url.dart';
+import 'detailed_map_view.dart';
 
 class TrackOrderView extends StatefulWidget {
   final String orderId;
@@ -244,45 +245,60 @@ class _TrackOrderViewState extends State<TrackOrderView> {
                                 : StepState.indexed,
                           ),
                           Step(
-                            title: Text('Orden en camino'),
-                            content: SizedBox(
-                              height: 200,
-                              child: GoogleMap(
-                                mapType: MapType.normal,
-                                onMapCreated: (GoogleMapController controller) {
-                                  _controller.complete(controller);
-                                },
-                                initialCameraPosition: CameraPosition(
-                                  target: origin,
-                                  zoom: 14.0,
-                                ),
-                                markers: {
-                                  Marker(
-                                      markerId: MarkerId('origin'),
-                                      position: origin),
-                                  Marker(
-                                      markerId: MarkerId('destination'),
-                                      position: deliveryLatLng),
-                                },
-                                polylines: {
-                                  Polyline(
-                                    polylineId: PolylineId('route'),
-                                    points: [origin, deliveryLatLng],
-                                    color: Colors.blue,
-                                    width: 5,
+                          title: Text('Orden en camino'),
+                          content: Column(
+                            children: [
+                              SizedBox(
+                                height: 200,
+                                child: GoogleMap(
+                                  onMapCreated: (GoogleMapController controller) {
+                                    _controller.complete(controller);
+                                  },
+                                  initialCameraPosition: CameraPosition(
+                                    target: origin,
+                                    zoom: 14.0,
                                   ),
-                                },
-                                scrollGesturesEnabled: true,
-                                zoomGesturesEnabled: true,
-                                rotateGesturesEnabled: true,
-                                tiltGesturesEnabled: true,
+                                  markers: {
+                                    Marker(markerId: MarkerId('origin'), position: origin),
+                                    Marker(markerId: MarkerId('destination'), position: deliveryLatLng),
+                                  },
+                                  polylines: {
+                                    Polyline(
+                                      polylineId: PolylineId('route'),
+                                      points: [origin, deliveryLatLng],
+                                      color: Colors.blue,
+                                      width: 3,
+                                    ),
+                                  },
+                                  scrollGesturesEnabled: true, 
+                                  zoomGesturesEnabled: false,
+                                ),
                               ),
-                            ),
-                            isActive: currentStep >= 2,
-                            state: currentStep > 2
-                                ? StepState.complete
-                                : StepState.indexed,
+                              const SizedBox(height: 16),
+                              SizedBox(
+                                height: 50,
+                                width: double.infinity,
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => DetailedMapView(
+                                          origin: origin,
+                                          destination: deliveryLatLng,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  child: Text('Ver mapa a detalle'),
+                                ),
+                              ),
+                            ],
                           ),
+                          isActive: currentStep >= 2,
+                          state: currentStep > 2 ? StepState.complete : StepState.indexed,
+                        ),
+
                           Step(
                             title: Text('Orden entregada'),
                             content: Container(),

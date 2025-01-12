@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:desarrollo_frontend/Cupon/domain/Cupon.dart';
 import 'package:desarrollo_frontend/Cupon/infrastructure/cupon_service_search_by_code.dart';
 import 'package:desarrollo_frontend/common/infrastructure/base_url.dart';
@@ -30,10 +29,10 @@ class _CuponViewState extends State<CuponView> {
       setState(() {
         _cupones.clear();
         _cupones.addAll(cuponesJson.map((json) => Cupon(
-              code: json['code'],
-              expirationDate: DateTime.parse(json['expirationDate']),
-              amount: json['amount'],
-            )));
+            code: json['code'],
+            expirationDate: DateTime.parse(json['expirationDate']),
+            amount: json['amount'],
+            used: json['used'])));
       });
     }
   }
@@ -45,6 +44,7 @@ class _CuponViewState extends State<CuponView> {
               'code': cupon.code,
               'expirationDate': cupon.expirationDate.toIso8601String(),
               'amount': cupon.amount,
+              'used': cupon.used
             })
         .toList());
     await prefs.setString('cupones', cuponesString);
@@ -88,16 +88,12 @@ class _CuponViewState extends State<CuponView> {
     }
   }
 
-  Future<void> _removeCupon(int index) async {
+  Future<void> _selectCupon(Cupon cupon) async {
     setState(() {
-      _cupones.removeAt(index);
+      cupon.used = true;
     });
     await _saveCupones();
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Cupón eliminado'),
-      ),
-    );
+    Navigator.pop(context, cupon);
   }
 
   @override
@@ -145,9 +141,13 @@ class _CuponViewState extends State<CuponView> {
                 itemBuilder: (context, index) {
                   final cupon = _cupones[index];
                   return GestureDetector(
-                    onTap: () => _removeCupon(index),
+                    onTap: () {
+                      if (!cupon.used) {
+                        _selectCupon(cupon);
+                      }
+                    },
                     child: Card(
-                      color: Colors.orange,
+                      color: cupon.used ? Colors.grey : Colors.orange,
                       margin: const EdgeInsets.symmetric(vertical: 8.0),
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),

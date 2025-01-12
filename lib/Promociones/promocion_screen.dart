@@ -314,7 +314,10 @@ class _PromocionesViewState extends State<PromocionesView> {
                                               price: discountedPrice,
                                               description: combo.description,
                                               peso: combo.peso,
-                                              productId: combo.productId)),
+                                              productId: combo.productId,
+                                              isCombo: true,
+                                              discount: combo.discount,
+                                              category: combo.category)),
                                         );
                                       }
                                     },
@@ -373,12 +376,16 @@ class _PromocionesViewState extends State<PromocionesView> {
                                         return ProductCard2(
                                           product: product,
                                           onAdd: () => onAdd(CartItem(
-                                              id_product: product.id_product,
-                                              imageUrl: product.images[0],
-                                              name: product.name,
-                                              price: discountedPrice,
-                                              description: product.description,
-                                              peso: product.peso)),
+                                            id_product: product.id_product,
+                                            imageUrl: product.images[0],
+                                            name: product.name,
+                                            price: discountedPrice,
+                                            description: product.description,
+                                            peso: product.peso,
+                                            isCombo: false,
+                                            discount: product.discount,
+                                            category: product.category,
+                                          )),
                                         );
                                       }
                                     },
