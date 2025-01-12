@@ -19,9 +19,11 @@ class CuponServiceSearchByCode {
       final cuponData = CuponData.fromJson(data);
 
       return Cupon(
-          code: cuponData.code,
-          expirationDate: DateTime.parse(cuponData.expirationDate),
-          amount: double.parse(cuponData.amount));
+        code: cuponData.code,
+        expirationDate: DateTime.parse(cuponData.expirationDate),
+        amount: double.parse(cuponData.amount),
+        used: false,
+      );
     } else {
       throw Exception('Error al obtener el producto');
     }

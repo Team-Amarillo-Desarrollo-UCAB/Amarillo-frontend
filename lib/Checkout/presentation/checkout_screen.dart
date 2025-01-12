@@ -5,6 +5,10 @@ import 'package:desarrollo_frontend/Checkout/presentation/direcciones_screen.dar
 import 'package:desarrollo_frontend/Checkout/presentation/fecha_hora_widget.dart';
 import 'package:desarrollo_frontend/Checkout/presentation/metodo_de_pago_widget.dart';
 import 'package:desarrollo_frontend/Checkout/presentation/pie_pagina_widget.dart';
+import 'package:desarrollo_frontend/Combo/domain/combo.dart';
+import 'package:desarrollo_frontend/Cupon/domain/Cupon.dart';
+import 'package:desarrollo_frontend/Cupon/presentation/cupon_screen.dart';
+import 'package:desarrollo_frontend/Producto/domain/product.dart';
 import 'package:flutter/material.dart';
 import '../../common/infrastructure/base_url.dart';
 import '../../common/presentation/common_widget/round_button.dart';
@@ -33,18 +37,53 @@ class CheckoutScreenState extends State<CheckoutScreen> {
   OrderRepository orderRepository = OrderRepository();
   final List<Direccion> _direcciones = [];
   DateTime? _selectedDateTime;
-
-  void _clearCart() {
-    setState(() {
-      widget.listCartItems.clear();
-      widget.cartService.clearCartItems();
-    });
-  }
+  List<Product> listProducts = [];
+  List<Combo> listCombos = [];
+  Cupon? selectedCupon;
 
   @override
   void initState() {
     super.initState();
     _fetchPaymentMethods();
+    _divideCartItems();
+  }
+
+  void _divideCartItems() {
+    for (var cartItem in widget.listCartItems) {
+      if (cartItem.isCombo) {
+        listCombos.add(Combo(
+          id_product: cartItem.id_product,
+          images: cartItem.imageUrl,
+          name: cartItem.name,
+          price: cartItem.price.toString(),
+          productId: cartItem.productId!,
+          peso: cartItem.peso,
+          description: cartItem.description,
+          discount: cartItem.discount,
+          category: cartItem.category,
+        ));
+      } else {
+        listProducts.add(Product(
+          id_product: cartItem.id_product,
+          name: cartItem.name,
+          price: cartItem.price.toString(),
+          description: cartItem.description,
+          peso: cartItem.peso,
+          images: cartItem.imageUrl,
+          category: cartItem.category,
+          discount: cartItem.discount,
+        ));
+      }
+    }
+  }
+
+  void _clearCart() {
+    setState(() {
+      widget.listCartItems.clear();
+      listProducts.clear();
+      listCombos.clear();
+      widget.cartService.clearCartItems();
+    });
   }
 
   final PaymentService paymentService = PaymentService(BaseUrl().BASE_URL);
@@ -79,6 +118,18 @@ class CheckoutScreenState extends State<CheckoutScreen> {
     });
   }
 
+  Future<void> _selectCupon() async {
+    final Cupon? cupon = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => CuponView()),
+    );
+    if (cupon != null && mounted) {
+      setState(() {
+        selectedCupon = cupon;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -91,8 +142,8 @@ class CheckoutScreenState extends State<CheckoutScreen> {
           'Checkout',
           style: TextStyle(
             fontFamily: 'Inter',
-            fontWeight: FontWeight.w600,
-            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
           ),
         ),
         leading: IconButton(
@@ -174,6 +225,61 @@ class CheckoutScreenState extends State<CheckoutScreen> {
             ),
             const Divider(),
             if (selectedPaymentMethod.isNotEmpty) ..._buildPaymentFields(),
+            const Divider(),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Cupones',
+                    style: TextStyle(
+                      fontFamily: 'Inter',
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  selectedCupon == null
+                      ? const Text(
+                          'No hay cupón seleccionado',
+                          style: TextStyle(
+                            fontFamily: 'Inter',
+                            fontWeight: FontWeight.w400,
+                            fontSize: 14,
+                          ),
+                        )
+                      : Text(
+                          'Cupón seleccionado: ${selectedCupon!.code} - ${selectedCupon!.amount}%',
+                          style: const TextStyle(
+                            fontFamily: 'Inter',
+                            fontWeight: FontWeight.w400,
+                            fontSize: 14,
+                          ),
+                        ),
+                  const SizedBox(height: 10),
+                  ElevatedButton(
+                    onPressed: _selectCupon,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.orange[400],
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                    ),
+                    child: const Text(
+                      'Seleccionar cupón',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Divider(),
           ],
         ),
       ),
@@ -209,18 +315,12 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                             actions: [
                               TextButton(
                                 onPressed: () {
-                                  // orderRepository.addOrder(Order(
-                                  //   orderId: widget.cartService.idOrder,
-                                  //   items: widget.cartService.orderItems,
-                                  // ));
                                   _clearCart();
                                   Navigator.of(context).pop();
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) =>
-                                            MainTabView() //OrderHistoryScreen(orderRepository: orderRepository,
-                                        ),
+                                        builder: (context) => MainTabView()),
                                   );
                                 },
                                 child: const Text('Continuar'),

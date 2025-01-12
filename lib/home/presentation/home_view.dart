@@ -399,7 +399,10 @@ class _HomeViewState extends State<HomeView> {
                                           price: discountedPrice,
                                           description: combo.description,
                                           peso: combo.peso,
-                                          productId: combo.productId)),
+                                          productId: combo.productId,
+                                          isCombo: true,
+                                          discount: combo.discount,
+                                          category: combo.category)),
                                     );
                                   }
                                 },
@@ -447,7 +450,10 @@ class _HomeViewState extends State<HomeView> {
                                           name: product.name,
                                           price: discountedPrice,
                                           description: product.description,
-                                          peso: product.peso)),
+                                          peso: product.peso,
+                                          isCombo: false,
+                                          category: product.category,
+                                          discount: product.discount)),
                                     );
                                   }
                                 },
