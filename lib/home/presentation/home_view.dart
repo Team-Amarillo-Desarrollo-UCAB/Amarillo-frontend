@@ -23,6 +23,7 @@ import '../../Carrito/infrastructure/cart_service.dart';
 import '../../Producto/domain/product.dart';
 import '../../Producto/presentation/product_widget.dart';
 import '../../common/presentation/logout_dialog.dart';
+import 'paralax_background.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -32,6 +33,19 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
+  double stopParallaxHeight = 200;
+  double stopParallaxHeight2 = 0;
+  double topEleven = 0;
+  double topTen = 0;
+  double topNine = 0;
+  double topEight = 0;
+  double topSeven = 0;
+  double topSix = 0;
+  double topFive = 0;
+  double topFour = 0;
+  double topThree = 0;
+  double topTwo = 0;
+  double topOne = 0;
   TextEditingController _searchController = TextEditingController();
   List<Product> _product = [];
   List<Combo> _combo = [];
@@ -170,53 +184,94 @@ class _HomeViewState extends State<HomeView> {
   Widget build(BuildContext context) {
     var media = MediaQuery.of(context).size;
     didChangeDependencies();
-    return Stack(children: [
-      // Drawer personalizado
-      _buildDrawer(),
-      AnimatedContainer(
-        transform: Matrix4.translationValues(xOffset, yOffset, 0)
-          ..scale(isDrawerOpen ? 0.85 : 1.00),
-        duration: const Duration(milliseconds: 250),
-        decoration: BoxDecoration(
-          borderRadius:
-              isDrawerOpen ? BorderRadius.circular(30) : BorderRadius.zero,
-        ),
-        child: Scaffold(
-            body: SingleChildScrollView(
+    return Scaffold(
+      body:NotificationListener(
+        onNotification: (notif) {
+          if (notif is ScrollUpdateNotification) {
+            if (notif.scrollDelta == null) return true;
+            if (notif.scrollDelta != null && notif.metrics.axis == Axis.vertical && notif.metrics.pixels <= stopParallaxHeight) {
+            setState(() {
+              topEleven -= notif.scrollDelta! / 2.0;
+              topTen -= notif.scrollDelta! / 1.9;
+              topNine -= notif.scrollDelta! / 1.8;
+              topEight -= notif.scrollDelta! / 1.7;
+              topSeven -= notif.scrollDelta! / 1.6;
+              topSix -= notif.scrollDelta! / 1.5;
+              topFive -= notif.scrollDelta! / 1.4;
+              topFour -= notif.scrollDelta! / 1.3;
+              topThree -= notif.scrollDelta! / 1.2;
+              topTwo -= notif.scrollDelta! / 1.2;
+              topOne -= notif.scrollDelta! / 1;
+            });
+            }
+            if (notif.metrics.pixels <= stopParallaxHeight) {
+
+              }
+          }
+          return true;
+        },
+        child: Stack(
+          children: [
+      // Parallax
+      ParalaxBackground(
+        top: topSeven,
+        asset: 'assets/img/top-paralax-7.png',
+      ),
+      ParalaxBackground(
+        top: topTwo,
+        asset: 'assets/img/top-paralax-2.png',
+      ),
+            ParalaxBackground(
+        top: topNine,
+        asset: 'assets/img/top-paralax-9.png',
+      ),
+      ParalaxBackground(
+        top: topFive,
+        asset: 'assets/img/top-paralax-5.png',
+      ),
+
+      ParalaxBackground(
+        top: topEight,
+        asset: 'assets/img/top-paralax-8.png',
+      ),
+            ParalaxBackground(
+        top: topOne,
+        asset: 'assets/img/top-paralax-1.png',
+      ),
+
+      ParalaxBackground(
+        top: topFour,
+        asset: 'assets/img/top-paralax-4.png',
+      ),
+      ParalaxBackground(
+        top: topThree,
+        asset: 'assets/img/top-paralax-3.png',
+      ),
+      
+
+            ParalaxBackground(
+        top: topSix,
+        asset: 'assets/img/top-paralax-6.png',
+      ),
+      SingleChildScrollView(
+        physics: const ClampingScrollPhysics(),
+        child: Column(
+          children: [
+        const SizedBox(height: 350),
+        NotificationListener<ScrollNotification>(
+          onNotification: (ScrollNotification scrollInfo) {
+            if (scrollInfo.metrics.pixels > stopParallaxHeight2) {
+              return true;
+            }
+            return false;
+          },
+        child:
+        Container(
+          color: const Color.fromARGB(255, 255, 255, 255),
                 child: Column(
           children: [
             // AppBar personalizado
-            SizedBox(height: media.height * 0.05),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: media.width * 0.05),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  isDrawerOpen
-                      ? IconButton(
-                          icon: const Icon(Icons.arrow_back_ios),
-                          onPressed: () {
-                            setState(() {
-                              xOffset = 0;
-                              yOffset = 0;
-                              isDrawerOpen = false;
-                            });
-                          },
-                        )
-                      : IconButton(
-                          icon: const Icon(Icons.menu),
-                          onPressed: () {
-                            setState(() {
-                              xOffset = 250;
-                              yOffset = 70;
-                              isDrawerOpen = true;
-                            });
-                          },
-                        ),
-                  const Icon(Icons.notifications),
-                ],
-              ),
-            ),
+
             Padding(
               padding: EdgeInsets.symmetric(vertical: media.height * 0.02),
               child: Column(
@@ -464,10 +519,49 @@ class _HomeViewState extends State<HomeView> {
                 ],
               ),
             ),
+            
           ],
-        ))),
-      )
-    ]);
+          ),
+        ),
+      ),
+        
+      ]),
+      
+    ),
+            Padding(
+          padding: EdgeInsets.symmetric(horizontal: media.width * 0.05, vertical: media.height * 0.04),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              isDrawerOpen
+                  ? IconButton(
+                      icon: const Icon(Icons.arrow_back_ios, color: Colors.yellow,),
+                      onPressed: () {
+                        setState(() {
+                          xOffset = 0;
+                          yOffset = 0;
+                          isDrawerOpen = false;
+                        });
+                      },
+                    )
+                  : IconButton(
+                      icon: const Icon(Icons.menu, color: Colors.yellow,),
+                      onPressed: () {
+                        setState(() {
+                          xOffset = 250;
+                          yOffset = 70;
+                          isDrawerOpen = true;
+                        });
+                      },
+                    ),
+              const Icon(Icons.notifications, color: Colors.yellow,),
+            ],
+          ),
+        ),
+
+    ]),
+    ),
+    );
   }
 
   Widget _buildDrawer() {
