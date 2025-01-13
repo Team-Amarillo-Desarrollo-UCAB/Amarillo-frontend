@@ -24,7 +24,6 @@ class ResumenPedido extends StatelessWidget {
                 Text(
                   'Total de $totalItems items en el carrito',
                   style: const TextStyle(
-                    fontFamily: 'Inter',
                     fontWeight: FontWeight.w600,
                     fontSize: 13,
                   ),
@@ -32,7 +31,6 @@ class ResumenPedido extends StatelessWidget {
                 Text(
                   '\$$totalPrice',
                   style: const TextStyle(
-                    fontFamily: 'Inter',
                     fontWeight: FontWeight.w600,
                     fontSize: 13,
                     color: Colors.green,

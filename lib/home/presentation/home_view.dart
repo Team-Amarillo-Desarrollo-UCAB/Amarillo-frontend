@@ -267,11 +267,9 @@ class _HomeViewState extends State<HomeView> {
           },
         child:
         Container(
-          color: const Color.fromARGB(255, 255, 255, 255),
+          color: TColor.white,
                 child: Column(
           children: [
-            // AppBar personalizado
-
             Padding(
               padding: EdgeInsets.symmetric(vertical: media.height * 0.02),
               child: Column(
@@ -323,13 +321,13 @@ class _HomeViewState extends State<HomeView> {
                       decoration: InputDecoration(
                         hintText: "Productos, Categorías...",
                         prefixIcon:
-                            const Icon(Icons.search, color: Colors.orange),
+                           Icon(Icons.search, color: TColor.primary),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30),
                           borderSide: BorderSide.none,
                         ),
                         filled: true,
-                        fillColor: Colors.orange.withOpacity(0.1),
+                        fillColor: TColor.secondary.withOpacity(0.4),
                       ),
                       onSubmitted: (value) {
                         if (value.trim().isNotEmpty) {

@@ -6,6 +6,7 @@ import 'package:desarrollo_frontend/common/presentation/common_widget/category_c
 import 'package:desarrollo_frontend/common/presentation/main_tabview.dart';
 import 'package:flutter/material.dart';
 import '../../common/infrastructure/base_url.dart';
+import '../../common/presentation/color_extension.dart';
 import '../infrastructure/product_service.dart';
 import '../infrastructure/product_service_search.dart';
 import '../../Carrito/domain/cart_item.dart';
@@ -192,7 +193,7 @@ class _ProductViewState extends State<ProductView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.grey[200],
+        backgroundColor: TColor.secondary,
         centerTitle: true,
         title: const Text('Productos',
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
@@ -204,7 +205,7 @@ class _ProductViewState extends State<ProductView> {
             }),
         actions: [
           IconButton(
-            icon: const Icon(Icons.shopping_cart, color: Colors.orange),
+            icon: Icon(Icons.shopping_cart, color: TColor.black),
             onPressed: () {
               Navigator.push(
                 context,
@@ -235,13 +236,13 @@ class _ProductViewState extends State<ProductView> {
                   controller: _searchController,
                   decoration: InputDecoration(
                     hintText: "Productos, Categorías...",
-                    prefixIcon: const Icon(Icons.search, color: Colors.orange),
+                    prefixIcon: Icon(Icons.search, color: TColor.primary),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30),
                       borderSide: BorderSide.none,
                     ),
                     filled: true,
-                    fillColor: Colors.orange.withOpacity(0.1),
+                    fillColor: TColor.secondary.withOpacity(0.4),
                   ),
                   onSubmitted: (value) {
                     _searchProductByName(value);

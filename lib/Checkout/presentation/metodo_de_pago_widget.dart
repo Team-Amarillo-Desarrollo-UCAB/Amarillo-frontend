@@ -1,6 +1,8 @@
 import 'package:desarrollo_frontend/Checkout/infrastructure/payment_service.dart';
 import 'package:flutter/material.dart';
 
+import '../../common/presentation/color_extension.dart';
+
 class MetodosDePago extends StatefulWidget {
   final Function(PaymentMethod) onSelectedMethod;
   final List<PaymentMethod> paymentMethods;
@@ -36,7 +38,7 @@ class MetodosDePagoState extends State<MetodosDePago> {
               widget.onSelectedMethod(method);
             });
           },
-          activeColor: Colors.orange,
+          activeColor: TColor.primary,
           controlAffinity: ListTileControlAffinity.leading,
         );
       }).toList(),

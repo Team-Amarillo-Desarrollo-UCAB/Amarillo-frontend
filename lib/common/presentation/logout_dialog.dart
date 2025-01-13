@@ -1,3 +1,4 @@
+import 'package:desarrollo_frontend/common/presentation/color_extension.dart';
 import 'package:desarrollo_frontend/common/presentation/startup_view.dart';
 import 'package:flutter/material.dart';
 import '../infrastructure/session_manager.dart';
@@ -11,10 +12,10 @@ void showLogoutConfirmationDialog(BuildContext context) {
       return AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)), // Bordes redondeados
         title: Column(
-          children: const [
-            Icon(Icons.help_outline, size: 50, color: Colors.orangeAccent), // Ícono de pregunta
-            SizedBox(height: 10),
-            Text(
+          children: [
+            Icon(Icons.help_outline, size: 50, color: TColor.primary), // Ícono de pregunta
+            const SizedBox(height: 10),
+            const Text(
               "Cerrar Sesión",
               textAlign: TextAlign.center,
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
@@ -33,7 +34,7 @@ void showLogoutConfirmationDialog(BuildContext context) {
               Navigator.of(context).pop(); // Cerrar el popup
             },
             style: TextButton.styleFrom(
-              foregroundColor: Colors.grey, // Color del texto
+              foregroundColor: TColor.primaryText, // Color del texto
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             ), // Estilo del botón
             child: const Text("Cancelar"),
@@ -47,7 +48,7 @@ void showLogoutConfirmationDialog(BuildContext context) {
                                         builder: (context) =>StartupView())); 
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.orangeAccent,
+              backgroundColor: TColor.primary, // Color de fondo
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             ), // Estilo del botón
             child: const Text("Sí, cerrar sesión", style: TextStyle(fontSize: 16, color: Colors.white)),

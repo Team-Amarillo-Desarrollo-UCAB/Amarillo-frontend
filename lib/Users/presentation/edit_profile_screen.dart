@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:desarrollo_frontend/Users/infrastructure/user_service_update.dart';
 import 'package:flutter/material.dart';
 import '../../common/infrastructure/base_url.dart';
+import '../../common/presentation/color_extension.dart';
 import '../domain/user_profile.dart';
 import 'package:provider/provider.dart';
 
@@ -72,6 +73,7 @@ class EditProfileScreen extends StatefulWidget {
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: TColor.secondary,
         title: const Text('Editar perfil'),
         centerTitle: true,
       ),
@@ -107,7 +109,7 @@ class EditProfileScreen extends StatefulWidget {
                 Navigator.pop(context);
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.orangeAccent,
+                backgroundColor: TColor.primary,
                 padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 40),
               ),
               child: const Text('Guardar datos', style: TextStyle(fontSize: 18, color: Colors.white)),

@@ -1,6 +1,8 @@
 import 'package:desarrollo_frontend/Producto/domain/product.dart';
 import 'package:flutter/material.dart';
 
+import '../../../common/presentation/color_extension.dart';
+
 void showDetailProductDialog(
     BuildContext context, Product product, VoidCallback onAdd) {
   showDialog(
@@ -22,7 +24,6 @@ void showDetailProductDialog(
                   product.name,
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    fontFamily: 'Inter',
                     fontWeight: FontWeight.w900,
                     fontSize: media.width * 0.05,
                   ),
@@ -36,7 +37,6 @@ void showDetailProductDialog(
                 const Text(
                   'Descripción:',
                   style: TextStyle(
-                    fontFamily: 'Inter',
                     fontWeight: FontWeight.w900,
                   ),
                 ),
@@ -47,10 +47,9 @@ void showDetailProductDialog(
                     product.description,
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontFamily: 'Inter',
                       fontWeight: FontWeight.w600,
                       fontSize: media.width * 0.035,
-                      color: Colors.grey,
+                      color: TColor.placeholder,
                     ),
                   ),
                 ),
@@ -69,21 +68,28 @@ void showDetailProductDialog(
                   ],
                 ),
                 SizedBox(height: media.height * 0.02),
-                ElevatedButton(
-                  onPressed: onAdd,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.orange,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
+                Container(
+                  decoration: BoxDecoration(
+                    gradient: TColor.gradient,
+                    borderRadius: BorderRadius.circular(10.0),
                   ),
-                  child: Text(
-                    'Agregar al carrito',
-                    style: TextStyle(
-                      fontFamily: 'Inter',
-                      fontWeight: FontWeight.w900,
-                      fontSize: media.width * 0.04,
-                      color: Colors.white,
+                  child: ElevatedButton(
+                    onPressed: onAdd,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.transparent,
+                      shadowColor: Colors.transparent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                    ),
+                    child: Text(
+                      'Agregar al carrito',
+                      style: TextStyle(
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w900,
+                        fontSize: media.width * 0.04,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ),

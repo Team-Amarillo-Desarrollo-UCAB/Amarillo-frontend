@@ -11,6 +11,7 @@ import 'package:desarrollo_frontend/categorias/domain/category.dart';
 import 'package:desarrollo_frontend/categorias/infrasestructure/category_service.dart';
 import 'package:desarrollo_frontend/common/infrastructure/base_url.dart';
 import 'package:flutter/material.dart';
+import '../../common/presentation/color_extension.dart';
 import '../../common/presentation/common_widget/category_cell.dart';
 
 class CategoriasProductView extends StatefulWidget {
@@ -192,7 +193,7 @@ class _CategoriasProductViewState extends State<CategoriasProductView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.grey[200],
+        backgroundColor: TColor.secondary,
         centerTitle: true,
         title: const Text('Productos',
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
@@ -204,7 +205,7 @@ class _CategoriasProductViewState extends State<CategoriasProductView> {
             }),
         actions: [
           IconButton(
-            icon: const Icon(Icons.shopping_cart, color: Colors.orange),
+            icon: Icon(Icons.shopping_cart, color: TColor.black),
             onPressed: () {
               Navigator.push(
                 context,
@@ -235,13 +236,13 @@ class _CategoriasProductViewState extends State<CategoriasProductView> {
                   controller: _searchController,
                   decoration: InputDecoration(
                     hintText: "Productos, Categorías...",
-                    prefixIcon: const Icon(Icons.search, color: Colors.orange),
+                    prefixIcon: Icon(Icons.search, color: TColor.primary),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30),
                       borderSide: BorderSide.none,
                     ),
                     filled: true,
-                    fillColor: Colors.orange.withOpacity(0.1),
+                    fillColor: TColor.secondary.withOpacity(0.4),
                   ),
                   onSubmitted: (value) {
                     _searchProductByName(value);

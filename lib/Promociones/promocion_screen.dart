@@ -14,6 +14,8 @@ import 'package:desarrollo_frontend/common/infrastructure/base_url.dart';
 import 'package:desarrollo_frontend/common/presentation/main_tabview.dart';
 import 'package:flutter/material.dart';
 
+import '../common/presentation/color_extension.dart';
+
 class PromocionesView extends StatefulWidget {
   const PromocionesView({super.key});
   @override
@@ -165,7 +167,7 @@ class _PromocionesViewState extends State<PromocionesView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.grey[200],
+        backgroundColor: TColor.secondary,
         centerTitle: true,
         title: const Text('Promociones',
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
@@ -177,7 +179,7 @@ class _PromocionesViewState extends State<PromocionesView> {
             }),
         actions: [
           IconButton(
-            icon: const Icon(Icons.shopping_cart, color: Colors.orange),
+            icon: Icon(Icons.shopping_cart, color: TColor.primary),
             onPressed: () {
               Navigator.push(
                 context,
@@ -207,7 +209,7 @@ class _PromocionesViewState extends State<PromocionesView> {
                         child: Container(
                           decoration: BoxDecoration(
                             color:
-                                _showCombo ? Colors.orange : Colors.grey[300],
+                                _showCombo ? TColor.primary : TColor.placeholder,
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Padding(
@@ -217,7 +219,7 @@ class _PromocionesViewState extends State<PromocionesView> {
                                 "Combo",
                                 style: TextStyle(
                                   color:
-                                      _showCombo ? Colors.white : Colors.black,
+                                      _showCombo ? TColor.white : TColor.placeholder,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -237,7 +239,7 @@ class _PromocionesViewState extends State<PromocionesView> {
                         child: Container(
                           decoration: BoxDecoration(
                             color:
-                                !_showCombo ? Colors.orange : Colors.grey[300],
+                                !_showCombo ? TColor.primary : TColor.placeholder,
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Padding(

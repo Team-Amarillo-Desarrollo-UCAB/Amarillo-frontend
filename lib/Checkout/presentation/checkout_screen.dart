@@ -9,6 +9,7 @@ import 'package:desarrollo_frontend/Combo/domain/combo.dart';
 import 'package:desarrollo_frontend/Cupon/domain/Cupon.dart';
 import 'package:desarrollo_frontend/Cupon/presentation/cupon_screen.dart';
 import 'package:desarrollo_frontend/Producto/domain/product.dart';
+import 'package:desarrollo_frontend/common/presentation/color_extension.dart';
 import 'package:flutter/material.dart';
 import '../../common/infrastructure/base_url.dart';
 import '../../common/presentation/common_widget/round_button.dart';
@@ -120,15 +121,14 @@ class CheckoutScreenState extends State<CheckoutScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: TColor.white,
       appBar: AppBar(
         titleSpacing: 0,
         centerTitle: true,
-        backgroundColor: Colors.white,
+        backgroundColor: TColor.secondary,
         title: const Text(
           'Checkout',
           style: TextStyle(
-            fontFamily: 'Inter',
             fontWeight: FontWeight.bold,
             fontSize: 20,
           ),
@@ -144,13 +144,11 @@ class CheckoutScreenState extends State<CheckoutScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Divider(),
             const Padding(
               padding: EdgeInsets.all(16.0),
               child: Text(
                 'Envía a',
                 style: TextStyle(
-                  fontFamily: 'Inter',
                   fontWeight: FontWeight.w600,
                   fontSize: 16,
                 ),
@@ -176,7 +174,6 @@ class CheckoutScreenState extends State<CheckoutScreen> {
               child: Text(
                 'Ingrese la fecha y hora de preferencial',
                 style: TextStyle(
-                  fontFamily: 'Inter',
                   fontWeight: FontWeight.w600,
                   fontSize: 16,
                 ),
@@ -196,7 +193,6 @@ class CheckoutScreenState extends State<CheckoutScreen> {
               child: Text(
                 'Seleccione el metodo de pago',
                 style: TextStyle(
-                  fontFamily: 'Inter',
                   fontWeight: FontWeight.w600,
                   fontSize: 16,
                 ),
@@ -211,7 +207,6 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                 });
               },
             ),
-            const Divider(),
             if (selectedPaymentMethod != null) ..._buildPaymentFields(),
             const Divider(),
             Padding(
@@ -222,7 +217,6 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                   const Text(
                     'Cupones',
                     style: TextStyle(
-                      fontFamily: 'Inter',
                       fontWeight: FontWeight.w600,
                       fontSize: 16,
                     ),
@@ -232,7 +226,6 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                       ? const Text(
                           'No hay cupón seleccionado',
                           style: TextStyle(
-                            fontFamily: 'Inter',
                             fontWeight: FontWeight.w400,
                             fontSize: 14,
                           ),
@@ -240,7 +233,6 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                       : Text(
                           'Cupón seleccionado: ${selectedCupon!.code} - ${selectedCupon!.amount}%',
                           style: const TextStyle(
-                            fontFamily: 'Inter',
                             fontWeight: FontWeight.w400,
                             fontSize: 14,
                           ),
@@ -248,23 +240,22 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                   const SizedBox(height: 10),
                   TextButton.icon(
                     onPressed: _selectCupon,
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.card_giftcard,
-                      color: Colors.orange,
+                      color: TColor.primary,
                     ),
-                    label: const Text(
+                    label: Text(
                       'Seleccionar cupón',
                       style: TextStyle(
-                          fontFamily: 'Inter',
                           fontWeight: FontWeight.w600,
                           fontSize: 16,
-                          color: Colors.orange),
+                          color: TColor.primary),
                     ),
                   ),
                 ],
               ),
             ),
-            const Divider(),
+
           ],
         ),
       ),
@@ -341,21 +332,20 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                       );
                     }
                   },
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.check_circle,
-                    color: Colors.orange,
+                    color: TColor.primary,
                   ),
-                  label: const Text(
+                  label: Text(
                     'Confirmar Pedido',
                     style: TextStyle(
-                      fontFamily: 'Inter',
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
-                      color: Colors.orange,
+                      color: TColor.primary,
                     ),
                   ),
                   style: TextButton.styleFrom(
-                    side: const BorderSide(color: Colors.orange, width: 2),
+                    side: BorderSide(color: TColor.primary, width: 2),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8.0),
                     ),

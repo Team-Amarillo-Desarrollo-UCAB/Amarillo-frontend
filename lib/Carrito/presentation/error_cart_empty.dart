@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../common/presentation/color_extension.dart';
+
 void showCartEmptyDialog(BuildContext context) {
   showDialog(
     context: context,
@@ -23,18 +25,35 @@ void showCartEmptyDialog(BuildContext context) {
           style: TextStyle(fontSize: 16),
         ),
         actions: [
-          ElevatedButton(
-            onPressed: () async {
-              Navigator.of(context).pop(); // Cerrar el popup
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.orangeAccent,
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            ), // Estilo del botón
-            child: const Text("Entendido", style: TextStyle(fontSize: 16, color: Colors.white)),
-          ), // ElevatedButton
-        ], // Botones del AlertDialog
-      ); // AlertDialog
-    }, // Builder
-  ); // showDialog
-} // showLogoutConfirmationDialog
+                          Container(
+                  decoration: BoxDecoration(
+                    gradient: TColor.gradient,
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  child: ElevatedButton(
+                    onPressed: () async {
+                Navigator.of(context).pop(); // Cerrar el popup
+              },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.transparent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      shadowColor: Colors.transparent,
+                    ),
+                    child: const Text(
+                      'Entendido',
+                      style: TextStyle(
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w900,
+                        fontSize: 15,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ), 
+        ], 
+      ); 
+    }, 
+  ); 
+} 

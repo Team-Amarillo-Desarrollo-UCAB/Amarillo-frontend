@@ -6,6 +6,8 @@ import 'package:desarrollo_frontend/Producto/infrastructure/product_service_sear
 import 'package:desarrollo_frontend/common/infrastructure/base_url.dart';
 import 'package:flutter/material.dart';
 
+import '../../common/presentation/color_extension.dart';
+
 class ComboCard extends StatefulWidget {
   final Combo combo;
   final VoidCallback onAdd;
@@ -72,7 +74,7 @@ class _ComboCardState extends State<ComboCard> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15),
           side: _descuento != null
-              ? BorderSide(color: Colors.yellow, width: 2)
+              ? BorderSide(color: TColor.secondary, width: 2)
               : BorderSide.none,
         ),
         child: Padding(
@@ -111,18 +113,18 @@ class _ComboCardState extends State<ComboCard> {
                                     children: [
                                       Text(
                                         'En descuento',
-                                        style: const TextStyle(
+                                        style: TextStyle(
                                           fontSize: 14,
                                           fontWeight: FontWeight.bold,
-                                          color: Colors.orange,
+                                          color: TColor.primary,
                                         ),
                                       ),
                                       Text(
                                         '${(double.parse(widget.combo.price) * (1 - _descuento!.percentage)).toStringAsFixed(2)} \$',
-                                        style: const TextStyle(
+                                        style: TextStyle(
                                           fontSize: 18,
                                           fontWeight: FontWeight.bold,
-                                          color: Colors.orange,
+                                          color: TColor.primary,
                                         ),
                                       ),
                                     ],
@@ -148,7 +150,7 @@ class _ComboCardState extends State<ComboCard> {
                             ElevatedButton(
                               onPressed: widget.onAdd,
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.orange,
+                                backgroundColor: TColor.primary,
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(10)),
                                 minimumSize: const Size(20, 20),

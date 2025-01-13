@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../common/presentation/color_extension.dart';
 import 'metodo_de_pago_widget.dart'; 
 
 class RegisterPaymentPage extends StatefulWidget {
@@ -67,12 +68,12 @@ class _RegisterPaymentPageState extends State<RegisterPaymentPage> {
                 children: [
                   Container(
                     width: double.infinity,
-                    color: Colors.orange,
+                    color: TColor.primary,
                     padding: const EdgeInsets.all(16.0),
-                    child: const Text(
+                    child: Text(
                       "Detalles del pago",
                       style: TextStyle(
-                        color: Colors.white,
+                        color: TColor.white,
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
                       ),

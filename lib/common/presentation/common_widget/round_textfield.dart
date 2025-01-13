@@ -25,7 +25,7 @@ class RoundTextfield extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
                 border: Border.all(
-          color: Colors.orange, 
+          color: TColor.primary, // Set border color to orange
           width: 1.0,
         ),
           color: TColor.white,
@@ -88,7 +88,7 @@ class RoundTitleTextfield extends StatelessWidget {
       height: 55,
       decoration: BoxDecoration(
         border: Border.all(
-          color: Colors.orange, // Set border color to orange
+          color: TColor.primary, // Set border color to orange
           width: 1.0, // Adjust border width as needed
         ),
           color: TColor.white,
