@@ -1,4 +1,4 @@
-import 'package:desarrollo_frontend/Descuento/Domain/Descuento.dart';
+import 'package:desarrollo_frontend/Descuento/Domain/descuento.dart';
 import 'package:desarrollo_frontend/Descuento/Infrastructure/descuento_service_search_by_id.dart';
 import 'package:desarrollo_frontend/Producto/domain/product.dart';
 import 'package:desarrollo_frontend/Producto/presentation/DetailProduct/detailproduct_screen.dart';
@@ -37,14 +37,31 @@ class _ProductCard2State extends State<ProductCard2> {
       try {
         final descuento = await _descuentoServiceSearchById
             .getDescuentoById(widget.product.discount);
-        if (mounted) {
-          setState(() {
-            _descuento = descuento;
-            _isLoading = false;
-          });
+        final now = DateTime.now();
+
+        if (descuento.fechaExp.isBefore(now)) {
+          if (mounted) {
+            setState(() {
+              _descuento = descuento;
+              _isLoading = false;
+            });
+          }
+        } else {
+          print(
+              'El descuento no es válido porque la fecha de expedición es posterior a la fecha actual.');
+          if (mounted) {
+            setState(() {
+              _isLoading = false;
+            });
+          }
         }
       } catch (error) {
         print('Error al obtener el descuento: $error');
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
       } finally {
         if (mounted) {
           setState(() {

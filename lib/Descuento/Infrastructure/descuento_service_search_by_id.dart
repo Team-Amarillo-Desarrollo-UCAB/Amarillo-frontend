@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:desarrollo_frontend/Descuento/Domain/Descuento.dart';
+import 'package:desarrollo_frontend/Descuento/Domain/descuento.dart';
 import 'package:desarrollo_frontend/Descuento/Domain/descuento_data.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -28,6 +28,7 @@ class DescuentoServiceSearchById {
         percentage: descuentoData.percentage,
         description: descuentoData.description,
         image: descuentoData.image,
+        fechaExp: DateTime.parse(descuentoData.fechaExp),
       );
     } else {
       throw Exception('Error al obtener el descuento');

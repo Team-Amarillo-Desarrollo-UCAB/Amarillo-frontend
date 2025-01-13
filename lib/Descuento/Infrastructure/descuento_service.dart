@@ -30,7 +30,8 @@ class DescuentoService {
             name: descuentoData.name,
             percentage: descuentoData.percentage,
             description: descuentoData.description,
-            image: descuentoData.image);
+            image: descuentoData.image,
+            fechaExp: DateTime.parse(descuentoData.fechaExp));
       }).toList();
     } else {
       throw Exception('Error al obtener la lista de descuentos');
