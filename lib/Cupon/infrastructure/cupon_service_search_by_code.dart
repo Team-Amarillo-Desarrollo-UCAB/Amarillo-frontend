@@ -26,7 +26,8 @@ class CuponServiceSearchByCode {
           code: cuponData.code,
           expirationDate: DateTime.parse(cuponData.expirationDate),
           amount: cuponData.amount,
-          used: cuponData.used);
+          used: cuponData.used,
+          use: cuponData.use);
     } else {
       throw Exception('Error al obtener el cupon, hola?');
     }

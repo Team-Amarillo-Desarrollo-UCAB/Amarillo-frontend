@@ -29,11 +29,11 @@ class _CuponViewState extends State<CuponView> {
       setState(() {
         _cupones.clear();
         _cupones.addAll(cuponesJson.map((json) => Cupon(
-              code: json['code'],
-              expirationDate: DateTime.parse(json['expirationDate']),
-              amount: json['amount'],
-              used: json['used'],
-            )));
+            code: json['code'],
+            expirationDate: DateTime.parse(json['expirationDate']),
+            amount: json['amount'],
+            used: json['used'],
+            use: json['use'])));
       });
     }
   }
@@ -46,6 +46,7 @@ class _CuponViewState extends State<CuponView> {
               'expirationDate': cupon.expirationDate.toIso8601String(),
               'amount': cupon.amount,
               'used': cupon.used,
+              'use': cupon.use
             })
         .toList());
     await prefs.setString('cupones', cuponesString);
@@ -67,13 +68,15 @@ class _CuponViewState extends State<CuponView> {
   Future<void> _addCupon() async {
     final cuponCode = _cuponController.text.trim();
     if (cuponCode.isNotEmpty) {
-      final existingCupon = _cupones.firstWhere(
-          (cupon) => cupon.code == cuponCode,
-          orElse: () => Cupon(
-              code: 'NOT_FOUND',
-              expirationDate: DateTime.now(),
-              amount: '0',
-              used: true));
+      final existingCupon =
+          _cupones.firstWhere((cupon) => cupon.code == cuponCode,
+              orElse: () => Cupon(
+                    code: 'NOT_FOUND',
+                    expirationDate: DateTime.now(),
+                    amount: '0',
+                    used: true,
+                    use: 3,
+                  ));
       if (existingCupon.code != 'NOT_FOUND') {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -118,7 +121,29 @@ class _CuponViewState extends State<CuponView> {
     }
   }
 
-  /*Future<void> _selectCupon(Cupon cupon) async { if (cupon.use > 0) { setState(() { cupon.use -= 1; if (cupon.use == 0) { cupon.used = true; } }); await _saveCupones(); ScaffoldMessenger.of(context).showSnackBar( SnackBar( content: Text('Cupón utilizado. Usos restantes: ${cupon.use}'), ), ); Navigator.pop(context, cupon); } else { ScaffoldMessenger.of(context).showSnackBar( const SnackBar( content: Text('El cupón ya no se puede usar.'), ), ); } }*/
+  Future<void> _selectCupon(Cupon cupon) async {
+    if (cupon.use > 0) {
+      setState(() {
+        cupon.use -= 1;
+        if (cupon.use == 0) {
+          cupon.used = true;
+        }
+      });
+      await _saveCupones();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Cupón utilizado. Usos restantes: ${cupon.use}'),
+        ),
+      );
+      Navigator.pop(context, cupon);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('El cupón ya no se puede usar.'),
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -185,7 +210,7 @@ class _CuponViewState extends State<CuponView> {
                   return GestureDetector(
                     onTap: () {
                       if (!cupon.used) {
-                        //_selectCupon(cupon);
+                        _selectCupon(cupon);
                       }
                     },
                     child: Card(
@@ -229,14 +254,14 @@ class _CuponViewState extends State<CuponView> {
                                 color: Colors.white,
                               ),
                             ),
-                            /*Text(
+                            Text(
                               'Usos restantes: ${cupon.use}',
                               style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
                               ),
-                            ),*/
+                            ),
                           ],
                         ),
                       ),
