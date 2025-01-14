@@ -62,7 +62,8 @@ class CartService {
       List<CartItem> products,
       List<CartItem> combos,
       String? cuponCode,
-      String instructions) async {
+      String instructions,
+      double total) async {
     final token = await TokenUser().getToken();
     final List<Map<String, dynamic>> productItems = products
         .map((item) => {
@@ -100,6 +101,7 @@ class CartService {
       'combos': bundleItems,
       'paymentMethod': paymentMethod,
       'currency': 'USD',
+      'total': total,
       if (cuponCode != null) 'cuponCode': cuponCode,
     });
 
