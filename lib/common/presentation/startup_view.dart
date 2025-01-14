@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import '../../login/infrastructure/login_service.dart'; // Servicio de autenticación
-import '../../login/presentation/welcome_view.dart'; // Vista de bienvenida
-import 'main_tabview.dart'; // Vista principal
+import '../../login/infrastructure/login_service.dart'; 
+import '../../login/presentation/welcome_view.dart'; 
+import '../infrastructure/session_manager.dart';
+import 'main_tabview.dart'; 
+import '../../common/infrastructure/base_url.dart';
 
 class StartupView extends StatefulWidget {
   const StartupView({super.key});
@@ -11,6 +13,7 @@ class StartupView extends StatefulWidget {
 }
 
 class _StartupViewState extends State<StartupView> {
+  final SessionManager _sessionManager = SessionManager();
   final AuthService _authService = AuthService();
 
   @override
@@ -27,11 +30,18 @@ class _StartupViewState extends State<StartupView> {
       final isValid = await _authService.isValidToken(token);
       print("¿Token válido? $isValid");
       if (isValid) {
+        if (BaseUrl().BASE_URL == BaseUrl().AMARILLO){
+          _goToMainTabView();
+          return;
+        }
+      }
+      else if (BaseUrl().BASE_URL == BaseUrl().ORANGE || BaseUrl().BASE_URL == BaseUrl().VERDE) {
         _goToMainTabView();
         return;
       }
     }
     print("Sesión no válida. Redirigiendo a WelcomePage...");
+    await _sessionManager.clearSession();
     _goToWelcomePage();
   }
 

@@ -143,7 +143,7 @@ class _HistoryOrderScreenState extends State<OrderHistoryScreen> {
                     },
                     child: Container(
                       decoration: BoxDecoration(
-                        color: _isActiveTab ? Colors.orange : Colors.grey[300],
+                        color: _isActiveTab ? TColor.primary : Colors.grey[300],
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Padding(
@@ -173,7 +173,7 @@ class _HistoryOrderScreenState extends State<OrderHistoryScreen> {
                     },
                     child: Container(
                       decoration: BoxDecoration(
-                        color: !_isActiveTab ? Colors.orange : Colors.grey[300],
+                        color: !_isActiveTab ? TColor.primary : Colors.grey[300],
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Padding(

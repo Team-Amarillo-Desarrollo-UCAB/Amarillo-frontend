@@ -3,6 +3,8 @@ import 'package:desarrollo_frontend/Producto/domain/product.dart';
 import 'package:desarrollo_frontend/Producto/infrastructure/product_service_search_by_id.dart';
 import 'package:flutter/material.dart';
 
+import '../../common/presentation/color_extension.dart';
+
 void showDetailComboDialog(BuildContext context, Combo combo,
     VoidCallback onAdd, ProductServiceSearchbyId productService) {
   showDialog(
@@ -49,10 +51,9 @@ void showDetailComboDialog(BuildContext context, Combo combo,
                     combo.description,
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontFamily: 'Inter',
                       fontWeight: FontWeight.w600,
                       fontSize: media.width * 0.035,
-                      color: Colors.grey[700],
+                      color: TColor.secondaryText,
                     ),
                   ),
                 ),
@@ -60,7 +61,6 @@ void showDetailComboDialog(BuildContext context, Combo combo,
                 const Text(
                   'Lista de Productos:',
                   style: TextStyle(
-                    fontFamily: 'Inter',
                     fontWeight: FontWeight.w900,
                   ),
                 ),
@@ -81,10 +81,9 @@ void showDetailComboDialog(BuildContext context, Combo combo,
                             return Text(
                               snapshot.data!.name,
                               style: TextStyle(
-                                fontFamily: 'Inter',
                                 fontWeight: FontWeight.w600,
                                 fontSize: media.width * 0.035,
-                                color: Colors.grey[700],
+                                color: TColor.secondaryText,
                               ),
                             );
                           } else {
@@ -96,53 +95,28 @@ void showDetailComboDialog(BuildContext context, Combo combo,
                   ),
                 ),
                 SizedBox(height: media.height * 0.02),
-                /*Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      'Precio:',
-                      style: TextStyle(
-                        fontFamily: 'Inter',
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                    SizedBox(width: media.width * 0.02),
-                    Text(
-                      '${combo.price} USD',
-                      style: TextStyle(
-                        fontFamily: 'Inter',
-                        fontWeight: FontWeight.w900,
-                        fontSize: media.width * 0.04,
-                        color: Colors.green,
-                      ),
-                    ),
-                    SizedBox(width: media.width * 0.02),
-                    Text(
-                      combo.peso,
-                      style: TextStyle(
-                        fontFamily: 'Inter',
-                        fontWeight: FontWeight.w900,
-                        fontSize: media.width * 0.04,
-                      ),
-                    ),
-                  ],
-                ),*/
                 SizedBox(height: media.height * 0.02),
-                ElevatedButton(
-                  onPressed: onAdd,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.orange,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
+                Container(
+                  decoration: BoxDecoration(
+                    gradient: TColor.gradient,
+                    borderRadius: BorderRadius.circular(10.0),
                   ),
-                  child: Text(
-                    'Agregar al carrito',
-                    style: TextStyle(
-                      fontFamily: 'Inter',
-                      fontWeight: FontWeight.w900,
-                      fontSize: media.width * 0.04,
-                      color: Colors.white,
+                  child: ElevatedButton(
+                    onPressed: onAdd,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.transparent,
+                      shadowColor: Colors.transparent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                    ),
+                    child: Text(
+                      'Agregar al carrito',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w900,
+                        fontSize: media.width * 0.04,
+                        color: TColor.white,
+                      ),
                     ),
                   ),
                 ),

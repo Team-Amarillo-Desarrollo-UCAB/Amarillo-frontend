@@ -3,6 +3,8 @@ import 'package:desarrollo_frontend/Producto/domain/product.dart';
 import 'package:desarrollo_frontend/Producto/infrastructure/product_service_search_by_id.dart';
 import 'package:flutter/material.dart';
 
+import '../../../common/presentation/color_extension.dart';
+
 void showDetailCartItemDialog(BuildContext context, CartItem product,
     ProductServiceSearchbyId productService) {
   print('productID: ${product.productId}');
@@ -25,7 +27,6 @@ void showDetailCartItemDialog(BuildContext context, CartItem product,
                   product.name,
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    fontFamily: 'Inter',
                     fontWeight: FontWeight.w900,
                     fontSize: media.width * 0.05,
                   ),
@@ -39,7 +40,6 @@ void showDetailCartItemDialog(BuildContext context, CartItem product,
                 const Text(
                   'Descripción:',
                   style: TextStyle(
-                    fontFamily: 'Inter',
                     fontWeight: FontWeight.w900,
                   ),
                 ),
@@ -50,10 +50,9 @@ void showDetailCartItemDialog(BuildContext context, CartItem product,
                     product.description,
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontFamily: 'Inter',
                       fontWeight: FontWeight.w600,
                       fontSize: media.width * 0.035,
-                      color: Colors.grey,
+                      color: TColor.placeholder,
                     ),
                   ),
                 ),
@@ -62,7 +61,6 @@ void showDetailCartItemDialog(BuildContext context, CartItem product,
                   const Text(
                     'Lista de Productos:',
                     style: TextStyle(
-                      fontFamily: 'Inter',
                       fontWeight: FontWeight.w900,
                     ),
                   ),
@@ -84,10 +82,9 @@ void showDetailCartItemDialog(BuildContext context, CartItem product,
                               return Text(
                                 snapshot.data!.name,
                                 style: TextStyle(
-                                  fontFamily: 'Inter',
                                   fontWeight: FontWeight.w600,
                                   fontSize: media.width * 0.035,
-                                  color: Colors.grey,
+                                  color: TColor.placeholder,
                                 ),
                               );
                             } else {
@@ -106,7 +103,6 @@ void showDetailCartItemDialog(BuildContext context, CartItem product,
                     const Text(
                       'Precio:',
                       style: TextStyle(
-                        fontFamily: 'Inter',
                         fontWeight: FontWeight.w900,
                       ),
                     ),
@@ -114,7 +110,6 @@ void showDetailCartItemDialog(BuildContext context, CartItem product,
                     Text(
                       '${product.price.toStringAsFixed(2)} USD',
                       style: TextStyle(
-                        fontFamily: 'Inter',
                         fontWeight: FontWeight.w900,
                         fontSize: media.width * 0.04,
                         color: Colors.green,
@@ -124,7 +119,6 @@ void showDetailCartItemDialog(BuildContext context, CartItem product,
                     Text(
                       product.peso,
                       style: TextStyle(
-                        fontFamily: 'Inter',
                         fontWeight: FontWeight.w900,
                         fontSize: media.width * 0.04,
                       ),

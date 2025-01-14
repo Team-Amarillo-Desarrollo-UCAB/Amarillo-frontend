@@ -11,6 +11,7 @@ import 'package:desarrollo_frontend/common/presentation/main_tabview.dart';
 import 'package:flutter/material.dart';
 import '../../Carrito/domain/cart_item.dart';
 import '../../Carrito/infrastructure/cart_service.dart';
+import '../../common/presentation/color_extension.dart';
 
 class ComboView extends StatefulWidget {
   const ComboView({super.key});
@@ -122,7 +123,7 @@ class _ComboViewState extends State<ComboView> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.grey[200],
+          backgroundColor: TColor.secondary,
           centerTitle: true,
           title: const Text('Combos',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
@@ -136,7 +137,7 @@ class _ComboViewState extends State<ComboView> {
               }),
           actions: [
             IconButton(
-              icon: const Icon(Icons.shopping_cart, color: Colors.orange),
+              icon: Icon(Icons.shopping_cart, color: TColor.black),
               onPressed: () {
                 Navigator.push(
                   context,

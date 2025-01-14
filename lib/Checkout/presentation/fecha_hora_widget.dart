@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../../common/presentation/color_extension.dart';
+
 class FechaHoraSelector extends StatefulWidget {
   final Function(DateTime) onDateTimeSelected;
   const FechaHoraSelector({super.key, required this.onDateTimeSelected});
@@ -58,33 +60,31 @@ class FechaHoraSelectorState extends State<FechaHoraSelector> {
       children: [
         TextButton.icon(
           onPressed: () => _selectDate(context),
-          icon: const Icon(
+          icon: Icon(
             Icons.calendar_today,
-            color: Colors.orange,
+            color: TColor.primary,
           ),
-          label: const Text(
+          label: Text(
             'Seleccionar fecha',
             style: TextStyle(
-                fontFamily: 'Inter',
                 fontWeight: FontWeight.w600,
                 fontSize: 16,
-                color: Colors.orange),
+                color: TColor.primary),
           ),
         ),
         const SizedBox(height: 10),
         TextButton.icon(
           onPressed: () => _selectTime(context),
-          icon: const Icon(
+          icon: Icon(
             Icons.access_time,
-            color: Colors.orange,
+            color: TColor.primary,
           ),
-          label: const Text(
+          label: Text(
             'Seleccionar hora',
             style: TextStyle(
-                fontFamily: 'Inter',
                 fontWeight: FontWeight.w600,
                 fontSize: 16,
-                color: Colors.orange),
+                color: TColor.primary),
           ),
         ),
         if (_selectedDate != null && _selectedTime != null)
@@ -99,7 +99,6 @@ class FechaHoraSelectorState extends State<FechaHoraSelector> {
                 _selectedTime!.minute,
               ))}',
               style: TextStyle(
-                fontFamily: 'Inter',
                 fontWeight: FontWeight.w600,
                 fontSize: 16,
               ),

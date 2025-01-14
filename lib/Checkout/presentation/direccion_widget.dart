@@ -1,6 +1,8 @@
 import 'package:desarrollo_frontend/Checkout/domain/direccion.dart';
 import 'package:flutter/material.dart';
 
+import '../../common/presentation/color_extension.dart';
+
 class DireccionWidget extends StatefulWidget {
   final Direccion direccion;
   final VoidCallback onRemove;
@@ -21,17 +23,16 @@ class DireccionWidgetState extends State<DireccionWidget> {
     return ListTile(
       leading: CircleAvatar(
         radius: 15,
-        backgroundColor: Colors.orange,
+        backgroundColor: TColor.primary,
         child: CircleAvatar(
           radius: 12,
           backgroundColor:
-              widget.direccion.isSelected ? Colors.orange : Colors.white,
+              widget.direccion.isSelected ? TColor.primary : TColor.white,
         ),
       ),
       title: Text(
         widget.direccion.nombre,
         style: const TextStyle(
-          fontFamily: 'Inter',
           fontWeight: FontWeight.w600,
           fontSize: 16,
         ),
@@ -39,13 +40,12 @@ class DireccionWidgetState extends State<DireccionWidget> {
       subtitle: Text(
         widget.direccion.direccionCompleta,
         style: const TextStyle(
-            fontFamily: 'Inter',
             fontWeight: FontWeight.w600,
             fontSize: 10,
             color: Colors.grey),
       ),
       trailing: IconButton(
-        icon: const Icon(Icons.delete, color: Colors.orange),
+        icon: Icon(Icons.delete, color: TColor.primary),
         onPressed: widget.onRemove,
       ),
       onTap: widget.onSelect,

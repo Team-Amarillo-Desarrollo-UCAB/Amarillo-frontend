@@ -244,7 +244,7 @@ class _LoginViewState extends State<LoginView> {
         ),
         if (_isLoading)
           Container(
-            color: Colors.black54,
+            color: TColor.black.withOpacity(0.5),
             child: Center(
               child: CircularProgressIndicator(
                 valueColor: AlwaysStoppedAnimation<Color>(TColor.primary),
