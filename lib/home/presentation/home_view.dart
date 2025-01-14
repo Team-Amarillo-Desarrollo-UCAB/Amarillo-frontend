@@ -102,7 +102,7 @@ class _HomeViewState extends State<HomeView> {
 
   Future<void> _fetchDescuentos() async {
     try {
-      List<Descuento> descuentos = await _descuentoService.getDescuento(1);
+      List<Descuento> descuentos = await _descuentoService.getDescuento();
       setState(() {
         _descuentos = descuentos;
       });
