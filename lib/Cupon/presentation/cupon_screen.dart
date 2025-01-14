@@ -5,6 +5,8 @@ import 'package:desarrollo_frontend/common/infrastructure/base_url.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../common/presentation/color_extension.dart';
+
 class CuponView extends StatefulWidget {
   @override
   _CuponViewState createState() => _CuponViewState();
@@ -214,7 +216,7 @@ class _CuponViewState extends State<CuponView> {
                       }
                     },
                     child: Card(
-                      color: cupon.used ? Colors.grey : Colors.orange,
+                      color: cupon.used ? Colors.grey : TColor.primary,
                       margin: const EdgeInsets.symmetric(vertical: 8.0),
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
@@ -275,7 +277,7 @@ class _CuponViewState extends State<CuponView> {
               child: ElevatedButton(
                 onPressed: _addCupon,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.orange[400],
+                  backgroundColor: TColor.primary,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8.0),

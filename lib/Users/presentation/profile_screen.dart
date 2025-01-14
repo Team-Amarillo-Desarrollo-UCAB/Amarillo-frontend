@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../common/presentation/color_extension.dart';
+import '../../statistics/presentation/views/statistics_screen.dart';
 import 'edit_profile_screen.dart';
 import '../../common/presentation/logout_dialog.dart';
 import '../domain/user_profile.dart';
@@ -35,7 +37,7 @@ class UserProfileScreen extends StatelessWidget {
                     },
                     child: CircleAvatar(
                       radius: 20,
-                      backgroundColor: Colors.orangeAccent,
+                      backgroundColor: TColor.secondary,
                       child: const Icon(Icons.edit, color: Colors.white),
                     ), 
                   ), 
@@ -56,7 +58,7 @@ class UserProfileScreen extends StatelessWidget {
           Column(
             children: [
               ListTile(
-                leading: const Icon(Icons.person, color: Color(0xFFFF7622)),
+                leading: Icon(Icons.person, color: TColor.primary),
                 title: const Text('Editar Perfil'),
                 trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                 onTap: () {
@@ -64,16 +66,16 @@ class UserProfileScreen extends StatelessWidget {
                                        builder: (context) => EditProfileScreen()));
                 }, // onTap
               ), 
-              const Divider(
-                thickness: 1,
-                color: Color(0xFFFFD4B2),
-              ), 
+              Divider(
+              thickness: 1,
+              color: TColor.secondary.withOpacity(0.5),
+            ),
             ], // Children de la columna
           ), 
           Column(
             children: [
               ListTile(
-                leading: const Icon(Icons.notifications, color: Color(0xFFFF7622)),
+                leading: Icon(Icons.notifications, color: TColor.primary),
                 title: const Text('Notificaciones'),
                 trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                 onTap: () { 
@@ -81,27 +83,42 @@ class UserProfileScreen extends StatelessWidget {
                                        builder: (context) => NotificationsView()));*/
                 }, // onTap
               ), 
-              const Divider(
-                thickness: 1,
-                color: Color(0xFFFFD4B2), 
-              ), 
+              Divider(
+              thickness: 1,
+              color: TColor.secondary.withOpacity(0.5),
+            ),
             ], // Children de la columna
           ), 
           Column(
             children: [
               ListTile(
-                leading: const Icon(Icons.settings, color: Color(0xFFFF7622)),
+                leading: Icon(Icons.settings, color: TColor.primary),
                 title: const Text('Configuración'),
                 trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                 onTap: () { 
                 }, // onTap
               ), 
-              const Divider(
-                thickness: 1,
-                color: Color(0xFFFFD4B2), // Barra anaranjada clara
-              ), 
-            ], // Children de la columna
+              Divider(
+              thickness: 1,
+              color: TColor.secondary.withOpacity(0.5),
+            ),
+            ], 
           ), 
+                    ListTile(
+            leading: Icon(Icons.bar_chart, color: TColor.primary),
+            title: const Text('Estadísticas'),
+            trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const StatisticsScreen()),
+              );
+              },
+            ),
+             Divider(
+              thickness: 1,
+              color: TColor.secondary.withOpacity(0.5),
+            ),
           ListTile(
             leading: const Icon(Icons.logout, color: Colors.red),
             title: const Text('Cerrar Sesión', style: TextStyle(color: Colors.red)),
@@ -109,6 +126,7 @@ class UserProfileScreen extends StatelessWidget {
               showLogoutConfirmationDialog(context);
             }, // onTap
           ), 
+
         ], // Children del Column principal
       ),
     ); 

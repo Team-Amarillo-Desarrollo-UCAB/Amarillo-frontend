@@ -2,6 +2,7 @@ import 'package:desarrollo_frontend/Producto/infrastructure/product_service_sear
 import 'package:desarrollo_frontend/Producto/presentation/DetailProduct/detailproductcart_screen.dart';
 import 'package:desarrollo_frontend/common/infrastructure/base_url.dart';
 import 'package:flutter/material.dart';
+import '../../common/presentation/color_extension.dart';
 import '../domain/cart_item.dart';
 
 class CartItemWidget extends StatelessWidget {
@@ -77,29 +78,29 @@ class CartItemWidget extends StatelessWidget {
                                   ElevatedButton(
                                     onPressed: onRemove,
                                     style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.orange[200],
+                                        backgroundColor: TColor.secondary,
                                         shape: RoundedRectangleBorder(
                                             borderRadius:
                                                 BorderRadius.circular(10)),
                                         minimumSize: const Size(25, 25),
                                         padding: EdgeInsets.zero),
-                                    child: const Icon(Icons.remove,
-                                        color: Colors.white),
+                                    child: Icon(Icons.remove,
+                                        color: TColor.white),
                                   ),
                                   Text(item.quantity.toString(),
                                       style: const TextStyle(fontSize: 15)),
                                   ElevatedButton(
                                     onPressed: onAdd,
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.orange[200],
+                                      backgroundColor: TColor.primary,
                                       shape: RoundedRectangleBorder(
                                           borderRadius:
                                               BorderRadius.circular(10)),
                                       minimumSize: const Size(20, 20),
                                       padding: EdgeInsets.zero,
                                     ),
-                                    child: const Icon(Icons.add,
-                                        color: Colors.white),
+                                    child: Icon(Icons.add,
+                                        color: TColor.white),
                                   ),
                                   IconButton(
                                       icon: const Icon(Icons.delete),

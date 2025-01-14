@@ -3,7 +3,11 @@ import 'package:desarrollo_frontend/Descuento/Infrastructure/descuento_service_s
 import 'package:desarrollo_frontend/Producto/domain/product.dart';
 import 'package:desarrollo_frontend/Producto/presentation/DetailProduct/detailproduct_screen.dart';
 import 'package:desarrollo_frontend/common/infrastructure/base_url.dart';
+import 'package:desarrollo_frontend/common/presentation/main_tabview.dart';
 import 'package:flutter/material.dart';
+
+import '../../common/presentation/color_extension.dart';
+import 'product_individual_view.dart';
 
 class ProductCard2 extends StatefulWidget {
   final Product product;
@@ -75,16 +79,26 @@ class _ProductCard2State extends State<ProductCard2> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        showDetailProductDialog(context, widget.product, widget.onAdd);
-      },
+    onTap: () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const PerfumeDetailPage(),
+        ),
+      );
+    },
+  onLongPress: () {
+    // Muestra el diálogo al mantener presionado
+    showDetailProductDialog(context, widget.product, widget.onAdd);
+  },
+
       child: Card(
         elevation: 5,
         margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15),
           side: _descuento != null
-              ? BorderSide(color: Colors.yellow, width: 2)
+              ? BorderSide(color: TColor.secondary, width: 2)
               : BorderSide.none,
         ),
         child: Padding(
@@ -123,18 +137,18 @@ class _ProductCard2State extends State<ProductCard2> {
                                     children: [
                                       Text(
                                         'En descuento',
-                                        style: const TextStyle(
+                                        style: TextStyle(
                                           fontSize: 14,
                                           fontWeight: FontWeight.bold,
-                                          color: Colors.orange,
+                                          color: TColor.primary,
                                         ),
                                       ),
                                       Text(
                                         '${(double.parse(widget.product.price) * (1 - _descuento!.percentage / 100)).toStringAsFixed(2)} \$',
-                                        style: const TextStyle(
+                                        style: TextStyle(
                                           fontSize: 18,
                                           fontWeight: FontWeight.bold,
-                                          color: Colors.orange,
+                                          color: TColor.primary,
                                         ),
                                       ),
                                     ],
@@ -160,7 +174,7 @@ class _ProductCard2State extends State<ProductCard2> {
                             ElevatedButton(
                               onPressed: widget.onAdd,
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.orange,
+                                backgroundColor: TColor.primary,
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(10)),
                                 minimumSize: const Size(20, 20),

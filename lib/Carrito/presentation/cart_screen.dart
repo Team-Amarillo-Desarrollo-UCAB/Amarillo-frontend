@@ -1,9 +1,11 @@
 import 'package:desarrollo_frontend/Checkout/presentation/checkout_screen.dart';
 import 'package:flutter/material.dart';
+import '../../common/presentation/color_extension.dart';
 import '../../common/presentation/main_tabview.dart';
 import '../domain/cart_item.dart';
 import 'cart_item_widget.dart';
 import '../infrastructure/cart_service.dart';
+import 'error_cart_empty.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
@@ -59,7 +61,7 @@ class _CartScreenState extends State<CartScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          backgroundColor: Colors.grey[200],
+          backgroundColor: TColor.secondary,
           centerTitle: true,
           title: const Text('Carrito de Compras',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
@@ -83,7 +85,7 @@ class _CartScreenState extends State<CartScreen> {
                   direction: DismissDirection.endToStart, 
                   
                   background: Container(
-                    color: Colors.red,
+                    color: const Color.fromARGB(255, 255, 63, 49),
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     alignment: Alignment.centerRight,
                     child: const Icon(Icons.delete, color: Colors.white),
@@ -139,34 +141,45 @@ class _CartScreenState extends State<CartScreen> {
                   ],
                 ),
                 const SizedBox(height: 10),
-                ElevatedButton(
-                  onPressed: () {
-                     Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => CheckoutScreen(
-                                      totalItems: _cartItems.length,
-                                      totalPrice: _totalPrice,
-                                      cartService: _cartService, 
-                                      listCartItems: _cartItems, 
-                                    ),
-                                  ),
-                                );
-
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.orange,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
+                Container(
+                  decoration: BoxDecoration(
+                    gradient: TColor.gradient,
+                    borderRadius: BorderRadius.circular(10.0),
                   ),
-                  child: const Text(
-                    'Proceder a la orden',
-                    style: TextStyle(
-                      fontFamily: 'Inter',
-                      fontWeight: FontWeight.w900,
-                      fontSize: 15,
-                      color: Colors.white,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      if (_cartItems.length > 0){
+                                             Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => CheckoutScreen(
+                                        totalItems: _cartItems.length,
+                                        totalPrice: _totalPrice,
+                                        cartService: _cartService, 
+                                        listCartItems: _cartItems, 
+                                      ),
+                                    ),
+                                  );
+                      }
+                      else{
+                        showCartEmptyDialog(context);
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.transparent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      shadowColor: Colors.transparent,
+                    ),
+                    child: const Text(
+                      'Proceder a la orden',
+                      style: TextStyle(
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w900,
+                        fontSize: 15,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ),

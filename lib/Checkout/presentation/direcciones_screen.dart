@@ -2,6 +2,8 @@ import 'package:desarrollo_frontend/Checkout/domain/direccion.dart';
 import 'package:desarrollo_frontend/Checkout/presentation/direccion_widget.dart';
 import 'package:flutter/material.dart';
 
+import '../../common/presentation/color_extension.dart';
+
 class ListaDirecciones extends StatefulWidget {
   final List<Direccion> direcciones;
   final VoidCallback onAddDireccion;
@@ -43,17 +45,16 @@ class ListaDireccionesState extends State<ListaDirecciones> {
         const SizedBox(height: 10),
         TextButton.icon(
           onPressed: widget.onAddDireccion,
-          icon: const Icon(
+          icon: Icon(
             Icons.add,
-            color: Colors.orange,
+            color: TColor.primary,
           ),
-          label: const Text(
+          label: Text(
             'Añadir nueva dirección',
             style: TextStyle(
-                fontFamily: 'Inter',
                 fontWeight: FontWeight.w600,
                 fontSize: 16,
-                color: Colors.orange),
+                color: TColor.primary),
           ),
         ),
       ],

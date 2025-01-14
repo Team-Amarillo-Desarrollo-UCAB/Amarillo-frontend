@@ -7,6 +7,7 @@ import 'package:desarrollo_frontend/Descuento/Infrastructure/descuento_service_s
 import 'package:desarrollo_frontend/categorias/domain/category.dart';
 import 'package:desarrollo_frontend/categorias/infrasestructure/category_service.dart';
 import 'package:desarrollo_frontend/common/infrastructure/base_url.dart';
+import 'package:desarrollo_frontend/common/presentation/color_extension.dart';
 import 'package:desarrollo_frontend/common/presentation/common_widget/category_cell.dart';
 import 'package:flutter/material.dart';
 import '../../Carrito/domain/cart_item.dart';
@@ -127,7 +128,7 @@ class _CategoriasComboViewState extends State<CategoriasComboView> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.grey[200],
+          backgroundColor: TColor.secondary,
           centerTitle: true,
           title: const Text('Combos',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
@@ -139,7 +140,7 @@ class _CategoriasComboViewState extends State<CategoriasComboView> {
               }),
           actions: [
             IconButton(
-              icon: const Icon(Icons.shopping_cart, color: Colors.orange),
+              icon: Icon(Icons.shopping_cart, color: TColor.black),
               onPressed: () {
                 Navigator.push(
                   context,
