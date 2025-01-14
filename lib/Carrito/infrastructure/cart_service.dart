@@ -54,6 +54,7 @@ class CartService {
   Future<void> createOrder(
       String idPayment,
       String paymentMethod,
+      String? tokenStripe,
       DateTime orderReceivedDate,
       String address,
       double latitude,
@@ -79,6 +80,7 @@ class CartService {
     final body = jsonEncode({
       'idPayment': idPayment,
       'paymentMethod': paymentMethod,
+      if (tokenStripe != null) 'token': tokenStripe,
       'orderReciviedDate': orderReceivedDate.toIso8601String().split('T')[0],
       'address': address,
       'latitude': latitude,

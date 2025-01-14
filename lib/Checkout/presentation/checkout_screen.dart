@@ -42,6 +42,8 @@ class CheckoutScreenState extends State<CheckoutScreen> {
   List<CartItem> listProducts = [];
   List<CartItem> listCombos = [];
   Cupon? selectedCupon;
+  String? selectedToken;
+  String selectedEmail = '';
   PaymentMethod? selectedPaymentMethod;
   Direccion? selectedDireccion;
   String instructions = 'Entregar por la puerta roja de la esquina';
@@ -115,6 +117,18 @@ class CheckoutScreenState extends State<CheckoutScreen> {
     if (cupon != null && mounted) {
       setState(() {
         selectedCupon = cupon;
+      });
+    }
+  }
+
+  Future<void> _tokenStripe() async {
+    final String? token = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => StripePaymentView(amount: widget.totalPrice)),
+    );
+    if (token != null && mounted) {
+      setState(() {
+        selectedToken = token;
       });
     }
   }
@@ -211,13 +225,8 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                   selectedPaymentMethod = method;
                   _generatePaymentFields(method.idPayment);
                 });
-                if(method.name == 'Stripe'){
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => StripePaymentView(amount: widget.totalPrice),
-                    ),
-                  );
+                if(method.name == 'Stripe'){     
+                  _tokenStripe();         
                 }else{
                   Navigator.push(
                     context,
@@ -309,6 +318,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                       await widget.cartService.createOrder(
                           selectedPaymentMethod!.idPayment,
                           selectedPaymentMethod!.name,
+                          selectedToken,
                           _selectedDateTime!,
                           selectedDireccion!.direccionCompleta,
                           selectedDireccion!.latitude,

@@ -15,7 +15,7 @@ class OrderServiceSearchById {
     final token = await TokenUser().getToken();
     final response =
         await http.get(
-          Uri.parse('$baseUrl/order/one/by/$orderId'),
+          Uri.parse('$baseUrl/order/one/$orderId'),
           headers: {
             'Authorization': 'Bearer $token',
           }

@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:http/http.dart' as http;
@@ -14,66 +13,88 @@ class StripePaymentView extends StatefulWidget {
 
 class _StripePaymentViewState extends State<StripePaymentView> {
 
-  String PublishableKey = "pk_test_51QgU4kD0dQ04HPD76rBHs2NHCCCkZzPNjbqimYXpqL7arJKeCEKokc4VYWsvyCXYVvQ1jQQl3KWXDURZNLlFPhLY00aIKtvDcv";
-  String SecretKey = "sk_test_51QgU4kD0dQ04HPD7mkhJGSNZJUI8t8lnfumsBpmeSI6AInu6FMEmAN2KDKf1ABdpGqpnpq1pqz556XYNQ3OODkna00TIVoNNZr";
+  String PublishableKey = "pk_test_51QPCuGRp6TYNTJcRgQQCOypVsFeQdu0xFvFxdKyX8G4UewYVHRmtRLgu9kMpdaBKgZbtG3Q7v1Qlp7NiPzcU1Yvl00RiGsPKJl";
+  String SecretKey = "sk_test_51QPCuGRp6TYNTJcR4llyNCSMpMVWr7EIHPbVblZt7RQY38176oo9P9hjiVHm2bR31TRJtlwy72s9mnpkd6txxOiu00te3NAVSe";
 
   Map<String, dynamic>? paymentIntentData;
+ 
+  String? token;
 
-  showPaymentSheet() async{
-    try{
+  showPaymentSheet() async {
+  try {
+    await Stripe.instance.presentPaymentSheet().then((val) {
+      paymentIntentData = null;
 
-      await Stripe.instance.presentPaymentSheet().then((val){
-        paymentIntentData = null; 
-      }).onError((e, stackTrace){
-        print(e);
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text("Éxito"),
+          content: Text("El pago se ha completado con éxito y el ID de pago es ${token}"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.pop(context, token);
+              },
+              child: Text("OK"),
+            ),
+          ],
+        ),
+      );
+    }).onError((e, stackTrace) {
+      print(e);
+    });
+  } on StripeException catch (e) {
+    print(e.error.localizedMessage);
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        content: Text("Pago cancelado."),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: Text("OK"),
+          ),
+        ],
+      ),
+    );
+  } catch (e) {
+    print(e);
+  }
+}
+
+
+  makeIntentForPayment(amountToBeCharge, currency) async {
+  try {
+    Map<String, dynamic> paymentInfo = {
+      "amount": (int.parse(amountToBeCharge) * 100).toString(),
+      "currency": currency,
+      "payment_method_types[]": "card",
+    };
+
+    var responseFromStripe = await http.post(
+      Uri.parse("https://api.stripe.com/v1/payment_intents"),
+      body: paymentInfo,
+      headers: {
+        "Authorization": "Bearer $SecretKey",
+        "Content-Type": "application/x-www-form-urlencoded"
       });
 
-    }
-    on StripeException catch(e){
-      print(e.error.localizedMessage);
+    var decodedResponse = jsonDecode(responseFromStripe.body);
 
-      showDialog(context: context,
-       builder: (context) => AlertDialog(
-         content: Text("Cancelado"),
-         actions: [
-           TextButton(
-             onPressed: (){
-               Navigator.pop(context);
-             },
-             child: Text("OK"),
-           )
-         ],
-        )
-       );
-    }
-    catch(e){
-      print(e);
-    }
+    token = decodedResponse['id'];
+    
+    print(decodedResponse);
+    ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Payment ID: ${decodedResponse['id']}')));
+    return decodedResponse;
+  } catch (e) {
+    print(e);
   }
-
-  makeIntentForPayment(amountToBeCharge,currency) async {
-    try{
-      Map<String, dynamic> paymentInfo = {
-        "amount": (int.parse(amountToBeCharge)*100).toString(),
-        "currency": currency,
-        "payment_method_types[]": "card",
-      };
-
-      var responseFromStripe = await http.post(
-        Uri.parse("https://api.stripe.com/v1/payment_intents"),
-        body: paymentInfo,
-        headers: {
-          "Authorization": "Bearer $SecretKey",
-          "Content-Type": "application/x-www-form-urlencoded"
-        });
-
-      return jsonDecode(responseFromStripe.body);
-
-    }catch(e){
-      print(e);
-    }
-
-  }
+}
 
   paymentSheetInitialization(amountToBeCharge,currency) async{
     try{
@@ -111,12 +132,10 @@ class _StripePaymentViewState extends State<StripePaymentView> {
           children: [
 
             ElevatedButton(onPressed: (){
-
               paymentSheetInitialization(
                 widget.amount.round().toString(),
                 "USD"
               );
-
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.green,

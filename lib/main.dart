@@ -9,7 +9,7 @@ import 'common/presentation/main_tabview.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  Stripe.publishableKey = 'pk_test_51QgU4kD0dQ04HPD76rBHs2NHCCCkZzPNjbqimYXpqL7arJKeCEKokc4VYWsvyCXYVvQ1jQQl3KWXDURZNLlFPhLY00aIKtvDcv';
+  Stripe.publishableKey = 'pk_test_51QPCuGRp6TYNTJcRgQQCOypVsFeQdu0xFvFxdKyX8G4UewYVHRmtRLgu9kMpdaBKgZbtG3Q7v1Qlp7NiPzcU1Yvl00RiGsPKJl';
   await Stripe.instance.applySettings();
   await Firebase.initializeApp();
   await FirebaseApi().initNotifications();
