@@ -61,7 +61,7 @@ class CartService {
       double longitude,
       List<CartItem> products,
       List<CartItem> combos,
-      String cuponCode,
+      String? cuponCode,
       String instructions) async {
     final token = await TokenUser().getToken();
     final List<Map<String, dynamic>> productItems = products
@@ -87,7 +87,7 @@ class CartService {
       'longitude': longitude,
       'products': productItems,
       'combos': bundleItems,
-      'cupon_code': cuponCode,
+      if(cuponCode != null) 'cuponCode': cuponCode,
       'instructions': instructions,
     });
 

@@ -1,6 +1,11 @@
+import 'package:desarrollo_frontend/order/infrastructure/order_service_refund_stripe.dart';
 import 'package:flutter/material.dart';
 
-void showRefundDialog(BuildContext context) {
+import '../../common/infrastructure/base_url.dart';
+
+
+
+void showRefundDialog(BuildContext context, String orderId) {
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -16,7 +21,7 @@ void showRefundDialog(BuildContext context) {
           ),
           TextButton(
             onPressed: () {
-              _askRefund(context); 
+              _askRefund(context, orderId); 
             },
             child: const Text("OK"),
           ),
@@ -26,8 +31,12 @@ void showRefundDialog(BuildContext context) {
   );
 }
 
-void _askRefund(BuildContext context) {
+void _askRefund(BuildContext context, String orderId) async{
+
+  final OrderAskRefund orderAskRefund = OrderAskRefund(BaseUrl().BASE_URL);
+  final response = await orderAskRefund.askRefund(orderId);
   
+  if(response.isSuccessful){
   Future.delayed(const Duration(seconds: 3), () {
     showDialog(
       context: context,
@@ -49,4 +58,23 @@ void _askRefund(BuildContext context) {
       },
     );
   });
+  }else{
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Error"),
+          content: Text("Ocurrió un error: ${response.errorMessage}"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text("OK"),
+            ),
+          ],
+        );
+      },
+    );
+  }
 }
