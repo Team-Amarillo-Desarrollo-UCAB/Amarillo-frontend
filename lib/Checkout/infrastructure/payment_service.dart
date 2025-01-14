@@ -26,22 +26,36 @@ class PaymentService {
   PaymentService(this.baseUrl);
 
   Future<List<PaymentMethod>> getPaymentMethods(int page) async {
-    final response = await http.get(Uri.parse('$baseUrl/payment/method/many?page=$page'));
+    if (baseUrl == 'https://amarillo-backend-production.up.railway.app') {
+      final response =
+          await http.get(Uri.parse('$baseUrl/payment/method/many?page=$page'));
 
-    if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body);
-      
-      final paymentlist = data;
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body);
 
-      return paymentlist.where((method) => method['active'] == true).map((json) {
-        final paymentData = PaymentData.fromJson(json);
-        return PaymentMethod(
-          idPayment: paymentData.id_payment,
-          name: paymentData.name,
-        );
-      }).toList();
+        final paymentlist = data;
+
+        return paymentlist
+            .where((method) => method['active'] == true)
+            .map((json) {
+          final paymentData = PaymentData.fromJson(json);
+          return PaymentMethod(
+            idPayment: paymentData.id_payment,
+            name: paymentData.name,
+          );
+        }).toList();
+      } else {
+        throw Exception('Error al obtener la lista de métodos de pago');
+      }
+    } else if (baseUrl ==
+        'https://orangeteam-deliverybackend-production.up.railway.app') {
+      // Crear una lista de métodos de pago predeterminados
+      return [
+        PaymentMethod(idPayment: "1", name: "Efectivo"),
+        PaymentMethod(idPayment: "2", name: "Stripe"),
+      ];
     } else {
-      throw Exception('Error al obtener la lista de métodos de pago');
+      throw Exception('Base URL no reconocida');
     }
   }
 }
