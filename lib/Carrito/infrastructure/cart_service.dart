@@ -77,7 +77,7 @@ class CartService {
             })
         .toList();
 
-    final body = jsonEncode({
+    final bodyAmarillo = jsonEncode({
       'idPayment': idPayment,
       'paymentMethod': paymentMethod,
       if (tokenStripe != null) 'token': tokenStripe,
@@ -90,6 +90,21 @@ class CartService {
       if(cuponCode != null) 'cuponCode': cuponCode,
       'instructions': instructions,
     });
+
+    // Por ahora, el cuerpo para ORANGE es el mismo
+    final bodyOrange = jsonEncode({
+      'address': address,
+      'latitude': latitude,
+      'longitude': longitude,
+      'products': productItems,
+      'combos': bundleItems,
+      'paymentMethod': paymentMethod,
+      'currency': 'USD',
+      if (cuponCode != null) 'cuponCode': cuponCode,
+    });
+
+    final body =
+        BaseUrl().BASE_URL == BaseUrl().AMARILLO ? bodyAmarillo : bodyOrange;
 
     final Uri url = Uri.parse(BaseUrl().BASE_URL + '/order/create');
 
