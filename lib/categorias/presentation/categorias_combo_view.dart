@@ -88,7 +88,7 @@ class _CategoriasComboViewState extends State<CategoriasComboView> {
             await _descuentoServiceSearchById.getDescuentoById(combo.discount);
         final now = DateTime.now();
 
-        if (descuento.fechaExp.isBefore(now)) {
+        if (now.isBefore(descuento.fechaExp)) {
           return double.parse(combo.price) * (1 - descuento.percentage);
         } else {
           print(

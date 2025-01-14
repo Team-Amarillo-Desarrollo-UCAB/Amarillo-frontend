@@ -39,7 +39,7 @@ class _ProductCard2State extends State<ProductCard2> {
             .getDescuentoById(widget.product.discount);
         final now = DateTime.now();
 
-        if (descuento.fechaExp.isBefore(now)) {
+        if (now.isBefore(descuento.fechaExp)) {
           if (mounted) {
             setState(() {
               _descuento = descuento;

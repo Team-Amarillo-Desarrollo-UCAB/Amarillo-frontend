@@ -114,7 +114,7 @@ class _CategoriasProductViewState extends State<CategoriasProductView> {
             .getDescuentoById(product.discount);
         final now = DateTime.now();
 
-        if (descuento.fechaExp.isBefore(now)) {
+        if (now.isBefore(descuento.fechaExp)) {
           return double.parse(product.price) * (1 - descuento.percentage);
         } else {
           print(

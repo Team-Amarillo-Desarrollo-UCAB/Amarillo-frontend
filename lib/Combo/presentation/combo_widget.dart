@@ -43,7 +43,7 @@ class _ComboCardState extends State<ComboCard> {
             .getDescuentoById(widget.combo.discount);
         final now = DateTime.now();
 
-        if (descuento.fechaExp.isBefore(now)) {
+        if (now.isBefore(descuento.fechaExp)) {
           if (mounted) {
             setState(() {
               _descuento = descuento;
