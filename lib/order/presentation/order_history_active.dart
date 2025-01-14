@@ -124,6 +124,7 @@ class _HistoryOrderScreenState extends State<OrderHistoryScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Historial de orden"),
+        centerTitle: true,
       ),
       body: Column(
         children: [
@@ -395,9 +396,12 @@ class _HistoryOrderScreenState extends State<OrderHistoryScreen> {
                                               ),
                                             );
                                           },
-                                          child: Text(
-                                            "Reportar problema",
-                                            style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 14),
+                                          child: Text(order.orderReport == ' ' 
+                                                ? "Reportar problema" 
+                                                : "Reportar problema", 
+                                                style: order.orderReport == ' ' 
+                                                ? TextStyle(fontSize: 16, color: TColor.primary, fontWeight: FontWeight.bold) 
+                                                : TextStyle(fontSize: 14, color: Colors.grey, fontWeight: FontWeight.bold),
                                           ),
                                         ),
                                       if (order.status != "CANCELLED") 
@@ -411,7 +415,7 @@ class _HistoryOrderScreenState extends State<OrderHistoryScreen> {
                                         ),
                                       TextButton(
                                         onPressed: () {
-                                          showRefundDialog(context);
+                                          showRefundDialog(context, order.orderId);
                                         },
                                         child: Text(
                                           "Pedir reembolso",
