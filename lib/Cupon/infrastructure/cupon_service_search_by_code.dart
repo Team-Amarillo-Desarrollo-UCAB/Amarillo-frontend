@@ -43,7 +43,7 @@ class CuponServiceSearchByCode {
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = json.decode(response.body);
 
-        final cuponData = CuponDataOrange.fromJson(data);
+        final cuponData = CuponData.fromJson(data);
 
         return Cupon(
             code: cuponData.code,
