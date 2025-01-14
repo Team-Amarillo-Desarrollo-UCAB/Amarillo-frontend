@@ -51,7 +51,7 @@ class PaymentService {
         'https://orangeteam-deliverybackend-production.up.railway.app') {
       // Crear una lista de métodos de pago predeterminados
       return [
-        PaymentMethod(idPayment: "1", name: "Efectivo"),
+        PaymentMethod(idPayment: "1", name: "Pago Movil"),
         PaymentMethod(idPayment: "2", name: "Stripe"),
       ];
     } else {

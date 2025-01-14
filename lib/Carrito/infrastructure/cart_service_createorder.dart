@@ -61,7 +61,7 @@ class CartServiceCreateOrder {
       'paymentMethod': paymentMethod,
       'currency': 'USD',
       'total': total,
-      if (cuponCode != null) 'cuponCode': cuponCode,
+      if (cuponCode != null) 'cupon_Code': cuponCode,
     });
 
     final body = baseUrl == 'https://amarillo-backend-production.up.railway.app'
