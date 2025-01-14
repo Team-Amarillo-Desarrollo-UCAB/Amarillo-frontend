@@ -91,28 +91,14 @@ class _PromocionesViewState extends State<PromocionesView> {
   }
 
   Future<void> _loadAllDescuentos() async {
-    int page = 1;
-    bool hasMore = true;
-    List<Descuento> allDescuentos = [];
-    while (hasMore) {
-      try {
-        List<Descuento> descuentos = await _descuentoService.getDescuento(page);
-        if (descuentos.isEmpty) {
-          hasMore = false;
-        } else {
-          allDescuentos.addAll(descuentos);
-          page++;
-        }
-      } catch (error) {
-        print('Error al obtener descuentos: $error');
-        hasMore = false;
-      }
+    try {
+      List<Descuento> allDescuentos = await _descuentoService.getDescuento();
+      setState(() {
+        _descuentos = allDescuentos;
+      });
+    } catch (error) {
+      print('Error al obtener descuentos: $error');
     }
-    allDescuentos.removeWhere(
-        (descuento) => descuento.id == "9bd9532c-5033-4621-be8a-87de4934a0be");
-    setState(() {
-      _descuentos = allDescuentos;
-    });
   }
 
   Future<double> _getDiscountedPrice(Combo combo) async {
@@ -120,7 +106,14 @@ class _PromocionesViewState extends State<PromocionesView> {
       try {
         final descuento =
             await _descuentoServiceSearchById.getDescuentoById(combo.discount);
-        return double.parse(combo.price) * (1 - descuento.percentage);
+        final now = DateTime.now();
+
+        if (now.isBefore(descuento.fechaExp)) {
+          return double.parse(combo.price) * (1 - descuento.percentage);
+        } else {
+          print(
+              'El descuento no es válido porque la fecha de expedición es posterior a la fecha actual.');
+        }
       } catch (error) {
         print('Error al obtener el descuento: $error');
       }
@@ -133,7 +126,14 @@ class _PromocionesViewState extends State<PromocionesView> {
       try {
         final descuento = await _descuentoServiceSearchById
             .getDescuentoById(product.discount);
-        return double.parse(product.price) * (1 - descuento.percentage);
+        final now = DateTime.now();
+
+        if (now.isBefore(descuento.fechaExp)) {
+          return double.parse(product.price) * (1 - descuento.percentage);
+        } else {
+          print(
+              'El descuento no es válido porque la fecha de expedición es posterior a la fecha actual.');
+        }
       } catch (error) {
         print('Error al obtener el descuento: $error');
       }
@@ -273,9 +273,13 @@ class _PromocionesViewState extends State<PromocionesView> {
                         itemCount: _descuentos.length,
                         itemBuilder: (context, index) {
                           final descuento = _descuentos[index];
+                          final now = DateTime.now();
                           final combosConDescuento = _combo
-                              .where((combo) => combo.discount == descuento.id)
+                              .where((combo) =>
+                                  combo.discount == descuento.id &&
+                                  now.isBefore(descuento.fechaExp))
                               .toList();
+
                           if (combosConDescuento.isEmpty) {
                             return const SizedBox.shrink();
                           }
@@ -340,9 +344,11 @@ class _PromocionesViewState extends State<PromocionesView> {
                         itemCount: _descuentos.length,
                         itemBuilder: (context, index) {
                           final descuento = _descuentos[index];
+                          final now = DateTime.now();
                           final productConDescuento = _products
-                              .where(
-                                  (product) => product.discount == descuento.id)
+                              .where((product) =>
+                                  product.discount == descuento.id &&
+                                  now.isBefore(descuento.fechaExp))
                               .toList();
                           if (productConDescuento.isEmpty) {
                             return const SizedBox.shrink();

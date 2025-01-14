@@ -87,7 +87,14 @@ class _CategoriasComboViewState extends State<CategoriasComboView> {
       try {
         final descuento =
             await _descuentoServiceSearchById.getDescuentoById(combo.discount);
-        return double.parse(combo.price) * (1 - descuento.percentage);
+        final now = DateTime.now();
+
+        if (now.isBefore(descuento.fechaExp)) {
+          return double.parse(combo.price) * (1 - descuento.percentage);
+        } else {
+          print(
+              'El descuento no es válido porque la fecha de expedición es posterior a la fecha actual.');
+        }
       } catch (error) {
         print('Error al obtener el descuento: $error');
       }

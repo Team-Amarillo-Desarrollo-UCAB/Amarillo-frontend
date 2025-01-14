@@ -4,6 +4,7 @@ import 'package:desarrollo_frontend/Checkout/presentation/Agregar_Direccion.dart
 import 'package:desarrollo_frontend/Checkout/presentation/direcciones_screen.dart';
 import 'package:desarrollo_frontend/Checkout/presentation/fecha_hora_widget.dart';
 import 'package:desarrollo_frontend/Checkout/presentation/metodo_de_pago_widget.dart';
+import 'package:desarrollo_frontend/Checkout/presentation/paypal_payment_page.dart';
 import 'package:desarrollo_frontend/Checkout/presentation/pie_pagina_widget.dart';
 import 'package:desarrollo_frontend/Combo/domain/combo.dart';
 import 'package:desarrollo_frontend/Cupon/domain/Cupon.dart';
@@ -17,6 +18,7 @@ import '../../Carrito/domain/cart_item.dart';
 import '../../Carrito/infrastructure/cart_service.dart';
 import '../../common/presentation/main_tabview.dart';
 import '../../order/application/order_repository.dart';
+import 'stripe_payment_view1.dart';
 
 class CheckoutScreen extends StatefulWidget {
   final int totalItems;
@@ -41,6 +43,8 @@ class CheckoutScreenState extends State<CheckoutScreen> {
   List<CartItem> listProducts = [];
   List<CartItem> listCombos = [];
   Cupon? selectedCupon;
+  String? selectedToken;
+  String selectedEmail = '';
   PaymentMethod? selectedPaymentMethod;
   Direccion? selectedDireccion;
   String instructions = 'Entregar por la puerta roja de la esquina';
@@ -114,6 +118,18 @@ class CheckoutScreenState extends State<CheckoutScreen> {
     if (cupon != null && mounted) {
       setState(() {
         selectedCupon = cupon;
+      });
+    }
+  }
+
+  Future<void> _tokenStripe() async {
+    final String? token = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => StripePaymentView(amount: widget.totalPrice)),
+    );
+    if (token != null && mounted) {
+      setState(() {
+        selectedToken = token;
       });
     }
   }
@@ -205,6 +221,16 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                   selectedPaymentMethod = method;
                   _generatePaymentFields(method.idPayment);
                 });
+                if(method.name == 'Stripe'){     
+                  _tokenStripe();         
+                }else{
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => PayPalPaymentPage(),
+                    ),
+                  );
+                }
               },
             ),
             if (selectedPaymentMethod != null) ..._buildPaymentFields(),
@@ -283,6 +309,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                       await widget.cartService.createOrder(
                           selectedPaymentMethod!.idPayment,
                           selectedPaymentMethod!.name,
+                          selectedToken,
                           _selectedDateTime!,
                           selectedDireccion!.direccionCompleta,
                           selectedDireccion!.latitude,

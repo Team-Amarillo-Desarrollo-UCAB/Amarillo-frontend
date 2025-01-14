@@ -29,9 +29,9 @@ class OrderService {
   if (response.statusCode == 200) {
     final Map<String, dynamic> decodedData = json.decode(response.body);
 
-    final orderList = decodedData.values.toList();
+    final List<dynamic> orders = decodedData['orders'];
 
-    return orderList.map((json) {
+    return orders.map((json) {
       final orderData = OrderData.fromJson(json);
       return Order(
         orderId: orderData.id,

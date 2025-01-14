@@ -8,11 +8,11 @@ class OrderServiceChangeState {
 
   OrderServiceChangeState(this.baseUrl);
 
-  Future<Response> changeOrderState(Map<String, dynamic> body) async {
-    final url = Uri.parse('$baseUrl/order/change/state');
+  Future<Response> changeOrderState(Map<String, dynamic> body, String orderId) async {
+    final url = Uri.parse('$baseUrl/order/change/state/$orderId');
     final token = await TokenUser().getToken();
 
-    final response = await http.post(
+    final response = await http.patch(
       url,
       headers: {
         'Authorization': 'Bearer $token',
@@ -33,10 +33,9 @@ class OrderServiceChangeState {
 
   Future<Response> cancelOrder(String orderId) async {
     final Map<String, dynamic> body = {
-      "id_order": orderId,
       "orderState": "CANCELLED",
     };
-    return await changeOrderState(body);
+    return await changeOrderState(body, orderId);
   }
 }
 class Response {

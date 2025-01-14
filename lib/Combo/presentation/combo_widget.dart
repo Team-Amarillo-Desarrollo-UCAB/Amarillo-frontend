@@ -1,6 +1,6 @@
 import 'package:desarrollo_frontend/Combo/domain/combo.dart';
 import 'package:desarrollo_frontend/Combo/presentation/detailcombo_screen.dart';
-import 'package:desarrollo_frontend/Descuento/Domain/Descuento.dart';
+import 'package:desarrollo_frontend/Descuento/Domain/descuento.dart';
 import 'package:desarrollo_frontend/Descuento/Infrastructure/descuento_service_search_by_id.dart';
 import 'package:desarrollo_frontend/Producto/infrastructure/product_service_search_by_id.dart';
 import 'package:desarrollo_frontend/common/infrastructure/base_url.dart';
@@ -43,11 +43,23 @@ class _ComboCardState extends State<ComboCard> {
       try {
         final descuento = await _descuentoServiceSearchById
             .getDescuentoById(widget.combo.discount);
-        if (mounted) {
-          setState(() {
-            _descuento = descuento;
-            _isLoading = false;
-          });
+        final now = DateTime.now();
+
+        if (now.isBefore(descuento.fechaExp)) {
+          if (mounted) {
+            setState(() {
+              _descuento = descuento;
+              _isLoading = false;
+            });
+          }
+        } else {
+          print(
+              'El descuento no es válido porque la fecha de expedición es posterior a la fecha actual.');
+          if (mounted) {
+            setState(() {
+              _isLoading = false;
+            });
+          }
         }
       } catch (error) {
         print('Error al obtener el descuento: $error');

@@ -54,12 +54,13 @@ class CartService {
   Future<void> createOrder(
       String idPayment,
       String paymentMethod,
+      String? tokenStripe,
       DateTime orderReceivedDate,
-      String ubicacion,
-      double latitud,
-      double longitud,
+      String address,
+      double latitude,
+      double longitude,
       List<CartItem> products,
-      List<CartItem> bundles,
+      List<CartItem> combos,
       String cuponCode,
       String instructions) async {
     final token = await TokenUser().getToken();
@@ -69,7 +70,7 @@ class CartService {
               'quantity': item.quantity,
             })
         .toList();
-    final List<Map<String, dynamic>> bundleItems = bundles
+    final List<Map<String, dynamic>> bundleItems = combos
         .map((item) => {
               'id': item.id_product,
               'quantity': item.quantity,
@@ -79,12 +80,13 @@ class CartService {
     final body = jsonEncode({
       'idPayment': idPayment,
       'paymentMethod': paymentMethod,
+      if (tokenStripe != null) 'token': tokenStripe,
       'orderReciviedDate': orderReceivedDate.toIso8601String().split('T')[0],
-      'ubicacion': ubicacion,
-      'latitud': latitud,
-      'longitud': longitud,
+      'address': address,
+      'latitude': latitude,
+      'longitude': longitude,
       'products': productItems,
-      'bundles': bundleItems,
+      'combos': bundleItems,
       'cupon_code': cuponCode,
       'instructions': instructions,
     });
