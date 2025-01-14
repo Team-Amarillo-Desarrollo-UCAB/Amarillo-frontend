@@ -238,6 +238,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_3d_viewer:
+    dependency: "direct main"
+    description:
+      name: flutter_3d_viewer
+      sha256: bd05eb007f135e61fa19c4703cec00f0e78794aa5083e0b2c0a7f142ebaf9578
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.0"
   flutter_inappwebview:
     dependency: "direct main"
     description:
@@ -302,14 +310,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.6.0"
-  flutter_3d_viewer:
-    dependency: "direct main"
-    description:
-      name: flutter_3d_viewer
-      sha256: bd05eb007f135e61fa19c4703cec00f0e78794aa5083e0b2c0a7f142ebaf9578
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.0"
   flutter_launcher_icons:
     dependency: "direct dev"
     description:
