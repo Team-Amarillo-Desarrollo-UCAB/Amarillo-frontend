@@ -45,6 +45,9 @@ dependencies:
   dropdown_button2: ^2.0.1
   js: ^0.6.3
   intl: ^0.17.0
+  carousel_slider: ^4.2.0
+  flutter_3d_viewer: ^1.0.0
+  model_viewer_plus: ^1.9.1
 
 dev_dependencies:
   flutter_test:
@@ -79,6 +82,7 @@ flutter:
   assets:
     - assets/img/
     - assets/RiveAssets/
+    - assets/3d/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

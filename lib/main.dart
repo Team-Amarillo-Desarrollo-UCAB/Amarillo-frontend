@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'Producto/presentation/product_individual_view.dart';
 import 'Users/domain/user_profile.dart';
 import 'api/firebase_api.dart';
 import 'common/presentation/startup_view.dart';
@@ -27,7 +28,7 @@ class MyApp extends StatelessWidget {
         fontFamily: "Metropolis",
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const StartupView(),
+      home: const StartupView(), //PerfumeDetailPage(),//
     );
   }
 }

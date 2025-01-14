@@ -62,19 +62,33 @@ class _SignUpViewState extends State<SignUpView> {
     });
 
     try {
+      var body;
+      if (BaseUrl().BASE_URL == BaseUrl().AMARILLO || BaseUrl().BASE_URL == BaseUrl().ORANGE) {
+        body = jsonEncode({
+          "email": email,
+          "name": name,
+          "phone": mobile,
+          //"image": "", 
+          "type": "CLIENT",
+          "password": password,
+        });
+      } else {
+        body = jsonEncode({
+          "email": email,
+          "name": name,
+          "password": password,
+          "phone": mobile,
+          "role": "CLIENT",
+          
+        });
+      }
+
       final response = await http.post(
         Uri.parse('$baseUrl/auth/register'),
         headers: {
           'Content-Type': 'application/json',
         },
-        body: jsonEncode({
-          "email": email,
-          "name": name,
-          "phone": mobile,
-          "image": "", 
-          "role": "CLIENT",
-          "password": password,
-        }),
+        body: body,
       );
 
       setState(() {
