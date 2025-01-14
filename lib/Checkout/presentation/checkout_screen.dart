@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:desarrollo_frontend/Checkout/domain/direccion.dart';
 import 'package:desarrollo_frontend/Checkout/infrastructure/payment_service.dart';
 import 'package:desarrollo_frontend/Checkout/presentation/Agregar_Direccion.dart';
@@ -11,6 +13,7 @@ import 'package:desarrollo_frontend/Cupon/domain/Cupon.dart';
 import 'package:desarrollo_frontend/Cupon/presentation/cupon_screen.dart';
 import 'package:desarrollo_frontend/Producto/domain/product.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../common/infrastructure/base_url.dart';
 import '../../common/presentation/common_widget/round_button.dart';
 import '../../Carrito/domain/cart_item.dart';
@@ -53,6 +56,41 @@ class CheckoutScreenState extends State<CheckoutScreen> {
     super.initState();
     _fetchPaymentMethods();
     _divideCartItems();
+    _loadDirecciones();
+  }
+
+  Future<void> _loadDirecciones() async {
+    final prefs = await SharedPreferences.getInstance();
+    final String? direccionesString = prefs.getString('direcciones');
+    if (direccionesString != null) {
+      final List<dynamic> direccionesJson = json.decode(direccionesString);
+      setState(() {
+        _direcciones.clear();
+        _direcciones.addAll(direccionesJson
+            .map((json) => Direccion(
+                  nombre: json['nombre'],
+                  direccionCompleta: json['direccionCompleta'],
+                  latitude: json['latitude'],
+                  longitude: json['longitude'],
+                  isSelected: json['isSelected'],
+                ))
+            .toList());
+      });
+    }
+  }
+
+  Future<void> _saveDirecciones() async {
+    final prefs = await SharedPreferences.getInstance();
+    final String direccionesString = json.encode(_direcciones
+        .map((direccion) => {
+              'nombre': direccion.nombre,
+              'direccionCompleta': direccion.direccionCompleta,
+              'latitude': direccion.latitude,
+              'longitude': direccion.longitude,
+              'isSelected': direccion.isSelected
+            })
+        .toList());
+    await prefs.setString('direcciones', direccionesString);
   }
 
   void _divideCartItems() {
@@ -94,12 +132,14 @@ class CheckoutScreenState extends State<CheckoutScreen> {
   void _addDireccion(Direccion direccion) {
     setState(() {
       _direcciones.add(direccion);
+      _saveDirecciones();
     });
   }
 
   void _removeDireccion(Direccion direccion) {
     setState(() {
       _direcciones.remove(direccion);
+      _saveDirecciones();
     });
   }
 
@@ -124,7 +164,8 @@ class CheckoutScreenState extends State<CheckoutScreen> {
   Future<void> _tokenStripe() async {
     final String? token = await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => StripePaymentView(amount: widget.totalPrice)),
+      MaterialPageRoute(
+          builder: (context) => StripePaymentView(amount: widget.totalPrice)),
     );
     if (token != null && mounted) {
       setState(() {
@@ -225,9 +266,9 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                   selectedPaymentMethod = method;
                   _generatePaymentFields(method.idPayment);
                 });
-                if(method.name == 'Stripe'){     
-                  _tokenStripe();         
-                }else{
+                if (method.name == 'Stripe') {
+                  _tokenStripe();
+                } else {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
