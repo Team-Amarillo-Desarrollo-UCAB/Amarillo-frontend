@@ -379,8 +379,8 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                         context: context,
                         builder: (context) => AlertDialog(
                           title: const Text('Error al crear la orden'),
-                          content: const Text(
-                              'Ha ocurrido un error al procesar tu pedido. Por favor, inténtalo de nuevo más tarde.'),
+                          content: Text(
+                              'Ha ocurrido un error al procesar tu pedido. Por favor, inténtalo de nuevo más tarde.\n\nError: $error'),
                           actions: [
                             TextButton(
                               onPressed: () {
