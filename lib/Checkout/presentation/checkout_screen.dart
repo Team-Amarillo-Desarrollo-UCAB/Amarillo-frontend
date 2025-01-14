@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:desarrollo_frontend/Carrito/infrastructure/cart_service_createorder.dart';
 import 'package:desarrollo_frontend/Checkout/domain/direccion.dart';
 import 'package:desarrollo_frontend/Checkout/infrastructure/payment_service.dart';
 import 'package:desarrollo_frontend/Checkout/presentation/Agregar_Direccion.dart';
@@ -114,6 +115,8 @@ class CheckoutScreenState extends State<CheckoutScreen> {
   }
 
   final PaymentService paymentService = PaymentService(BaseUrl().BASE_URL);
+  final CartServiceCreateOrder createService =
+      CartServiceCreateOrder(BaseUrl().BASE_URL);
 
   final Map<String, TextEditingController> controllers = {};
 
@@ -340,7 +343,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                           ),
                         );
                       }
-                      await widget.cartService.createOrder(
+                      await createService.createOrder(
                           selectedPaymentMethod!.idPayment,
                           selectedPaymentMethod!.name,
                           selectedToken,
