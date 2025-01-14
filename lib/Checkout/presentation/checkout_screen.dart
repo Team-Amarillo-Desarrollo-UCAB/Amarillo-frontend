@@ -351,7 +351,8 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                           listProducts,
                           listCombos,
                           code,
-                          instructions);
+                          instructions,
+                          widget.totalPrice);
                       showDialog(
                         context: context,
                         builder: (context) => AlertDialog(
