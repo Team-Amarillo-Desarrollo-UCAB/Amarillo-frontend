@@ -330,6 +330,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
               children: [
                 TextButton.icon(
                   onPressed: () async {
+                    String? code = getCodeFromCupon(selectedCupon);
                     try {
                       if (!_validateFields()) {
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -349,7 +350,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                           selectedDireccion!.longitude,
                           listProducts,
                           listCombos,
-                          selectedCupon!.code,
+                          code,
                           instructions);
                       showDialog(
                         context: context,
@@ -445,5 +446,9 @@ class CheckoutScreenState extends State<CheckoutScreen> {
       return false;
     }
     return true;
+  }
+
+  String? getCodeFromCupon(Cupon? selectedCupon) {
+    return selectedCupon?.code;
   }
 }
