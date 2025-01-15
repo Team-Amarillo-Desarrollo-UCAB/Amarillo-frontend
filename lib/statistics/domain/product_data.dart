@@ -1,12 +1,10 @@
 class ProductData {
-  final double thisYear;
-  final double target;
-  final double lastYear;
+  final double quantity;
+  final String name;
 
   ProductData({
-    required this.thisYear,
-    required this.target,
-    required this.lastYear,
+    required this.name,
+    required this.quantity,
   });
 }
 
