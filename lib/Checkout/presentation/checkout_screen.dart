@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:desarrollo_frontend/Carrito/infrastructure/cart_service_createorder.dart';
 import 'package:desarrollo_frontend/Checkout/domain/direccion.dart';
 import 'package:desarrollo_frontend/Checkout/infrastructure/payment_service.dart';
 import 'package:desarrollo_frontend/Checkout/presentation/Agregar_Direccion.dart';
@@ -114,7 +115,11 @@ class CheckoutScreenState extends State<CheckoutScreen> {
   }
 
   final PaymentService paymentService = PaymentService(BaseUrl().BASE_URL);
+  final CartServiceCreateOrder createService =
+      CartServiceCreateOrder(BaseUrl().BASE_URL);
+
   final Map<String, TextEditingController> controllers = {};
+
   List<PaymentMethod> paymentFields = [];
   Future<void> _fetchPaymentMethods() async {
     try {
@@ -260,21 +265,12 @@ class CheckoutScreenState extends State<CheckoutScreen> {
               onSelectedMethod: (method) {
                 setState(() {
                   selectedPaymentMethod = method;
-                  _generatePaymentFields(method.idPayment);
                 });
                 if (method.name == 'Stripe') {
                   _tokenStripe();
-                } else {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => PayPalPaymentPage(),
-                    ),
-                  );
-                }
+                } else {}
               },
             ),
-            if (selectedPaymentMethod != null) ..._buildPaymentFields(),
             const Divider(),
             Padding(
               padding: const EdgeInsets.all(16.0),
@@ -322,7 +318,6 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                 ],
               ),
             ),
-
           ],
         ),
       ),
@@ -338,6 +333,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
               children: [
                 TextButton.icon(
                   onPressed: () async {
+                    String? code = getCodeFromCupon(selectedCupon);
                     try {
                       if (!_validateFields()) {
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -347,7 +343,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                           ),
                         );
                       }
-                      await widget.cartService.createOrder(
+                      await createService.createOrder(
                           selectedPaymentMethod!.idPayment,
                           selectedPaymentMethod!.name,
                           selectedToken,
@@ -357,14 +353,15 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                           selectedDireccion!.longitude,
                           listProducts,
                           listCombos,
-                          selectedCupon!.code,
-                          instructions);
+                          code,
+                          instructions,
+                          widget.totalPrice);
                       showDialog(
                         context: context,
                         builder: (context) => AlertDialog(
                           title: const Text('¡Orden creada con éxito!'),
                           content: Text(
-                              'Tu pedido ha sido procesado. ID de la orden: ${widget.cartService.idOrder}. Pronto recibirás una confirmación.'),
+                              'Tu pedido ha sido procesado. ID de la orden: ${createService.idOrder}. Pronto recibirás una confirmación.'),
                           actions: [
                             TextButton(
                               onPressed: () {
@@ -386,8 +383,8 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                         context: context,
                         builder: (context) => AlertDialog(
                           title: const Text('Error al crear la orden'),
-                          content: const Text(
-                              'Ha ocurrido un error al procesar tu pedido. Por favor, inténtalo de nuevo más tarde.'),
+                          content: Text(
+                              'Ha ocurrido un error al procesar tu pedido. Por favor, inténtalo de nuevo más tarde.\n\nError: $error'),
                           actions: [
                             TextButton(
                               onPressed: () {
@@ -427,58 +424,35 @@ class CheckoutScreenState extends State<CheckoutScreen> {
     );
   }
 
-  void _generatePaymentFields(String method) {
-    setState(() {
-      controllers.clear();
-      if (method == 'c9710a23-6748-4841-aaf3-007a0a4caf74') {
-        controllers['email'] = TextEditingController();
-      } else if (method == 'f8386cbb-c503-450c-9829-6548b2c60b7c') {
-        controllers['token'] = TextEditingController();
-      }
-    });
-  }
-
-  List<Widget> _buildPaymentFields() {
-    List<Widget> fields = [];
-
-    if (selectedPaymentMethod == 'c9710a23-6748-4841-aaf3-007a0a4caf74') {
-      fields.add(
-        TextField(
-          controller: controllers['email'],
-          keyboardType: TextInputType.emailAddress,
-          decoration: InputDecoration(
-            labelText: 'Paypal Email',
-            border: OutlineInputBorder(),
-          ),
-        ),
-      );
-    } else if (selectedPaymentMethod ==
-        'f8386cbb-c503-450c-9829-6548b2c60b7c') {
-      fields.add(
-        TextField(
-          controller: controllers['token'],
-          keyboardType: TextInputType.text,
-          decoration: const InputDecoration(
-            labelText: 'Token de la tarjeta',
-            border: OutlineInputBorder(),
-          ),
-        ),
-      );
-    }
-    return fields;
-  }
-
   bool _validateFields() {
-    if (selectedPaymentMethod == 'c9710a23-6748-4841-aaf3-007a0a4caf74') {
-      if (controllers['email'] == null || controllers['email']!.text.isEmpty) {
-        return false;
-      }
-    } else if (selectedPaymentMethod ==
-        'f8386cbb-c503-450c-9829-6548b2c60b7c') {
-      if (controllers['token'] == null || controllers['token']!.text.isEmpty) {
-        return false;
-      }
+    if (_selectedDateTime == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Por favor, seleccione una fecha."),
+        ),
+      );
+      return false;
+    }
+    if (selectedPaymentMethod == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Por favor, seleccione un método de pago."),
+        ),
+      );
+      return false;
+    }
+    if (selectedDireccion == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Por favor, seleccione una dirección."),
+        ),
+      );
+      return false;
     }
     return true;
+  }
+
+  String? getCodeFromCupon(Cupon? selectedCupon) {
+    return selectedCupon?.code;
   }
 }
