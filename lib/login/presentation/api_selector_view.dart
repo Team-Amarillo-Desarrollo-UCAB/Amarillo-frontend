@@ -61,6 +61,15 @@ class _ApiSelectionViewState extends State<ApiSelectionView> {
                   ),
                   const SizedBox(height: 20),
                   Text(
+                    "Bienvenido a GODELY",
+                    style: TextStyle(
+                      color: TColor.primaryText,
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+                  Text(
                     "Seleccione la API a utilizar",
                     style: TextStyle(
                       color: TColor.primaryText,
