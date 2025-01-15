@@ -4,9 +4,11 @@ import 'package:provider/provider.dart';
 import 'Producto/presentation/product_individual_view.dart';
 import 'Users/domain/user_profile.dart';
 import 'api/firebase_api.dart';
+import 'chatbot/prueba.dart';
 import 'common/presentation/startup_view.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'common/presentation/main_tabview.dart';
+import 'statistics/presentation/views/statistics_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -31,7 +33,10 @@ class MyApp extends StatelessWidget {
         fontFamily: "Metropolis",
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const StartupView(), //PerfumeDetailPage(),//
+      //home: const StartupView(), 
+      //home: const PerfumeDetailPage(),
+      //home: ChatBotScreen(),
+       home: StatisticsScreen(),
     );
   }
 }

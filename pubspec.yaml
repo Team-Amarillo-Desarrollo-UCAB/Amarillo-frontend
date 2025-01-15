@@ -51,6 +51,8 @@ dependencies:
   carousel_slider: ^4.2.0
   flutter_3d_viewer: ^1.0.0
   model_viewer_plus: ^1.9.1
+  google_generative_ai: ^0.4.6
+  googleapis_auth: ^1.6.0
 
 dev_dependencies:
   flutter_test:
