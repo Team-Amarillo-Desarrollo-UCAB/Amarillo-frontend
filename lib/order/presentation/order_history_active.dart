@@ -374,13 +374,13 @@ class _HistoryOrderScreenState extends State<OrderHistoryScreen> {
                                       Container(
                                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                         decoration: BoxDecoration(
-                                          color: order.status == "DELIVERED" ? Colors.blue[100] : Colors.red[100],
+                                          color: order.status == "DELIVERED" ? Colors.green[100] : Colors.red[100],
                                           borderRadius: BorderRadius.circular(4),
                                         ),
                                         child: Text(
                                           order.status,
                                           style: TextStyle(
-                                            color: order.status == "DELIVERED" ? Colors.blue : Colors.red,
+                                            color: order.status == "DELIVERED" ? Colors.green : Colors.red,
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
