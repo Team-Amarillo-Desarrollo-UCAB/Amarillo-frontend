@@ -68,26 +68,23 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
     return productDetails;
   }
 
-  void onAdd(CartItem item) async {
+  void onAdd(CartItem item, int quantity) async {
     await _cartService.loadCartItems();
-    bool isProductInCart =
-        _cartService.cartItems.any((cartItem) => cartItem.name == item.name);
-    if (isProductInCart) {
-      CartItem existingItem = _cartService.cartItems
-          .firstWhere((cartItem) => cartItem.name == item.name);
-      existingItem.incrementQuantity();
-    } else {
+    bool isProductInCart = _cartService.cartItems.isNotEmpty;
+    if (!isProductInCart) {
       _cartService.cartItems.add(item);
+      for (int i = 0; i < quantity; i++) {
+        item.incrementQuantity();
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error: El carrito debe estar vacío para reordenar'),
+          duration: const Duration(seconds: 2),
+        ),
+      );
     }
     await _cartService.saveCartItems();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(isProductInCart
-            ? '${item.name} cantidad incrementada'
-            : '${item.name} añadido al carrito'),
-        duration: const Duration(seconds: 2),
-      ),
-    );
   }
 
   Future<void> reordenarProductosYCombos(List<Map<String, dynamic>> items,
@@ -96,38 +93,37 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
       for (var item in items) {
         final product = await _productService.getProductById(item['id']);
         final int quantity = item['quantity'];
-        for (int i = 0; i < quantity; i++) {
-          onAdd(CartItem(
-            id_product: product.id_product,
-            imageUrl: product.images[0],
-            name: product.name,
-            price: double.parse(product.price),
-            description: product.description,
-            peso: product.peso,
-            isCombo: false,
-            category: product.category,
-            discount: product.discount,
-          ));
-        }
+        onAdd(
+            CartItem(
+              id_product: product.id_product,
+              imageUrl: product.images[0],
+              name: product.name,
+              price: double.parse(product.price),
+              description: product.description,
+              peso: product.peso,
+              isCombo: false,
+              category: product.category,
+              discount: product.discount,
+            ),
+            quantity);
       }
-
       for (var bundle in bundles) {
         final combo = await _comboService.getComboById(bundle['id']);
         final int quantity = bundle['quantity'];
-        for (int i = 0; i < quantity; i++) {
-          onAdd(CartItem(
-            id_product: combo.id_product,
-            imageUrl: combo.images[0],
-            name: combo.name,
-            price: double.parse(combo.price),
-            description: combo.description,
-            peso: combo.peso,
-            productId: combo.productId,
-            isCombo: true,
-            discount: combo.discount,
-            category: combo.category,
-          ));
-        }
+        onAdd(
+            CartItem(
+              id_product: combo.id_product,
+              imageUrl: combo.images[0],
+              name: combo.name,
+              price: double.parse(combo.price),
+              description: combo.description,
+              peso: combo.peso,
+              productId: combo.productId,
+              isCombo: true,
+              discount: combo.discount,
+              category: combo.category,
+            ),
+            quantity);
       }
     } catch (e) {
       print('Error al reordenar productos y combos: $e');
