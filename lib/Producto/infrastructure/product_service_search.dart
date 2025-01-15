@@ -12,12 +12,22 @@ class ProductServiceSearch {
 
   Future<Product> getProductByName(String productName) async {
     final token = await TokenUser().getToken();
+    String endpoint;
+    if (baseUrl == 'https://amarillo-backend-production.up.railway.app') {
+      endpoint = '$baseUrl/product/many?name=$productName';
+    } else if (baseUrl == 'https://godelybackgreen.up.railway.app/api') {
+      endpoint = '$baseUrl/product/one/$productName';
+    } else {
+      throw Exception('Base URL no reconocida');
+    }
 
     final response = await http.get(
-        Uri.parse('$baseUrl/product/many?name=$productName'),
-        headers: {
-          'Authorization': 'Bearer $token',
-        });
+      Uri.parse(endpoint),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+    );
 
     if (response.statusCode == 200) {
       print('Response: ${response.statusCode}');
