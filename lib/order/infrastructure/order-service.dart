@@ -100,6 +100,105 @@ class OrderService {
     }
   }
 
+
+  // Retornar todas las órdenes obtenidas
+  return allOrders;
+}else{
+  throw Exception('Error al obtener las órdenes de los backends');
+}
+}
+
+
+Future<List<Order>> getAllOrders(int perpage, List<String> status) async {
+  final token = await TokenUser().getToken();
+    if(baseUrl == 'https://amarillo-backend-production.up.railway.app') {
+        String url = '$baseUrl/order/many?page=1&?&perpage=$perpage';
+    
+  for (var s in status) {
+    url += '&status=$s';
+  }
+    final response = await http.get(
+      Uri.parse(url),
+      headers: {
+        'Authorization': 'Bearer $token',
+      }
+    );
+  print("Código de respuesta: ${response.statusCode}"); // Debug
+
+  if (response.statusCode == 200) {
+    final Map<String, dynamic> decodedData = json.decode(response.body);
+
+    final List<dynamic> orders = decodedData['orders'];
+
+    return orders.map((json) {
+      final orderData = OrderData.fromJson(json);
+      return Order(
+        orderId: orderData.id,
+        items: orderData.products,
+        bundles: orderData.bundles,
+        latitude: orderData.latitude,
+        longitude: orderData.longitude,
+        directionName: orderData.directionName,
+        status: orderData.orderState,
+        totalAmount: orderData.totalAmount,
+        orderReport: orderData.orderReport,
+        subTotal: orderData.subTotal,
+        deliveryFee: orderData.shippingFee,
+        discount: orderData.orderDiscount,
+        currency: orderData.currency,
+        paymentMethod: orderData.orderPayment['paymentMethod'],
+        creationDate: orderData.orderCreatedDate.toString(),
+      );
+    }).toList();
+  } else {
+    throw Exception('Error al obtener las órdenes con backend amarillo');
+  }
+}else if (baseUrl == 'https://orangeteam-deliverybackend-production.up.railway.app') {
+    List<Order> allOrders = [];
+  
+  for (String s in status) {
+    String url = '$baseUrl/order/many?status=$s';
+    try {
+      final response = await http.get(
+        Uri.parse(url),
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+      print("Estado: $s, Código de respuesta: ${response.statusCode}"); // Debug
+
+      if (response.statusCode == 200) {
+        final List<dynamic> decodedData = json.decode(response.body);
+
+        allOrders.addAll(decodedData.map((json) {
+          final orderData = OrderDataOrange.fromJson(json);
+          return Order(
+            orderId: orderData.id,
+            items: orderData.products,
+            bundles: orderData.combos,
+            latitude: orderData.latitude,
+            longitude: orderData.longitude,
+            directionName: orderData.address,
+            status: orderData.status,
+            totalAmount: orderData.paymentMethod['total'].toString(),
+            orderReport: orderData.report['description'],
+            subTotal: '0',
+            deliveryFee: '0',
+            discount: '0',
+            currency: orderData.paymentMethod['currency'],
+            paymentMethod: orderData.paymentMethod['paymentMethod'],
+            creationDate: orderData.createdDate.toString(),
+          );
+        }));
+      } else {
+        print("Error al obtener órdenes para el estado para el backend naranja $s");
+      }
+    } catch (e) {
+      print("Error al llamar al endpoint para el estado $s: $e");
+    }
+  }
+
+
   // Retornar todas las órdenes obtenidas
   return allOrders;
 }else{

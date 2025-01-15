@@ -5,6 +5,7 @@ import 'Producto/presentation/product_individual_view.dart';
 import 'Users/domain/user_profile.dart';
 import 'api/firebase_api.dart';
 import 'chatbot/prueba.dart';
+import 'chatbot/prueba2.dart';
 import 'common/presentation/startup_view.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'common/presentation/main_tabview.dart';
@@ -33,9 +34,10 @@ class MyApp extends StatelessWidget {
         fontFamily: "Metropolis",
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const StartupView(), 
+      //home: const StartupView(), 
       //home: const PerfumeDetailPage(),
-      //home: ChatBotScreen(),
+      // home: ChatBotScreen(),
+      home: HomeScreen(),
       //  home: StatisticsScreen(),
     );
   }
