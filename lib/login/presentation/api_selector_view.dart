@@ -38,12 +38,20 @@ class _ApiSelectionViewState extends State<ApiSelectionView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              Image.asset(
+                "assets/img/GoDely-vertical.png",
+                width: MediaQuery.of(context).size.width * 0.55,
+                height: MediaQuery.of(context).size.width * 0.55,
+                fit: BoxFit.contain,
+              ),
+              const SizedBox(height: 20),
               Text(
                 "Seleccione la API a utilizar",
                 style: TextStyle(
@@ -53,28 +61,24 @@ class _ApiSelectionViewState extends State<ApiSelectionView> {
                 ),
               ),
               const SizedBox(height: 20),
-              DropdownButton<String>(
-                value: _selectedBaseUrl,
-                isExpanded: true,
-                items: const [
-                  DropdownMenuItem(
-                      value: 'Selecciona una API',
-                      child: Text('Selecciona una API')),
-                  DropdownMenuItem(value: 'AMARILLO', child: Text('AMARILLO')),
-                  DropdownMenuItem(value: 'ORANGE', child: Text('ORANGE')),
-                  DropdownMenuItem(value: 'VERDE', child: Text('VERDE')),
+              Column(
+                children: [
+                  ListTile(
+                    leading: Icon(Icons.circle, color: Colors.yellow),
+                    title: Text('AMARILLO'),
+                    onTap: () => _updateBaseUrl('AMARILLO'),
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.circle, color: Colors.orange),
+                    title: Text('ORANGE'),
+                    onTap: () => _updateBaseUrl('ORANGE'),
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.circle, color: Colors.green),
+                    title: Text('VERDE'),
+                    onTap: () => _updateBaseUrl('VERDE'),
+                  ),
                 ],
-                onChanged: (value) {
-                  if (value != null) {
-                    _updateBaseUrl(value);
-                  }
-                },
-                style: TextStyle(
-                  color: TColor.secondaryText,
-                  fontSize: 18,
-                ),
-                dropdownColor: TColor.placeholder,
-                iconEnabledColor: TColor.primary,
               ),
             ],
           ),
