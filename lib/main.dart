@@ -33,10 +33,10 @@ class MyApp extends StatelessWidget {
         fontFamily: "Metropolis",
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      //home: const StartupView(), 
+      home: const StartupView(), 
       //home: const PerfumeDetailPage(),
       //home: ChatBotScreen(),
-       home: StatisticsScreen(),
+      //  home: StatisticsScreen(),
     );
   }
 }

@@ -34,8 +34,8 @@ class StatisticsScreen extends StatelessWidget {
     );
 
     final profitData = [
-      ProfitData(name: 'Rosa', value: 169, color: Colors.pink[100]!),
-      ProfitData(name: 'Lavanda', value: 143, color: Colors.purple[200]!),
+      ProfitData(name: 'Rosa', value: 169),
+      ProfitData(name: 'Lavanda', value: 143),
       ProfitData(name: 'Benzil Benzoato', value: 124, color: Colors.blue[300]!),
       ProfitData(name: 'Almizole', value: 118, color: Colors.teal[300]!),
       ProfitData(name: 'Sandalo', value: 116, color: Colors.green[400]!),
