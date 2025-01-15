@@ -19,7 +19,9 @@ class ProductCategoryService {
       }
       final categoriesParam = categories.join(',');
       String endpoint;
-      if (baseUrl == 'https://amarillo-backend-production.up.railway.app') {
+      if (baseUrl == 'https://amarillo-backend-production.up.railway.app' ||
+          baseUrl ==
+              'https://orangeteam-deliverybackend-production.up.railway.app') {
         endpoint = '$baseUrl/product/many?page=$page&category=$categoriesParam';
       } else if (baseUrl == 'https://godelybackgreen.up.railway.app/api') {
         endpoint = '$baseUrl/product/category/$categoriesParam';

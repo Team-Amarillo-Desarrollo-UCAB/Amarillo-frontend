@@ -13,7 +13,9 @@ class ProductServiceSearchbyId {
   Future<Product> getProductById(String productId) async {
     final token = await TokenUser().getToken();
     String endpoint;
-    if (baseUrl == 'https://amarillo-backend-production.up.railway.app') {
+    if (baseUrl == 'https://amarillo-backend-production.up.railway.app' ||
+        baseUrl ==
+            'https://orangeteam-deliverybackend-production.up.railway.app') {
       endpoint = '$baseUrl/product/one/$productId';
     } else if (baseUrl == 'https://godelybackgreen.up.railway.app/api') {
       endpoint = '$baseUrl/product/one/$productId';

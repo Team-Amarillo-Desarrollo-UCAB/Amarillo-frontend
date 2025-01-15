@@ -19,7 +19,9 @@ class ProductService {
       }
 
       String endpoint;
-      if (baseUrl == 'https://amarillo-backend-production.up.railway.app') {
+      if (baseUrl == 'https://amarillo-backend-production.up.railway.app' ||
+          baseUrl ==
+              'https://orangeteam-deliverybackend-production.up.railway.app') {
         endpoint = '$baseUrl/product/many?page=$page';
       } else if (baseUrl == 'https://godelybackgreen.up.railway.app/api') {
         endpoint = '$baseUrl/product/many?page=1&perpage=10';
