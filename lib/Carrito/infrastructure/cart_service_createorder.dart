@@ -1,55 +1,14 @@
 import 'dart:convert';
 import 'package:desarrollo_frontend/common/infrastructure/tokenUser.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import '../../common/infrastructure/base_url.dart';
 import '../domain/cart_item.dart';
 import 'package:http/http.dart' as http;
 
-class CartService {
-  static final CartService _instance = CartService._internal();
-  factory CartService() => _instance;
-
-  CartService._internal();
-
-  List<CartItem> _cartItems = [];
-  final List<CartItem> initialCartItems = [];
-
-  List<CartItem> get cartItems => _cartItems;
-
+class CartServiceCreateOrder {
+  final String baseUrl;
   String? _idOrder;
-  List<Map<String, dynamic>>? orderItems;
   String? get idOrder => _idOrder;
 
-  Future<void> loadCartItems() async {
-    final prefs = await SharedPreferences.getInstance();
-    final cartItemsString = prefs.getString('cart_items');
-
-    if (cartItemsString == null) {
-      _cartItems = List<CartItem>.from(initialCartItems);
-    } else {
-      final List<dynamic> jsonItems = jsonDecode(cartItemsString);
-      _cartItems =
-          jsonItems.map((jsonItem) => CartItem.fromJson(jsonItem)).toList();
-    }
-  }
-
-  Future<void> saveCartItems() async {
-    final prefs = await SharedPreferences.getInstance();
-    final jsonItems = _cartItems.map((item) => item.toJson()).toList();
-    prefs.setString('cart_items', jsonEncode(jsonItems));
-  }
-
-  void removeItem(CartItem item) {
-    _cartItems.remove(item);
-    saveCartItems();
-  }
-
-  Future<void> clearCartItems() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('cart_items');
-    _cartItems = List<CartItem>.from(initialCartItems);
-    saveCartItems();
-  }
+  CartServiceCreateOrder(this.baseUrl);
 
   Future<void> createOrder(
       String idPayment,
@@ -88,7 +47,7 @@ class CartService {
       'longitude': longitude,
       'products': productItems,
       'combos': bundleItems,
-      if(cuponCode != null) 'cuponCode': cuponCode,
+      if (cuponCode != null) 'cuponCode': cuponCode,
       'instructions': instructions,
     });
 
@@ -102,13 +61,14 @@ class CartService {
       'paymentMethod': paymentMethod,
       'currency': 'USD',
       'total': total,
-      if (cuponCode != null) 'cuponCode': cuponCode,
+      if (cuponCode != null) 'cupon_Code': cuponCode,
     });
 
-    final body =
-        BaseUrl().BASE_URL == BaseUrl().AMARILLO ? bodyAmarillo : bodyOrange;
+    final body = baseUrl == 'https://amarillo-backend-production.up.railway.app'
+        ? bodyAmarillo
+        : bodyOrange;
 
-    final Uri url = Uri.parse(BaseUrl().BASE_URL + '/order/create');
+    final Uri url = Uri.parse('$baseUrl/order/create');
 
     final response = await http.post(url, body: body, headers: {
       'Content-Type': 'application/json',

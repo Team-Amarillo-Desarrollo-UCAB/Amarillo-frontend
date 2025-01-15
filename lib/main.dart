@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:provider/provider.dart';
 import 'Producto/presentation/product_individual_view.dart';
 import 'Users/domain/user_profile.dart';
@@ -9,6 +10,8 @@ import 'common/presentation/main_tabview.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  Stripe.publishableKey = 'pk_test_51QPCuGRp6TYNTJcRgQQCOypVsFeQdu0xFvFxdKyX8G4UewYVHRmtRLgu9kMpdaBKgZbtG3Q7v1Qlp7NiPzcU1Yvl00RiGsPKJl';
+  await Stripe.instance.applySettings();
   await Firebase.initializeApp();
   final userProfile = await UserProfile.loadFromPreferences();
   runApp(MultiProvider(providers: [

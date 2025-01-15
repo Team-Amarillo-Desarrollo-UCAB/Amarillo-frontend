@@ -1,3 +1,4 @@
+import 'package:desarrollo_frontend/order/domain/orderDataOrange.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -12,8 +13,8 @@ class OrderService {
 
   Future<List<Order>> getOrders(int page, List<String> status) async {
   final token = await TokenUser().getToken();
-    
-    String url = '$baseUrl/order/many?page=$page';
+    if(baseUrl == 'https://amarillo-backend-production.up.railway.app') {
+        String url = '$baseUrl/order/many?page=$page';
     
   for (var s in status) {
     url += '&status=$s';
@@ -29,9 +30,9 @@ class OrderService {
   if (response.statusCode == 200) {
     final Map<String, dynamic> decodedData = json.decode(response.body);
 
-    final orderList = decodedData.values.toList();
+    final List<dynamic> orders = decodedData['orders'];
 
-    return orderList.map((json) {
+    return orders.map((json) {
       final orderData = OrderData.fromJson(json);
       return Order(
         orderId: orderData.id,
@@ -52,32 +53,52 @@ class OrderService {
       );
     }).toList();
   } else {
-    throw Exception('Error al obtener las órdenes');
+    throw Exception('Error al obtener las órdenes con backend amarillo');
   }
-}
-
-Future<List<OrderData>> getAllOrders() async {
-  List<OrderData> allOrders = [];
-  int page = 1;
-  bool hasMore = true;
-
-  while (hasMore) {
-    final response = await http.get(Uri.parse('$baseUrl/order/many?page=$page'));
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> decodedData = json.decode(response.body);
-
-      if (decodedData.isEmpty) {
-        hasMore = false;
-      } else {
-        allOrders.addAll(
-          decodedData.values.map<OrderData>((jsonOrder) => OrderData.fromJson(jsonOrder)).toList(),
-        );
-        page++;
+}else if (baseUrl == 'https://orangeteam-deliverybackend-production.up.railway.app') {
+    String createdOrCancelledStatus = status.firstWhere( (s) => s == "CREATED" || s == "CANCELLED", orElse: () => "No Status Found", );
+    String url = '$baseUrl/order/many?status=$createdOrCancelledStatus';
+    
+    
+  /*for (var s in status) {
+    url += '&status=$s';
+  }*/
+    final response = await http.get(
+      Uri.parse(url),
+      headers: {
+        'Authorization': 'Bearer $token',
       }
-    } else {
-      throw Exception('Error al obtener las órdenes en la página $page');
+    );
+  print("Código de respuesta: ${response.statusCode}"); // Debug
+
+  if (response.statusCode == 200) {
+    final List<dynamic> decodedData = json.decode(response.body);
+
+    return decodedData.map((json) {
+      final orderData = OrderDataOrange.fromJson(json);
+      return Order(
+        orderId: orderData.id,
+        items: orderData.products,
+        bundles: orderData.combos,
+        latitude: orderData.latitude,
+        longitude: orderData.longitude,
+        directionName: orderData.address,
+        status: orderData.status,
+        totalAmount: orderData.paymentMethod['total'].toString(),
+        orderReport: orderData.report['description'],
+        subTotal: '0',
+        deliveryFee: '0',
+        discount: '0',
+        currency: orderData.paymentMethod['currency'],
+        paymentMethod: orderData.paymentMethod['paymentMethod'],
+        creationDate: orderData.createdDate.toString(),
+      );
+    }).toList();
+}else{
+    throw Exception('Error al obtener las órdenes');
+}
+}else{
+      throw Exception('Error al obtener las órdenes con algun backend');
     }
-  }
-  return allOrders;
 }
 }

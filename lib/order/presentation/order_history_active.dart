@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import '../../Producto/infrastructure/product_service_search_by_id.dart';
 import '../../common/infrastructure/base_url.dart';
 import '../application/order_cancel.dart';
+import '../application/refund_dialog.dart';
 import '../domain/order.dart';
 import '../infrastructure/order-service.dart';
 import 'order_summary_screen.dart';
@@ -111,7 +112,7 @@ class _HistoryOrderScreenState extends State<OrderHistoryScreen> {
       });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error al cargar más órdenes, ricardo: $e')),
+        SnackBar(content: Text('Error al cargar más órdenes: $e')),
       );
     } finally {
       setState(() => _isLoading = false);
@@ -123,6 +124,7 @@ class _HistoryOrderScreenState extends State<OrderHistoryScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Historial de orden"),
+        centerTitle: true,
       ),
       body: Column(
         children: [
@@ -309,117 +311,126 @@ class _HistoryOrderScreenState extends State<OrderHistoryScreen> {
                 : pastOrders.isEmpty
                     ? const Center(child: CircularProgressIndicator())
                     : ListView.builder(
-                        controller: _scrollController,
-                        itemCount: _hasMore ? pastOrders.length + 1 : pastOrders.length,
-                        itemBuilder: (context, index) {
-                          if (index >= pastOrders.length) {
-                            return const Center(child: CircularProgressIndicator());
-                          }
-                          final order = pastOrders[index];
-                          return InkWell(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => OrderDetailsView(
-                                    orderId: order.orderId,
-                                  ),
+                       controller: _scrollController,
+                      itemCount: _hasMore ? pastOrders.length + 1 : pastOrders.length,
+                      itemBuilder: (context, index) {
+                        if (index >= pastOrders.length) {
+                          return const Center(child: CircularProgressIndicator());
+                        }
+                        final order = pastOrders[index];
+                        return InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => OrderDetailsView(
+                                  orderId: order.orderId,
                                 ),
-                              );
-                            },
-                            child: Card(
-                              margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const SizedBox(height: 4),
-                                    Text("Orden #${order.orderId.substring(order.orderId.length - 4)}",
-                                        style: const TextStyle(
-                                            fontSize: 16, fontWeight: FontWeight.bold)),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      "\$ ${(order.totalAmount)}",
-                                      style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                              ),
+                            );
+                          },
+                          child: Card(
+                            margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    "Orden #${order.orderId.substring(order.orderId.length - 4)}",
+                                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    "\$ ${(order.totalAmount)}",
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
                                     ),
-                                    const SizedBox(height: 8),
-                                    FutureBuilder<List<String>>(
-                                      future: getProductNames(order.items, order.bundles),
-                                      builder: (context, snapshot) {
-                                        if (snapshot.connectionState == ConnectionState.waiting) {
-                                          return const CircularProgressIndicator();
-                                        }
-                                        if (snapshot.hasError) {
-                                          return Text('Error: ${snapshot.error}');
-                                        }
-                                        if (snapshot.hasData) {
-                                          return Text(
-                                            snapshot.data!.join(", \n"),
-                                            style: const TextStyle(
-                                              fontSize: 16,
-                                            ),
-                                          );
-                                        }
-                                        return const Text('No hay productos');
-                                      },
-                                    ),
-                                    const SizedBox(height: 8),
-                                    Row(
-                                      children: [
-                                        Container(
-                                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                          decoration: BoxDecoration(
-                                            color: order.status == "CREATED"
-                                                ? Colors.green[100]
-                                                : Colors.orange[100],
-                                            borderRadius: BorderRadius.circular(4),
-                                          ),
-                                          child: Text(
-                                            order.status,
-                                            style: TextStyle(
-                                              color: order.status == "CREATED"
-                                                  ? Colors.green
-                                                  : Colors.orange,
-                                              fontWeight: FontWeight.bold,
-                                            ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  FutureBuilder<List<String>>(
+                                    future: getProductNames(order.items, order.bundles),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState == ConnectionState.waiting) {
+                                        return const CircularProgressIndicator();
+                                      }
+                                      if (snapshot.hasError) {
+                                        return Text('Error: ${snapshot.error}');
+                                      }
+                                      if (snapshot.hasData) {
+                                        return Text(
+                                          snapshot.data!.join(", \n"),
+                                          style: const TextStyle(fontSize: 16),
+                                        );
+                                      }
+                                      return const Text('No hay productos');
+                                    },
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Row(
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                        decoration: BoxDecoration(
+                                          color: order.status == "DELIVERED" ? Colors.blue[100] : Colors.red[100],
+                                          borderRadius: BorderRadius.circular(4),
+                                        ),
+                                        child: Text(
+                                          order.status,
+                                          style: TextStyle(
+                                            color: order.status == "DELIVERED" ? Colors.blue : Colors.red,
+                                            fontWeight: FontWeight.bold,
                                           ),
                                         ),
-                                        const Spacer(),
-                                        if(order.status== 'CANCELLED')...[
+                                      ),
+                                      const Spacer(),
+                                      if (order.status == "CANCELLED") 
                                         TextButton(
                                           onPressed: () {
                                             Navigator.push(
                                               context,
                                               MaterialPageRoute(
-                                                  builder: (context) => RefundRequestView(
-                                                        orderId: order.orderId,
-                                                      )),
+                                                builder: (context) => RefundRequestView(orderId: order.orderId),
+                                              ),
                                             );
                                           },
-                                            child:
-                                            order.orderReport == ' ' 
-                                                ? Text("Reportar problema", style: TextStyle(fontSize: 16, color: TColor.primary, fontWeight: FontWeight.bold)) 
-                                                : Text("Reportar problema", style: TextStyle(fontSize: 14, color: Colors.grey, fontWeight: FontWeight.bold)),
+                                          child: Text(order.orderReport == ' ' 
+                                                ? "Reportar problema" 
+                                                : "Reportar problema", 
+                                                style: order.orderReport == ' ' 
+                                                ? TextStyle(fontSize: 16, color: TColor.primary, fontWeight: FontWeight.bold) 
+                                                : TextStyle(fontSize: 14, color: Colors.grey, fontWeight: FontWeight.bold),
+                                          ),
                                         ),
-                                        ]else...[
+                                      if (order.status != "CANCELLED") 
                                         TextButton(
-                                          onPressed: () {},
-                                          child: Text("Reordenar", style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 16)),
+                                          onPressed: () {
+                                          },
+                                          child: Text(
+                                            "Reordenar",
+                                            style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 14),
+                                          ),
                                         ),
-                                        ],
-                                      ],
-                                    ),
-                                  ],
-                                ),
+                                      TextButton(
+                                        onPressed: () {
+                                          showRefundDialog(context, order.orderId);
+                                        },
+                                        child: Text(
+                                          "Pedir reembolso",
+                                          style: TextStyle(color: Colors.orange, fontWeight: FontWeight.bold, fontSize: 14),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
                               ),
                             ),
-                          );
-                        },
-                      ),
+                          ),
+                        );
+                      },
+                    )
           ),
         ],
       ),

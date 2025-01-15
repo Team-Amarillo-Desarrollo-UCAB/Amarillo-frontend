@@ -9,12 +9,11 @@ class OrderServiceReportProblem {
   OrderServiceReportProblem(this.baseUrl);
 
   Future<ReportResponse> reportProblem(String orderId, String text) async {
-    final url = Uri.parse('$baseUrl/order/report');
+    final url = Uri.parse('$baseUrl/order/report/$orderId');
     final token = await TokenUser().getToken();
 
 
     final body = {
-      "id_orden": orderId,
       "texto": text,
     };
 

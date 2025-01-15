@@ -11,10 +11,10 @@ class DescuentoService {
 
   DescuentoService(this.baseUrl);
 
-  Future<List<Descuento>> getDescuento(int page) async {
+  Future<List<Descuento>> getDescuento() async {
     final token = await TokenUser().getToken();
-    final response = await http
-        .get(Uri.parse('$baseUrl/discount/many?page=$page'), headers: {
+    final response =
+        await http.get(Uri.parse('$baseUrl/discount/many'), headers: {
       'Authorization': 'Bearer $token',
     });
 
@@ -30,7 +30,8 @@ class DescuentoService {
             name: descuentoData.name,
             percentage: descuentoData.percentage,
             description: descuentoData.description,
-            image: descuentoData.image);
+            image: descuentoData.image,
+            fechaExp: DateTime.parse(descuentoData.fechaExp));
       }).toList();
     } else {
       throw Exception('Error al obtener la lista de descuentos');

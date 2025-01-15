@@ -34,7 +34,8 @@ class _CuponViewState extends State<CuponView> {
             code: json['code'],
             expirationDate: DateTime.parse(json['expirationDate']),
             amount: json['amount'],
-            used: json['used'])));
+            used: json['used'],
+            use: json['use'])));
       });
     }
   }
@@ -46,40 +47,72 @@ class _CuponViewState extends State<CuponView> {
               'code': cupon.code,
               'expirationDate': cupon.expirationDate.toIso8601String(),
               'amount': cupon.amount,
-              'used': cupon.used
+              'used': cupon.used,
+              'use': cupon.use
             })
         .toList());
     await prefs.setString('cupones', cuponesString);
   }
 
+  Future<void> _deleteAllCupones() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _cupones.clear();
+    });
+    await prefs.remove('cupones');
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Todos los cupones han sido eliminados'),
+      ),
+    );
+  }
+
   Future<void> _addCupon() async {
     final cuponCode = _cuponController.text.trim();
     if (cuponCode.isNotEmpty) {
-      try {
-        final cupon = await _cuponService.getCuponByCode(cuponCode);
-        if (cupon.code == 'ERROR01') {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Por favor, ingresa un código de cupón válido'),
-            ),
-          );
-        } else {
-          setState(() {
-            _cupones.add(cupon);
-          });
-          await _saveCupones();
+      final existingCupon =
+          _cupones.firstWhere((cupon) => cupon.code == cuponCode,
+              orElse: () => Cupon(
+                    code: 'NOT_FOUND',
+                    expirationDate: DateTime.now(),
+                    amount: '0',
+                    used: true,
+                    use: 3,
+                  ));
+      if (existingCupon.code != 'NOT_FOUND') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('El cupón ya está en la lista'),
+          ),
+        );
+      } else {
+        try {
+          final cupon = await _cuponService.getCuponByCode(cuponCode);
+          if (cupon.code == 'ERROR01') {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Por favor, ingresa un código de cupón válido'),
+              ),
+            );
+          } else {
+            setState(() {
+              _cupones.add(cupon);
+            });
+            await _saveCupones();
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content:
+                    Text('Cupón agregado: ${cupon.code} - ${cupon.amount}'),
+              ),
+            );
+          }
+        } catch (error) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Cupón agregado: ${cupon.code} - ${cupon.amount}'),
+              content: Text('Error al agregar el cupón: $error'),
             ),
           );
         }
-      } catch (error) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error al agregar el cupón: $error'),
-          ),
-        );
       }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -91,11 +124,27 @@ class _CuponViewState extends State<CuponView> {
   }
 
   Future<void> _selectCupon(Cupon cupon) async {
-    setState(() {
-      cupon.used = true;
-    });
-    await _saveCupones();
-    Navigator.pop(context, cupon);
+    if (cupon.use > 0) {
+      setState(() {
+        cupon.use -= 1;
+        if (cupon.use == 0) {
+          cupon.used = true;
+        }
+      });
+      await _saveCupones();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Cupón utilizado. Usos restantes: ${cupon.use}'),
+        ),
+      );
+      Navigator.pop(context, cupon);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('El cupón ya no se puede usar.'),
+        ),
+      );
+    }
   }
 
   @override
@@ -119,6 +168,24 @@ class _CuponViewState extends State<CuponView> {
             const Text(
               '¿Quieres agregar un nuevo cupon?',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            ElevatedButton(
+              onPressed: _deleteAllCupones,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+              ),
+              child: const Text(
+                'Eliminar Todos',
+                style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white),
+              ),
             ),
             const SizedBox(height: 16),
             TextField(
@@ -160,7 +227,7 @@ class _CuponViewState extends State<CuponView> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  'El codigo es: ${cupon.code}',
+                                  'El código es: ${cupon.code}',
                                   style: const TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
@@ -183,6 +250,14 @@ class _CuponViewState extends State<CuponView> {
                             const SizedBox(height: 8),
                             Text(
                               '${cupon.amount} %',
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                            Text(
+                              'Usos restantes: ${cupon.use}',
                               style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,

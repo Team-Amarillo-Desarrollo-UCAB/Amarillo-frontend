@@ -116,7 +116,7 @@ class _HomeViewState extends State<HomeView> {
 
   Future<void> _fetchDescuentos() async {
     try {
-      List<Descuento> descuentos = await _descuentoService.getDescuento(1);
+      List<Descuento> descuentos = await _descuentoService.getDescuento();
       setState(() {
         _descuentos = descuentos;
       });
@@ -130,7 +130,14 @@ class _HomeViewState extends State<HomeView> {
       try {
         final descuento =
             await _descuentoServiceSearchById.getDescuentoById(combo.discount);
-        return double.parse(combo.price) * (1 - descuento.percentage);
+        final now = DateTime.now();
+
+        if (now.isBefore(descuento.fechaExp)) {
+          return double.parse(combo.price) * (1 - descuento.percentage);
+        } else {
+          print(
+              'El descuento no es válido porque la fecha de expedición es posterior a la fecha actual.');
+        }
       } catch (error) {
         print('Error al obtener el descuento: $error');
       }
@@ -143,7 +150,14 @@ class _HomeViewState extends State<HomeView> {
       try {
         final descuento = await _descuentoServiceSearchById
             .getDescuentoById(product.discount);
-        return double.parse(product.price) * (1 - descuento.percentage / 100);
+        final now = DateTime.now();
+
+        if (now.isBefore(descuento.fechaExp)) {
+          return double.parse(product.price) * (1 - descuento.percentage);
+        } else {
+          print(
+              'El descuento no es válido porque la fecha de expedición es posterior a la fecha actual.');
+        }
       } catch (error) {
         print('Error al obtener el descuento: $error');
       }
