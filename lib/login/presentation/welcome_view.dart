@@ -150,8 +150,8 @@ class _WelcomeViewState extends State<WelcomeView> {
                 Padding(
                   padding: EdgeInsets.symmetric(
                       horizontal: constraints.maxWidth * 0.1),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       RoundButton(
                         title: "Crear una cuenta",
@@ -165,11 +165,14 @@ class _WelcomeViewState extends State<WelcomeView> {
                           );
                         },
                       ),
-                      IconButton(
-                        icon: Icon(Icons.settings),
-                        color: TColor.primary,
-                        iconSize: 40,
-                        onPressed: _showApiSelectionDialog,
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: IconButton(
+                          icon: Icon(Icons.settings),
+                          color: TColor.primary,
+                          iconSize: 40,
+                          onPressed: _showApiSelectionDialog,
+                        ),
                       ),
                     ],
                   ),
