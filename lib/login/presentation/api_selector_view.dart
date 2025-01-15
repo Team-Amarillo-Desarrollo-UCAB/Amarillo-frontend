@@ -76,7 +76,7 @@ class _ApiSelectionViewState extends State<ApiSelectionView> {
                           title: "AMARILLO",
                           onPressed: () => _updateBaseUrl('AMARILLO'),
                           type: RoundButtonType.bgPrimary,
-                          customColor: const LinearGradient(colors: [
+                          customGradient: const LinearGradient(colors: [
                             Color(0xffFC6011),
                             Color.fromARGB(255, 252, 201, 17)
                           ]), // Color personalizado
@@ -86,7 +86,7 @@ class _ApiSelectionViewState extends State<ApiSelectionView> {
                           title: "ORANGE",
                           onPressed: () => _updateBaseUrl('ORANGE'),
                           type: RoundButtonType.bgPrimary,
-                          customColor: const LinearGradient(colors: [
+                          customGradient: const LinearGradient(colors: [
                             Color.fromARGB(255, 255, 142, 55),
                             Color.fromARGB(255, 255, 10, 10)
                           ]), // Color personalizado
@@ -96,7 +96,7 @@ class _ApiSelectionViewState extends State<ApiSelectionView> {
                           title: "VERDE",
                           onPressed: () => _updateBaseUrl('VERDE'),
                           type: RoundButtonType.bgPrimary,
-                          customColor: const LinearGradient(colors: [
+                          customGradient: const LinearGradient(colors: [
                             Color.fromARGB(255, 5, 150, 53),
                             Color.fromARGB(255, 59, 250, 123)
                           ]), // Color personalizado

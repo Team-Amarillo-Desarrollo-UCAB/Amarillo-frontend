@@ -9,7 +9,8 @@ class RoundButton extends StatelessWidget {
   final String title;
   final RoundButtonType type;
   final double fontSize;
-  final LinearGradient? customColor;
+  final LinearGradient?
+      customGradient; // Nuevo parámetro opcional para gradiente personalizado
 
   const RoundButton({
     super.key,
@@ -17,7 +18,7 @@ class RoundButton extends StatelessWidget {
     required this.onPressed,
     this.fontSize = 16,
     this.type = RoundButtonType.bgPrimary,
-    this.customColor,
+    this.customGradient, // Inicialización del nuevo parámetro
   });
 
   @override
@@ -25,28 +26,29 @@ class RoundButton extends StatelessWidget {
     return InkWell(
       onTap: onPressed,
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 24),
+        padding:
+            EdgeInsets.symmetric(horizontal: 24), // Ajuste del padding lateral
         height: 56,
         alignment: Alignment.center,
         decoration: BoxDecoration(
           border: type == RoundButtonType.bgPrimary
               ? null
               : Border.all(color: TColor.primary, width: 1),
-          gradient: customColor != null
-              ? LinearGradient(colors: [customColor!, customColor!])
-              : type == RoundButtonType.bgPrimary
+          gradient: customGradient ??
+              (type == RoundButtonType.bgPrimary
                   ? TColor.gradient
-                  : TColor.gradientWhite,
+                  : TColor.gradientWhite),
           borderRadius: BorderRadius.circular(28),
         ),
         child: Text(
           title,
           style: TextStyle(
-              color: type == RoundButtonType.bgPrimary
-                  ? TColor.white
-                  : TColor.primary,
-              fontSize: fontSize,
-              fontWeight: FontWeight.w600),
+            color: type == RoundButtonType.bgPrimary
+                ? TColor.white
+                : TColor.primary,
+            fontSize: fontSize,
+            fontWeight: FontWeight.w600,
+          ),
         ),
       ),
     );
