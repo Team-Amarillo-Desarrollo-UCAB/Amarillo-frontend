@@ -1,4 +1,3 @@
-import 'package:desarrollo_frontend/login/presentation/api_selector_view.dart';
 import 'package:desarrollo_frontend/login/presentation/welcome_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';

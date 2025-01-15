@@ -14,21 +14,27 @@ class WelcomeView extends StatefulWidget {
 
 class _WelcomeViewState extends State<WelcomeView> {
   void _showApiSelectionDialog() {
-    showDialog(
+    showModalBottomSheet(
       context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
+      ),
+      backgroundColor: Colors.white,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(
-            "Seleccione la API a utilizar",
-            style: TextStyle(
-              color: TColor.primaryText,
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          content: Column(
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              Text(
+                "Seleccione la API a utilizar",
+                style: TextStyle(
+                  color: TColor.primaryText,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 20),
               RoundButton(
                 title: "AMARILLO",
                 onPressed: () {
@@ -114,7 +120,7 @@ class _WelcomeViewState extends State<WelcomeView> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 10),
                 Text(
                   "Encuentra los mejores productos\ny vive la experiencia del más \nrápido delivery del país",
                   textAlign: TextAlign.center,
@@ -124,7 +130,7 @@ class _WelcomeViewState extends State<WelcomeView> {
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                const SizedBox(height: 20.0),
+                const SizedBox(height: 10),
                 Padding(
                   padding: EdgeInsets.symmetric(
                       horizontal: constraints.maxWidth * 0.1),
@@ -140,7 +146,7 @@ class _WelcomeViewState extends State<WelcomeView> {
                     },
                   ),
                 ),
-                const SizedBox(height: 20.0),
+                const SizedBox(height: 10),
                 Padding(
                   padding: EdgeInsets.symmetric(
                       horizontal: constraints.maxWidth * 0.1),
@@ -157,22 +163,21 @@ class _WelcomeViewState extends State<WelcomeView> {
                     },
                   ),
                 ),
+                const SizedBox(height: 10),
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                      horizontal: constraints.maxWidth * 0.1),
+                  child: RoundButton(
+                    title: "Selecciona la Api ha Utilizar",
+                    type: RoundButtonType.textPrimary,
+                    onPressed: () {
+                      _showApiSelectionDialog();
+                    },
+                  ),
+                ),
               ],
             );
           },
-        ),
-      ),
-      bottomNavigationBar: BottomAppBar(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            IconButton(
-              icon: Icon(Icons.settings),
-              color: TColor.primary,
-              iconSize: 40,
-              onPressed: _showApiSelectionDialog,
-            ),
-          ],
         ),
       ),
     );

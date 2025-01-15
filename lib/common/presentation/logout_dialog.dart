@@ -1,5 +1,5 @@
 import 'package:desarrollo_frontend/common/presentation/color_extension.dart';
-import 'package:desarrollo_frontend/login/presentation/api_selector_view.dart';
+import 'package:desarrollo_frontend/login/presentation/welcome_view.dart';
 import 'package:flutter/material.dart';
 import '../infrastructure/session_manager.dart';
 
@@ -46,7 +46,7 @@ void showLogoutConfirmationDialog(BuildContext context) {
               Navigator.of(context).pop(); // Cerrar el popup
               await _sessionManager.clearSession();
               Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => ApiSelectionView()));
+                  MaterialPageRoute(builder: (context) => WelcomeView()));
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: TColor.primary, // Color de fondo
