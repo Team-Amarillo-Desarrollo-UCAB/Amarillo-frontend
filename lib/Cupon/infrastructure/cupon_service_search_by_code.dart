@@ -34,7 +34,8 @@ class CuponServiceSearchByCode {
         throw Exception('Error al obtener el cupon');
       }
     } else if (baseUrl ==
-        'https://orangeteam-deliverybackend-production.up.railway.app') {
+            'https://orangeteam-deliverybackend-production.up.railway.app' ||
+        baseUrl == 'https://godelybackgreen.up.railway.app/api') {
       final response = await http
           .get(Uri.parse('$baseUrl/cupon/one/by/$cuponCode'), headers: {
         'Authorization': 'Bearer $token',

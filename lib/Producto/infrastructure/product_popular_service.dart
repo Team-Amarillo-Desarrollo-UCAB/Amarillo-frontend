@@ -53,6 +53,7 @@ class ProductPopularService {
             peso: '${productData.quantity} ${productData.unitMeasure}',
             category: productData.category,
             discount: productData.discount,
+            image3d: productData.image3d,
           );
         }).toList();
       } else {
