@@ -3,7 +3,7 @@ import 'package:desarrollo_frontend/login/presentation/sing_up_view.dart';
 import 'package:flutter/material.dart';
 import '../../common/infrastructure/base_url.dart';
 import '../../common/presentation/color_extension.dart';
-import '../../common/presentation/common_widget/round_button.dart';
+import '../../common/presentation/common_widget/round_button.dart'; // Importa el RoundButton
 
 class WelcomeView extends StatefulWidget {
   const WelcomeView({super.key});
@@ -120,7 +120,7 @@ class _WelcomeViewState extends State<WelcomeView> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 20),
                 Text(
                   "Encuentra los mejores productos\ny vive la experiencia del más \nrápido delivery del país",
                   textAlign: TextAlign.center,
@@ -130,7 +130,7 @@ class _WelcomeViewState extends State<WelcomeView> {
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 20.0),
                 Padding(
                   padding: EdgeInsets.symmetric(
                       horizontal: constraints.maxWidth * 0.1),
@@ -146,33 +146,32 @@ class _WelcomeViewState extends State<WelcomeView> {
                     },
                   ),
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 20.0),
                 Padding(
                   padding: EdgeInsets.symmetric(
                       horizontal: constraints.maxWidth * 0.1),
-                  child: RoundButton(
-                    title: "Crear una cuenta",
-                    type: RoundButtonType.textPrimary,
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const SignUpView(),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: constraints.maxWidth * 0.1),
-                  child: RoundButton(
-                    title: "Selecciona la Api ha Utilizar",
-                    type: RoundButtonType.textPrimary,
-                    onPressed: () {
-                      _showApiSelectionDialog();
-                    },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      RoundButton(
+                        title: "Crear una cuenta",
+                        type: RoundButtonType.textPrimary,
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const SignUpView(),
+                            ),
+                          );
+                        },
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.settings),
+                        color: TColor.primary,
+                        iconSize: 40,
+                        onPressed: _showApiSelectionDialog,
+                      ),
+                    ],
                   ),
                 ),
               ],
