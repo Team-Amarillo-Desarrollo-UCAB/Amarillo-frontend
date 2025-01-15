@@ -1,10 +1,9 @@
 import 'package:desarrollo_frontend/login/presentation/login_view.dart';
 import 'package:desarrollo_frontend/login/presentation/sing_up_view.dart';
-import 'package:desarrollo_frontend/login/presentation/welcome_view.dart';
 import 'package:flutter/material.dart';
 import '../../common/infrastructure/base_url.dart';
 import '../../common/presentation/color_extension.dart';
-import '../../common/presentation/common_widget/round_button.dart'; // Importa el RoundButton
+import '../../common/presentation/common_widget/round_button.dart';
 
 class WelcomeView extends StatefulWidget {
   const WelcomeView({super.key});
@@ -158,17 +157,22 @@ class _WelcomeViewState extends State<WelcomeView> {
                     },
                   ),
                 ),
-                const SizedBox(height: 20.0),
-                IconButton(
-                  icon: Icon(Icons
-                      .settings), // Usa un ícono adecuado para la selección de API
-                  color: TColor.primary,
-                  iconSize: 40,
-                  onPressed: _showApiSelectionDialog,
-                ),
               ],
             );
           },
+        ),
+      ),
+      bottomNavigationBar: BottomAppBar(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            IconButton(
+              icon: Icon(Icons.settings),
+              color: TColor.primary,
+              iconSize: 40,
+              onPressed: _showApiSelectionDialog,
+            ),
+          ],
         ),
       ),
     );
