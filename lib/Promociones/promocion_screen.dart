@@ -208,8 +208,9 @@ class _PromocionesViewState extends State<PromocionesView> {
                         },
                         child: Container(
                           decoration: BoxDecoration(
-                            color:
-                                _showCombo ? TColor.primary : TColor.placeholder,
+                            color: _showCombo
+                                ? TColor.primary
+                                : TColor.placeholder,
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Padding(
@@ -218,8 +219,9 @@ class _PromocionesViewState extends State<PromocionesView> {
                               child: Text(
                                 "Combo",
                                 style: TextStyle(
-                                  color:
-                                      _showCombo ? TColor.white : TColor.placeholder,
+                                  color: _showCombo
+                                      ? TColor.white
+                                      : TColor.placeholder,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -238,8 +240,9 @@ class _PromocionesViewState extends State<PromocionesView> {
                         },
                         child: Container(
                           decoration: BoxDecoration(
-                            color:
-                                !_showCombo ? TColor.primary : TColor.placeholder,
+                            color: !_showCombo
+                                ? TColor.primary
+                                : TColor.placeholder,
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Padding(
@@ -248,8 +251,9 @@ class _PromocionesViewState extends State<PromocionesView> {
                               child: Text(
                                 "Producto",
                                 style: TextStyle(
-                                  color:
-                                      !_showCombo ? Colors.white : Colors.black,
+                                  color: !_showCombo
+                                      ? TColor.white
+                                      : TColor.placeholder,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),

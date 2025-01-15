@@ -52,7 +52,7 @@ class CuponServiceSearchByCode {
             used: cuponData.used,
             use: cuponData.use);
       } else {
-        throw Exception('Error al obtener el cupon, hola?');
+        throw Exception('Error al obtener el cupon');
       }
     } else {
       throw Exception('Base URL no reconocida');

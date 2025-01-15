@@ -18,8 +18,19 @@ class ProductCategoryService {
         throw Exception('No se encontró un token para el usuario.');
       }
       final categoriesParam = categories.join(',');
+      String endpoint;
+      if (baseUrl == 'https://amarillo-backend-production.up.railway.app' ||
+          baseUrl ==
+              'https://orangeteam-deliverybackend-production.up.railway.app') {
+        endpoint = '$baseUrl/product/many?page=$page&category=$categoriesParam';
+      } else if (baseUrl == 'https://godelybackgreen.up.railway.app/api') {
+        endpoint = '$baseUrl/product/category/$categoriesParam';
+      } else {
+        throw Exception('Base URL no reconocida');
+      }
+
       final response = await http.get(
-        Uri.parse('$baseUrl/product/many?page=$page&perpage=40&category=$categoriesParam'),
+        Uri.parse(endpoint),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',

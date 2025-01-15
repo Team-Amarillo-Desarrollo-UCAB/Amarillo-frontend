@@ -18,8 +18,19 @@ class ProductService {
         throw Exception('No se encontró un token para el usuario.');
       }
 
+      String endpoint;
+      if (baseUrl == 'https://amarillo-backend-production.up.railway.app' ||
+          baseUrl ==
+              'https://orangeteam-deliverybackend-production.up.railway.app') {
+        endpoint = '$baseUrl/product/many?page=$page';
+      } else if (baseUrl == 'https://godelybackgreen.up.railway.app/api') {
+        endpoint = '$baseUrl/product/many?page=1&perpage=10';
+      } else {
+        throw Exception('Base URL no reconocida');
+      }
+
       final response = await http.get(
-        Uri.parse('$baseUrl/product/many?page=$page'),
+        Uri.parse(endpoint),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',

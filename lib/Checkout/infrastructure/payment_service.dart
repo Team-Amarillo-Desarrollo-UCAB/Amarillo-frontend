@@ -52,7 +52,8 @@ class PaymentService {
       // Crear una lista de métodos de pago predeterminados
       return [
         PaymentMethod(idPayment: "1", name: "Pago Movil"),
-        PaymentMethod(idPayment: "2", name: "Stripe"),
+        PaymentMethod(idPayment: "2", name: "Tarjeta de Credito"),
+        PaymentMethod(idPayment: "3", name: "Tarjeta de Debito"),
       ];
     } else {
       throw Exception('Base URL no reconocida');
