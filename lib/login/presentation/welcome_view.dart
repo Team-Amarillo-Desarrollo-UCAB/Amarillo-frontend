@@ -1,4 +1,3 @@
-import 'package:desarrollo_frontend/login/presentation/api_selector_view.dart';
 import 'package:flutter/material.dart';
 import '../../common/presentation/color_extension.dart';
 import '../../common/presentation/common_widget/round_button.dart';
@@ -16,18 +15,6 @@ class _WelcomeViewState extends State<WelcomeView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => ApiSelectionView()),
-            );
-          },
-        ),
-        title: Text('Welcome'),
-      ),
       body: SingleChildScrollView(
         child: LayoutBuilder(
           builder: (context, constraints) {

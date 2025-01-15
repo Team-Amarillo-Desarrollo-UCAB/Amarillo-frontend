@@ -2,6 +2,7 @@ import 'package:desarrollo_frontend/login/presentation/welcome_view.dart';
 import 'package:flutter/material.dart';
 import '../../common/infrastructure/base_url.dart';
 import '../../common/presentation/color_extension.dart';
+import '../../common/presentation/common_widget/round_button.dart';
 
 class ApiSelectionView extends StatefulWidget {
   @override
@@ -38,51 +39,64 @@ class _ApiSelectionViewState extends State<ApiSelectionView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset(
-                "assets/img/GoDely-vertical.png",
-                width: MediaQuery.of(context).size.width * 0.55,
-                height: MediaQuery.of(context).size.width * 0.55,
-                fit: BoxFit.contain,
-              ),
-              const SizedBox(height: 20),
-              Text(
-                "Seleccione la API a utilizar",
-                style: TextStyle(
-                  color: TColor.primaryText,
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 20),
-              Column(
+      body: Stack(
+        children: [
+          Image.asset(
+            "assets/img/fondologin.png",
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height,
+            fit: BoxFit.cover,
+          ),
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  ListTile(
-                    leading: Icon(Icons.circle, color: Colors.yellow),
-                    title: Text('AMARILLO'),
-                    onTap: () => _updateBaseUrl('AMARILLO'),
+                  Image.asset(
+                    "assets/img/GoDely-vertical.png",
+                    width: MediaQuery.of(context).size.width * 0.55,
+                    height: MediaQuery.of(context).size.width * 0.55,
+                    fit: BoxFit.contain,
                   ),
-                  ListTile(
-                    leading: Icon(Icons.circle, color: Colors.orange),
-                    title: Text('ORANGE'),
-                    onTap: () => _updateBaseUrl('ORANGE'),
+                  const SizedBox(height: 20),
+                  Text(
+                    "Seleccione la API a utilizar",
+                    style: TextStyle(
+                      color: TColor.primaryText,
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                  ListTile(
-                    leading: Icon(Icons.circle, color: Colors.green),
-                    title: Text('VERDE'),
-                    onTap: () => _updateBaseUrl('VERDE'),
+                  const SizedBox(height: 20),
+                  Center(
+                    child: Column(
+                      children: [
+                        RoundButton(
+                          title: "AMARILLO",
+                          onPressed: () => _updateBaseUrl('AMARILLO'),
+                          type: RoundButtonType.bgPrimary,
+                        ),
+                        const SizedBox(height: 10),
+                        RoundButton(
+                          title: "ORANGE",
+                          onPressed: () => _updateBaseUrl('ORANGE'),
+                          type: RoundButtonType.bgPrimary,
+                        ),
+                        const SizedBox(height: 10),
+                        RoundButton(
+                          title: "VERDE",
+                          onPressed: () => _updateBaseUrl('VERDE'),
+                          type: RoundButtonType.bgPrimary,
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
