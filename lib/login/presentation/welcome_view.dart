@@ -1,8 +1,10 @@
+import 'package:desarrollo_frontend/login/presentation/login_view.dart';
+import 'package:desarrollo_frontend/login/presentation/sing_up_view.dart';
+import 'package:desarrollo_frontend/login/presentation/welcome_view.dart';
 import 'package:flutter/material.dart';
+import '../../common/infrastructure/base_url.dart';
 import '../../common/presentation/color_extension.dart';
-import '../../common/presentation/common_widget/round_button.dart';
-import 'login_view.dart';
-import 'sing_up_view.dart';
+import '../../common/presentation/common_widget/round_button.dart'; // Importa el RoundButton
 
 class WelcomeView extends StatefulWidget {
   const WelcomeView({super.key});
@@ -12,6 +14,84 @@ class WelcomeView extends StatefulWidget {
 }
 
 class _WelcomeViewState extends State<WelcomeView> {
+  void _showApiSelectionDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            "Seleccione la API a utilizar",
+            style: TextStyle(
+              color: TColor.primaryText,
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              RoundButton(
+                title: "AMARILLO",
+                onPressed: () {
+                  _updateBaseUrl('AMARILLO');
+                  Navigator.pop(context);
+                },
+                type: RoundButtonType.bgPrimary,
+                customGradient: const LinearGradient(colors: [
+                  Color(0xffFC6011),
+                  Color.fromARGB(255, 252, 201, 17)
+                ]), // Gradiente personalizado
+              ),
+              const SizedBox(height: 10),
+              RoundButton(
+                title: "ORANGE",
+                onPressed: () {
+                  _updateBaseUrl('ORANGE');
+                  Navigator.pop(context);
+                },
+                type: RoundButtonType.bgPrimary,
+                customGradient: const LinearGradient(colors: [
+                  Color.fromARGB(255, 255, 142, 55),
+                  Color.fromARGB(255, 255, 10, 10)
+                ]), // Gradiente personalizado
+              ),
+              const SizedBox(height: 10),
+              RoundButton(
+                title: "VERDE",
+                onPressed: () {
+                  _updateBaseUrl('VERDE');
+                  Navigator.pop(context);
+                },
+                type: RoundButtonType.bgPrimary,
+                customGradient: const LinearGradient(colors: [
+                  Color.fromARGB(255, 5, 150, 53),
+                  Color.fromARGB(255, 59, 250, 123)
+                ]), // Gradiente personalizado
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _updateBaseUrl(String selected) {
+    setState(() {
+      switch (selected) {
+        case 'AMARILLO':
+          BaseUrl().BASE_URL = BaseUrl().AMARILLO;
+          break;
+        case 'ORANGE':
+          BaseUrl().BASE_URL = BaseUrl().ORANGE;
+          break;
+        case 'VERDE':
+          BaseUrl().BASE_URL = BaseUrl().VERDE;
+          break;
+      }
+    });
+    print("Base URL seleccionada: ${BaseUrl().BASE_URL}");
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -77,6 +157,14 @@ class _WelcomeViewState extends State<WelcomeView> {
                       );
                     },
                   ),
+                ),
+                const SizedBox(height: 20.0),
+                IconButton(
+                  icon: Icon(Icons
+                      .settings), // Usa un ícono adecuado para la selección de API
+                  color: TColor.primary,
+                  iconSize: 40,
+                  onPressed: _showApiSelectionDialog,
                 ),
               ],
             );

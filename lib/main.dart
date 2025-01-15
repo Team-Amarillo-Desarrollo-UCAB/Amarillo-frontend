@@ -1,4 +1,5 @@
 import 'package:desarrollo_frontend/login/presentation/api_selector_view.dart';
+import 'package:desarrollo_frontend/login/presentation/welcome_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:provider/provider.dart';
@@ -33,7 +34,7 @@ class MyApp extends StatelessWidget {
         fontFamily: "Metropolis",
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: ApiSelectionView(), //PerfumeDetailPage(),//
+      home: WelcomeView(), //PerfumeDetailPage(),//
     );
   }
 }
