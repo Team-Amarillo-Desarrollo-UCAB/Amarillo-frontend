@@ -35,7 +35,6 @@
 //   }
 // }
 
-
 import 'dart:convert';
 import 'package:desarrollo_frontend/categorias/domain/category.dart';
 import 'package:desarrollo_frontend/categorias/domain/category_data.dart';
@@ -70,15 +69,18 @@ class CategoryService {
         );
       }).toList();
 
-      categories.insert(
-        0,
-        Category(
-          categoryID: "",
-          categoryImage: const NetworkImage(
-              "https://res.cloudinary.com/dxttqmyxu/image/upload/v1736705483/unpnkumd3iqo19gaswn2.png"),
-          categoryName: "Todos",
-        ),
-      );
+      // Insertar la categoría "Todos" solo si es AMARILLO
+      if (baseUrl == 'https://amarillo-backend-production.up.railway.app') {
+        categories.insert(
+          0,
+          Category(
+            categoryID: "",
+            categoryImage: const NetworkImage(
+                "https://res.cloudinary.com/dxttqmyxu/image/upload/v1736705483/unpnkumd3iqo19gaswn2.png"),
+            categoryName: "Todos",
+          ),
+        );
+      }
 
       return categories;
     } else {
