@@ -2,7 +2,7 @@ import 'package:desarrollo_frontend/login/presentation/welcome_view.dart';
 import 'package:flutter/material.dart';
 import '../../common/infrastructure/base_url.dart';
 import '../../common/presentation/color_extension.dart';
-import '../../common/presentation/common_widget/round_button.dart';
+import '../../common/presentation/common_widget/round_button.dart'; // Importa el RoundButton
 
 class ApiSelectionView extends StatefulWidget {
   @override
@@ -76,18 +76,30 @@ class _ApiSelectionViewState extends State<ApiSelectionView> {
                           title: "AMARILLO",
                           onPressed: () => _updateBaseUrl('AMARILLO'),
                           type: RoundButtonType.bgPrimary,
+                          customColor: const LinearGradient(colors: [
+                            Color(0xffFC6011),
+                            Color.fromARGB(255, 252, 201, 17)
+                          ]), // Color personalizado
                         ),
                         const SizedBox(height: 10),
                         RoundButton(
                           title: "ORANGE",
                           onPressed: () => _updateBaseUrl('ORANGE'),
                           type: RoundButtonType.bgPrimary,
+                          customColor: const LinearGradient(colors: [
+                            Color.fromARGB(255, 255, 142, 55),
+                            Color.fromARGB(255, 255, 10, 10)
+                          ]), // Color personalizado
                         ),
                         const SizedBox(height: 10),
                         RoundButton(
                           title: "VERDE",
                           onPressed: () => _updateBaseUrl('VERDE'),
                           type: RoundButtonType.bgPrimary,
+                          customColor: const LinearGradient(colors: [
+                            Color.fromARGB(255, 5, 150, 53),
+                            Color.fromARGB(255, 59, 250, 123)
+                          ]), // Color personalizado
                         ),
                       ],
                     ),
