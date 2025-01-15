@@ -361,7 +361,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                         builder: (context) => AlertDialog(
                           title: const Text('¡Orden creada con éxito!'),
                           content: Text(
-                              'Tu pedido ha sido procesado. ID de la orden: ${widget.cartService.idOrder}. Pronto recibirás una confirmación.'),
+                              'Tu pedido ha sido procesado. ID de la orden: ${createService.idOrder}. Pronto recibirás una confirmación.'),
                           actions: [
                             TextButton(
                               onPressed: () {

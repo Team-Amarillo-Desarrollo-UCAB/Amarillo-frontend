@@ -11,7 +11,6 @@ class OrderData {
   final String directionName;
   final List<Map<String, dynamic>> products;
   final List<Map<String, dynamic>> bundles;
-  final DateTime orderReciviedDate;
   final String orderReport;
   final Map<String, dynamic> orderPayment;
   final String orderDiscount;
@@ -29,7 +28,6 @@ class OrderData {
     required this.directionName,
     required this.products,
     required this.bundles,
-    required this.orderReciviedDate,
     required this.orderReport,
     required this.orderPayment,
     required this.orderDiscount,
@@ -39,7 +37,7 @@ class OrderData {
     return OrderData(
       id: json['id']?? 'ERROR01',
       orderState: json['orderState'] ?? ' ',
-      orderCreatedDate: DateTime.parse(json['orderCreatedDate'] ?? ' '),
+      orderCreatedDate: json['orderCreatedDate'] != null ? DateTime.parse(json['orderCreatedDate']) : DateTime.now(),
       totalAmount: (json['totalAmount'] ?? 0.0).toString(),
       subTotal: (json['sub_total'] ?? 0.0).toString(),
       shippingFee: (json['shipping_fee'] ?? 0.0).toString(),
@@ -49,7 +47,6 @@ class OrderData {
       directionName: json['directionName'] ?? ' ',
       products: List<Map<String, dynamic>>.from(json['products'] ?? []),
       bundles: List<Map<String, dynamic>>.from(json['bundles'] ?? []),
-      orderReciviedDate: DateTime.parse(json['orderReciviedDate'] ?? ' '),
       orderReport: json['orderReport'] ?? ' ',
       orderPayment: Map<String, dynamic>.from(json['orderPayment'] ?? {}),
       orderDiscount: (json['orderDiscount'] ?? 0.0).toString(),
