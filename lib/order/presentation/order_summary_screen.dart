@@ -70,12 +70,14 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
 
   void onAdd(CartItem item, int quantity) async {
     await _cartService.loadCartItems();
-    bool isProductInCart = _cartService.cartItems.isNotEmpty;
+    bool isProductInCart =
+        _cartService.cartItems.any((cartItem) => cartItem.name == item.name);
     if (!isProductInCart) {
       _cartService.cartItems.add(item);
       for (int i = 0; i < quantity; i++) {
         item.incrementQuantity();
       }
+      await _cartService.saveCartItems();
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -84,7 +86,6 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
         ),
       );
     }
-    await _cartService.saveCartItems();
   }
 
   Future<void> reordenarProductosYCombos(List<Map<String, dynamic>> items,
