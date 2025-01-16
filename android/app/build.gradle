@@ -13,7 +13,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.desarrollo_frontend"
-        minSdk = 21
+        minSdkVersion = 23
         targetSdk = 33
         versionCode = 1
         versionName = "1.0"
@@ -46,6 +46,10 @@ flutter {
 dependencies {
     implementation platform('com.google.firebase:firebase-bom:33.7.0')
     implementation 'com.google.firebase:firebase-analytics'
+    // Wear libraries
+    implementation 'com.android.support:wear:27.1.1'
+    implementation 'com.google.android.support:wearable:2.3.0'
+    compileOnly 'com.google.android.wearable:wearable:2.3.0'
 }
 
 

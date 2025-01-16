@@ -11,6 +11,7 @@ import 'common/presentation/startup_view.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'common/presentation/main_tabview.dart';
 import 'statistics/presentation/views/statistics_screen.dart';
+import 'package:wear/wear.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
