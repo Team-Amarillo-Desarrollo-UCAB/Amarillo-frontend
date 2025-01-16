@@ -38,7 +38,7 @@ Future<void> cancelOrder(BuildContext context, String orderId) async {
 
   final orderService = OrderServiceChangeState(BaseUrl().BASE_URL);
   try {
-    final response = await orderService.cancelOrder(orderId);
+    final response = await orderService.changeState(orderId, 'CANCELLED');
 
     Navigator.of(context).pop();
 

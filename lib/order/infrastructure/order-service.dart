@@ -1,3 +1,4 @@
+import 'package:desarrollo_frontend/order/domain/orderDataGreen.dart';
 import 'package:desarrollo_frontend/order/domain/orderDataOrange.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -102,6 +103,81 @@ class OrderService {
 
   // Retornar todas las órdenes obtenidas
   return allOrders;
+}else if(baseUrl == 'https://godelybackgreen.up.railway.app/api') {
+  if(status == ['CREATED', 'BEING PROCESSED', 'SHIPPED']){
+    print(status);
+    final url = Uri.parse('$baseUrl/order/many/active');
+    final response = await http.get(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+      print("Código de respuesta: ${response.statusCode}"); 
+    if (response.statusCode == 200) {
+      print(response.body);
+      final List<dynamic> decodedData = json.decode(response.body);
+      print(decodedData); 
+
+      return decodedData.map((json) {
+        final orderData = OrderDataGreen.fromJson(json);
+        return Order(
+          orderId: orderData.id,
+          items: orderData.products,
+          bundles: orderData.bundles,
+          latitude: orderData.latitude,
+          longitude: orderData.longitude,
+          directionName: orderData.directionName,
+          status: orderData.orderState,
+          totalAmount: orderData.totalAmount,
+          orderReport: ' ',
+          subTotal: '0',
+          deliveryFee: '0',
+          discount: orderData.orderDiscount,
+          currency: orderData.currency,
+          paymentMethod: orderData.orderPayment,
+          creationDate: orderData.orderCreatedDate.toString(),
+        );
+      }).toList();
+  } else {
+    throw Exception('Error al obtener las órdenes con backend Verde en activas');
+  }
+  }else{
+      final url = Uri.parse('$baseUrl/order/many/active');
+    final response = await http.get(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+      print("Código de respuesta: ${response.statusCode}"); 
+    if (response.statusCode == 200) {
+      final List<dynamic> decodedData = json.decode(response.body);
+
+      return decodedData.map((json) {
+        final orderData = OrderDataGreen.fromJson(json);
+        return Order(
+          orderId: orderData.id,
+          items: orderData.products,
+          bundles: orderData.bundles,
+          latitude: orderData.latitude,
+          longitude: orderData.longitude,
+          directionName: orderData.directionName,
+          status: orderData.orderState,
+          totalAmount: orderData.totalAmount,
+          orderReport: ' ',
+          subTotal: '0',
+          deliveryFee: '0',
+          discount: orderData.orderDiscount,
+          currency: orderData.currency,
+          paymentMethod: orderData.orderPayment,
+          creationDate: orderData.orderCreatedDate.toString(),
+        );
+      }).toList();
+  } else {
+    throw Exception('Error al obtener las órdenes con backend Verde');
+  }
+  }
 }else{
   throw Exception('Error al obtener las órdenes de los backends');
 }

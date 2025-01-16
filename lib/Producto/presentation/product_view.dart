@@ -5,6 +5,8 @@ import 'package:desarrollo_frontend/categorias/infrasestructure/category_service
 import 'package:desarrollo_frontend/common/presentation/common_widget/category_cell.dart';
 import 'package:desarrollo_frontend/common/presentation/main_tabview.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
 import '../../common/infrastructure/base_url.dart';
 import '../../common/presentation/color_extension.dart';
 import '../infrastructure/product_service.dart';
@@ -46,19 +48,16 @@ class _ProductViewState extends State<ProductView> {
     super.initState();
     _loadMoreProducts();
     _loadCategories();
-    _searchController.addListener(_onSearchChanged);
     if (widget.searchQuery != null && widget.searchQuery!.isNotEmpty) {
       _searchController.text = widget.searchQuery!;
       _searchProductByName(widget.searchQuery!);
     } else {
       _loadMoreProducts();
     }
-    _searchController.addListener(_onSearchChanged);
   }
 
   @override
   void dispose() {
-    _searchController.removeListener(_onSearchChanged);
     _searchController.dispose();
     super.dispose();
   }
@@ -156,13 +155,6 @@ class _ProductViewState extends State<ProductView> {
     }
   }
 
-  void _onSearchChanged() {
-    if (_searchController.text.isNotEmpty) {
-      _searchProductByName(_searchController.text);
-    } else {
-      _resetSearch();
-    }
-  }
 
   void _resetSearch() {
     setState(() {
@@ -293,7 +285,29 @@ class _ProductViewState extends State<ProductView> {
                 ),
                 const SizedBox(height: 10),
                 _product.isEmpty
-                    ? const Center(child: CircularProgressIndicator())
+                    ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Lottie.network(
+                          "https://assets10.lottiefiles.com/packages/lf20_02epxjye.json",
+                          width: MediaQuery.of(context).size.width / 4.5 * 2.5,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 40),
+                          child: Text(
+                            "No se ha encontrado el producto: '${_searchController.text}'",
+                            style: GoogleFonts.montserrat(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 24,
+                              color: Colors.indigo,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
                     : ListView.builder(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),

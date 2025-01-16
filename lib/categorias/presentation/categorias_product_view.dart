@@ -11,6 +11,8 @@ import 'package:desarrollo_frontend/categorias/domain/category.dart';
 import 'package:desarrollo_frontend/categorias/infrasestructure/category_service.dart';
 import 'package:desarrollo_frontend/common/infrastructure/base_url.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
 import '../../common/presentation/color_extension.dart';
 import '../../common/presentation/common_widget/category_cell.dart';
 
@@ -51,19 +53,16 @@ class _CategoriasProductViewState extends State<CategoriasProductView> {
     super.initState();
     _loadMoreProducts();
     _loadCategories();
-    _searchController.addListener(_onSearchChanged);
     if (widget.searchQuery != null && widget.searchQuery!.isNotEmpty) {
       _searchController.text = widget.searchQuery!;
       _searchProductByName(widget.searchQuery!);
     } else {
       _loadMoreProducts();
     }
-    _searchController.addListener(_onSearchChanged);
   }
 
   @override
   void dispose() {
-    _searchController.removeListener(_onSearchChanged);
     _searchController.dispose();
     super.dispose();
   }
@@ -74,14 +73,18 @@ class _CategoriasProductViewState extends State<CategoriasProductView> {
       _isLoading = true;
     });
     try {
-      List<Product> newProducts =
-          await _productService.getProducts(_page, [widget.idCategory]);
+      List<Product> newProducts = await _productService.getProducts(_page, [widget.idCategory]);
       setState(() {
         if (newProducts.isEmpty) {
           _hasMore = false;
         } else {
-          _product.addAll(newProducts);
-          for (var product in newProducts) {
+          final filteredProducts = newProducts
+              .where((newProduct) => !_product.any((existingProduct) =>
+                  existingProduct.id_product == newProduct.id_product))
+              .toList();
+          _product.addAll(filteredProducts);
+
+          for (var product in filteredProducts) {
             _discountedPriceFutures[product.id_product] =
                 _getDiscountedPrice(product);
           }
@@ -132,19 +135,20 @@ class _CategoriasProductViewState extends State<CategoriasProductView> {
     setState(() {
       _isSearching = true;
       _product.clear();
+      _discountedPriceFutures.clear();
+      _page = 1;
+      _hasMore = true;
     });
 
-    String formattedProductName = productName
-        .toLowerCase()
-        .split(' ')
-        .map((word) => word[0].toUpperCase() + word.substring(1))
-        .join(' ');
+    String formattedProductName = Uri.encodeComponent(productName.trim());
 
     try {
       Product product =
           await _productServiceSearch.getProductByName(formattedProductName);
       setState(() {
         _product = [product];
+        _discountedPriceFutures[product.id_product] =
+            _getDiscountedPrice(product);
         _isSearching = false;
       });
     } catch (error) {
@@ -154,24 +158,6 @@ class _CategoriasProductViewState extends State<CategoriasProductView> {
       });
       print('Error al buscar producto: $error');
     }
-  }
-
-  void _onSearchChanged() {
-    if (_searchController.text.isNotEmpty) {
-      _searchProductByName(_searchController.text);
-    } else {
-      _resetSearch();
-    }
-  }
-
-  void _resetSearch() {
-    setState(() {
-      _isSearching = false;
-      _product.clear();
-      _page = 1;
-      _hasMore = true;
-      _loadMoreProducts();
-    });
   }
 
   void onAdd(CartItem item) async {
@@ -301,7 +287,29 @@ class _CategoriasProductViewState extends State<CategoriasProductView> {
                 ),
                 const SizedBox(height: 10),
                 _product.isEmpty
-                    ? const Center(child: CircularProgressIndicator())
+                    ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Lottie.network(
+                            "https://assets10.lottiefiles.com/packages/lf20_02epxjye.json",
+                            width: MediaQuery.of(context).size.width / 3 * 2,
+                          ),
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 40),
+                            child: Text(
+                              "No se ha encontrado el producto: '${_searchController.text}'",
+                              style: GoogleFonts.montserrat(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 30,
+                                color: Colors.indigo,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
                     : ListView.builder(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),

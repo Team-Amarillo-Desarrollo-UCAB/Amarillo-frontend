@@ -315,7 +315,7 @@ class _HomeViewState extends State<HomeView> {
                                   fontWeight: FontWeight.w600),
                             ),
                             Text(
-                              "Sábana Grande, Caracas",
+                              "Que tenga un excelente dia!",
                               style: TextStyle(
                                   color: TColor.secondaryText,
                                   fontSize: media.width * 0.035,

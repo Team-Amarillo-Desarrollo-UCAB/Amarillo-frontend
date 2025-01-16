@@ -1,3 +1,4 @@
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:desarrollo_frontend/Carrito/domain/cart_item.dart';
 import 'package:desarrollo_frontend/Carrito/infrastructure/cart_service.dart';
 import 'package:desarrollo_frontend/Carrito/presentation/cart_screen.dart';
@@ -5,6 +6,7 @@ import 'package:flutter/material.dart';
 import '../../Combo/infrastructure/combo_service_search_by_id.dart';
 import '../../Producto/infrastructure/product_service_search_by_id.dart';
 import '../../common/infrastructure/base_url.dart';
+import '../../common/presentation/custom_error_message.dart';
 import '../domain/order.dart';
 import '../infrastructure/order_service_search_by_id.dart';
 
@@ -74,17 +76,23 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
         _cartService.cartItems.any((cartItem) => cartItem.name == item.name);
     if (!isProductInCart) {
       _cartService.cartItems.add(item);
-      for (int i = 0; i < quantity; i++) {
+      for (int i = 0; i < quantity-1 ; i++) {
         item.incrementQuantity();
       }
       await _cartService.saveCartItems();
+      SnackbarUtil.showAwesomeSnackBar(
+      context: context,
+      title: 'Reordenado con exito',
+      message: 'Los productos ya se han añadido correctamente al carrito.',
+      contentType: ContentType.success,
+    );
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error: El carrito debe estar vacío para reordenar'),
-          duration: const Duration(seconds: 2),
-        ),
-      );
+      SnackbarUtil.showAwesomeSnackBar(
+      context: context,
+      title: 'Error',
+      message: 'El carrito debe estar vacío para reordenar.',
+      contentType: ContentType.failure,
+    );
     }
   }
 
@@ -387,13 +395,7 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
               child: ElevatedButton(
                 onPressed: () async {
                   await reordenarProductosYCombos(order.items,
-                      order.bundles); // Llama a la función de reordenar
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Se ha reordenado satisfactoriamente'),
-                      duration: const Duration(seconds: 2),
-                    ),
-                  );
+                      order.bundles); 
                   Navigator.push(
                     context,
                     MaterialPageRoute(

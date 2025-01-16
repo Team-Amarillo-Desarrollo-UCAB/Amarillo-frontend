@@ -28,7 +28,7 @@ class RoundButton extends StatelessWidget {
       child: Container(
         padding:
             EdgeInsets.symmetric(horizontal: 12), // Ajuste del padding lateral
-        height: 36,
+        height: 56,
         alignment: Alignment.center,
         decoration: BoxDecoration(
           border: type == RoundButtonType.bgPrimary

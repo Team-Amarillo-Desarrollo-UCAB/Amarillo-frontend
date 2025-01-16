@@ -54,10 +54,10 @@ class OrderServiceChangeState {
     return Response(isSuccessful: false, errorMessage: 'Error al cambiar el estado de la orden');
   }
 
-  Future<Response> cancelOrder(String orderId) async {
+  Future<Response> changeState(String orderId, String orderstate) async {
     if(baseUrl == 'https://amarillo-backend-production.up.railway.app') {
       final Map<String, dynamic> body = {
-        "orderState": "CANCELLED",
+        "orderState": orderstate
       };
       return await changeOrderState(body, orderId);
     }else if(baseUrl == 'https://orangeteam-deliverybackend-production.up.railway.app') {
