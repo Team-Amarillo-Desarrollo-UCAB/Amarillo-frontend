@@ -197,13 +197,13 @@ class _HistoryOrderScreenState extends State<OrderHistoryScreen> {
           Expanded(
             child: _isActiveTab
                 ? activeOrders.isEmpty
-                    ? const Center(child: CircularProgressIndicator())
+                    ? const SizedBox( height: 2)
                     : ListView.builder(
                         controller: _scrollController,
                         itemCount: _hasMore ? activeOrders.length + 1 : activeOrders.length,
                         itemBuilder: (context, index) {
                           if (index >= activeOrders.length) {
-                            return const Center(child: CircularProgressIndicator());
+                            return const SizedBox(height: 2);
                           }
                           final order = activeOrders[index];
                           return InkWell(
@@ -309,13 +309,13 @@ class _HistoryOrderScreenState extends State<OrderHistoryScreen> {
                         },
                       )
                 : pastOrders.isEmpty
-                    ? const Center(child: CircularProgressIndicator())
+                    ? const SizedBox( height: 2)
                     : ListView.builder(
                        controller: _scrollController,
                       itemCount: _hasMore ? pastOrders.length + 1 : pastOrders.length,
                       itemBuilder: (context, index) {
                         if (index >= pastOrders.length) {
-                          return const Center(child: CircularProgressIndicator());
+                          return const SizedBox(height: 2);
                         }
                         final order = pastOrders[index];
                         return InkWell(

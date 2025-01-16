@@ -1,3 +1,4 @@
+import 'package:desarrollo_frontend/login/presentation/welcome_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:provider/provider.dart';
@@ -13,7 +14,8 @@ import 'statistics/presentation/views/statistics_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  Stripe.publishableKey = 'pk_test_51QPCuGRp6TYNTJcRgQQCOypVsFeQdu0xFvFxdKyX8G4UewYVHRmtRLgu9kMpdaBKgZbtG3Q7v1Qlp7NiPzcU1Yvl00RiGsPKJl';
+  Stripe.publishableKey =
+      'pk_test_51QPCuGRp6TYNTJcRgQQCOypVsFeQdu0xFvFxdKyX8G4UewYVHRmtRLgu9kMpdaBKgZbtG3Q7v1Qlp7NiPzcU1Yvl00RiGsPKJl';
   await Stripe.instance.applySettings();
   await Firebase.initializeApp();
   final userProfile = await UserProfile.loadFromPreferences();
@@ -42,6 +44,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
-
-

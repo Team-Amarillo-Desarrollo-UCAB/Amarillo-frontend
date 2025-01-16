@@ -5,7 +5,7 @@ class Order {
   final double latitude;
   final double longitude;
   final String directionName;
-  final String status;
+  late final String status;
   final String totalAmount;
   final String subTotal;
   final String deliveryFee;
