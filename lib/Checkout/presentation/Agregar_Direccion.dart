@@ -66,22 +66,23 @@ class AddDireccionDialogState extends State<AddDireccionDialog> {
                   fontSize: 16,
                 )),
           ),
-          if (_selectedPosition != null) SizedBox(height: 16),
-          Column(
-            children: [
-              Text('Latitud: ${_selectedPosition!.latitude}',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  )),
-              SizedBox(height: 10),
-              Text('Longitud: ${_selectedPosition!.longitude}',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  )),
-            ],
-          ),
+          SizedBox(height: 16),
+          if (_selectedPosition != null)
+            Column(
+              children: [
+                Text('Latitud: ${_selectedPosition!.latitude}',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    )),
+                SizedBox(height: 10),
+                Text('Longitud: ${_selectedPosition!.longitude}',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    )),
+              ],
+            ),
           SizedBox(height: 16),
           if (_selectedAddress.isNotEmpty)
             Text('Dirección: $_selectedAddress',
