@@ -197,13 +197,13 @@ class _HistoryOrderScreenState extends State<OrderHistoryScreen> {
           Expanded(
             child: _isActiveTab
                 ? activeOrders.isEmpty
-                    ? const Center(child: CircularProgressIndicator())
+                    ? const SizedBox( height: 2)
                     : ListView.builder(
                         controller: _scrollController,
                         itemCount: _hasMore ? activeOrders.length + 1 : activeOrders.length,
                         itemBuilder: (context, index) {
                           if (index >= activeOrders.length) {
-                            return const Center(child: CircularProgressIndicator());
+                            return const SizedBox(height: 2);
                           }
                           final order = activeOrders[index];
                           return InkWell(
@@ -309,13 +309,13 @@ class _HistoryOrderScreenState extends State<OrderHistoryScreen> {
                         },
                       )
                 : pastOrders.isEmpty
-                    ? const Center(child: CircularProgressIndicator())
+                    ? const SizedBox( height: 2)
                     : ListView.builder(
                        controller: _scrollController,
                       itemCount: _hasMore ? pastOrders.length + 1 : pastOrders.length,
                       itemBuilder: (context, index) {
                         if (index >= pastOrders.length) {
-                          return const Center(child: CircularProgressIndicator());
+                          return const SizedBox(height: 2);
                         }
                         final order = pastOrders[index];
                         return InkWell(
@@ -374,13 +374,13 @@ class _HistoryOrderScreenState extends State<OrderHistoryScreen> {
                                       Container(
                                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                         decoration: BoxDecoration(
-                                          color: order.status == "DELIVERED" ? Colors.blue[100] : Colors.red[100],
+                                          color: order.status == "DELIVERED" ? Colors.green[100] : Colors.red[100],
                                           borderRadius: BorderRadius.circular(4),
                                         ),
                                         child: Text(
                                           order.status,
                                           style: TextStyle(
-                                            color: order.status == "DELIVERED" ? Colors.blue : Colors.red,
+                                            color: order.status == "DELIVERED" ? Colors.green : Colors.red,
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),

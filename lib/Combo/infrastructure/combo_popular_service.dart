@@ -14,11 +14,22 @@ class ComboPopularService {
 
   Future<List<Combo>> getCombo() async {
     final token = await TokenUser().getToken();
-    if (BaseUrl().BASE_URL == BaseUrl().AMARILLO) {
+    String endpoint;
+    if (baseUrl == 'https://amarillo-backend-production.up.railway.app') {
+      endpoint = '$baseUrl/bundle/many?popular=si';
+    } else if (baseUrl == 'https://godelybackgreen.up.railway.app/api' ||
+        baseUrl ==
+            'https://orangeteam-deliverybackend-production.up.railway.app') {
+      endpoint = '$baseUrl/bundle/many?page=1&perpage=3';
+    } else {
+      throw Exception('Base URL no reconocida');
+    }
+
     final response = await http.get(
-      Uri.parse('$baseUrl/bundle/many?popular=si'),
+      Uri.parse(endpoint),
       headers: {
         'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
       },
     );
 
@@ -42,37 +53,5 @@ class ComboPopularService {
     } else {
       throw Exception('Error al obtener la lista de productos');
     }
-      
-    }
-    else {
-      final response = await http.get(
-      Uri.parse('$baseUrl/bundle/many'),
-      headers: {
-        'Authorization': 'Bearer $token',
-      },
-    );
-
-    if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body);
-      return data.map((json) {
-        final comboData = ComboData.fromJson(json);
-        return Combo(
-            id_product: comboData.id,
-            images: comboData.images
-                .map((imageUrl) => NetworkImage(imageUrl))
-                .toList(),
-            productId: comboData.productId,
-            name: comboData.name,
-            price: comboData.price,
-            description: comboData.description,
-            peso: '${comboData.weight} ${comboData.measurement}',
-            discount: comboData.discount,
-            category: comboData.category);
-      }).toList();
-    } else {
-      throw Exception('Error al obtener la lista de productos');
-    }
-    }
-
   }
 }

@@ -13,12 +13,14 @@ class ComboServiceSearchById {
 
   Future<Combo> getComboById(String comboId) async {
     final token = await TokenUser().getToken();
+
     final response = await http.get(
       Uri.parse('$baseUrl/bundle/one/$comboId'),
       headers: {
         'Authorization': 'Bearer $token',
       },
     );
+
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(response.body);
       final comboData = ComboData.fromJson(data);

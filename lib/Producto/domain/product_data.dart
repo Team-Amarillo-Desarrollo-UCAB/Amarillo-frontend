@@ -8,6 +8,7 @@ class ProductData {
   final List<dynamic> images;
   final List<dynamic> category;
   final String discount;
+  final String? image3d;
 
   ProductData(
       {required this.id_product,
@@ -18,7 +19,8 @@ class ProductData {
       required this.unitMeasure,
       required this.quantity,
       required this.category,
-      required this.discount});
+      required this.discount,
+      this.image3d});
 
   factory ProductData.fromJson(Map<String, dynamic> json) {
     return ProductData(
@@ -34,6 +36,7 @@ class ProductData {
       quantity: (json['weight'] ?? 0).toString(),
       category: List<String>.from(json['categories'] ?? []),
       discount: json['discount'] ?? '0',
+      image3d: json['image3d'] ?? '',
     );
   }
 }

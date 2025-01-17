@@ -17,9 +17,19 @@ class ProductPopularService {
       if (token == null) {
         throw Exception('No se encontró un token para el usuario.');
       }
+      String endpoint;
+      if (baseUrl == 'https://amarillo-backend-production.up.railway.app') {
+        endpoint = '$baseUrl/product/many?popular=si';
+      } else if (baseUrl == 'https://godelybackgreen.up.railway.app/api' ||
+          baseUrl ==
+              'https://orangeteam-deliverybackend-production.up.railway.app') {
+        endpoint = '$baseUrl/product/many?page=1&perpage=3';
+      } else {
+        throw Exception('Base URL no reconocida');
+      }
 
       final response = await http.get(
-        Uri.parse('$baseUrl/product/many?popular=si'),
+        Uri.parse(endpoint),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
@@ -43,6 +53,7 @@ class ProductPopularService {
             peso: '${productData.quantity} ${productData.unitMeasure}',
             category: productData.category,
             discount: productData.discount,
+            image3d: productData.image3d,
           );
         }).toList();
       } else {

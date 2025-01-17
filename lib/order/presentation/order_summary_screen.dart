@@ -1,7 +1,12 @@
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
+import 'package:desarrollo_frontend/Carrito/domain/cart_item.dart';
+import 'package:desarrollo_frontend/Carrito/infrastructure/cart_service.dart';
+import 'package:desarrollo_frontend/Carrito/presentation/cart_screen.dart';
 import 'package:flutter/material.dart';
 import '../../Combo/infrastructure/combo_service_search_by_id.dart';
 import '../../Producto/infrastructure/product_service_search_by_id.dart';
 import '../../common/infrastructure/base_url.dart';
+import '../../common/presentation/custom_error_message.dart';
 import '../domain/order.dart';
 import '../infrastructure/order_service_search_by_id.dart';
 
@@ -24,6 +29,7 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
       ProductServiceSearchbyId(BaseUrl().BASE_URL);
   final ComboServiceSearchById _comboService =
       ComboServiceSearchById(BaseUrl().BASE_URL);
+  final CartService _cartService = CartService();
 
   @override
   void initState() {
@@ -62,6 +68,75 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
           {'name': 'Producto no encontrado', 'quantity': '0', 'price': '0'});
     }
     return productDetails;
+  }
+
+  void onAdd(CartItem item, int quantity) async {
+    await _cartService.loadCartItems();
+    bool isProductInCart =
+        _cartService.cartItems.any((cartItem) => cartItem.name == item.name);
+    if (!isProductInCart) {
+      _cartService.cartItems.add(item);
+      for (int i = 0; i < quantity-1 ; i++) {
+        item.incrementQuantity();
+      }
+      await _cartService.saveCartItems();
+      SnackbarUtil.showAwesomeSnackBar(
+      context: context,
+      title: 'Reordenado con exito',
+      message: 'Los productos ya se han añadido correctamente al carrito.',
+      contentType: ContentType.success,
+    );
+    } else {
+      SnackbarUtil.showAwesomeSnackBar(
+      context: context,
+      title: 'Error',
+      message: 'El carrito debe estar vacío para reordenar.',
+      contentType: ContentType.failure,
+    );
+    }
+  }
+
+  Future<void> reordenarProductosYCombos(List<Map<String, dynamic>> items,
+      List<Map<String, dynamic>> bundles) async {
+    try {
+      for (var item in items) {
+        final product = await _productService.getProductById(item['id']);
+        final int quantity = item['quantity'];
+        onAdd(
+            CartItem(
+              id_product: product.id_product,
+              imageUrl: product.images[0],
+              name: product.name,
+              price: double.parse(product.price),
+              description: product.description,
+              peso: product.peso,
+              isCombo: false,
+              category: product.category,
+              discount: product.discount,
+            ),
+            quantity);
+      }
+      for (var bundle in bundles) {
+        final combo = await _comboService.getComboById(bundle['id']);
+        final int quantity = bundle['quantity'];
+        onAdd(
+            CartItem(
+              id_product: combo.id_product,
+              imageUrl: combo.images[0],
+              name: combo.name,
+              price: double.parse(combo.price),
+              description: combo.description,
+              peso: combo.peso,
+              productId: combo.productId,
+              isCombo: true,
+              discount: combo.discount,
+              category: combo.category,
+            ),
+            quantity);
+      }
+    } catch (e) {
+      print('Error al reordenar productos y combos: $e');
+    }
   }
 
   Future<void> _fetchOrderDetails() async {
@@ -151,8 +226,9 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
                                     Text(
                                       order.status,
                                       style: TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w600,),
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -176,7 +252,7 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
                       padding: const EdgeInsets.all(16.0),
                       width: double.infinity,
                       decoration: BoxDecoration(
-                        color: Colors.orange[100], 
+                        color: Colors.orange[100],
                         borderRadius: BorderRadius.circular(8.0),
                         border: Border.all(color: Colors.orange, width: 1.5),
                       ),
@@ -260,10 +336,12 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       _buildPriceRow("Subtotal", double.parse(order.subTotal)),
-                      _buildPriceRow("Shipping fee", double.parse(order.deliveryFee)),
+                      _buildPriceRow(
+                          "Shipping fee", double.parse(order.deliveryFee)),
                       _buildPriceRow("Descuento", double.parse(order.discount)),
                       Divider(),
-                      _buildPriceRow("Total", double.parse(order.totalAmount), isTotal: true),
+                      _buildPriceRow("Total", double.parse(order.totalAmount),
+                          isTotal: true),
                     ],
                   ),
                   SizedBox(height: 16),
@@ -315,7 +393,16 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () async {
+                  await reordenarProductosYCombos(order.items,
+                      order.bundles); 
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            CartScreen()), // Redirige a CartScreen
+                  );
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.orange,
                   shape: RoundedRectangleBorder(
@@ -330,7 +417,7 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
                           color: Colors.white)),
                 ),
               ),
-            ),
+            )
         ],
       ),
     );
@@ -364,7 +451,7 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
 
   Map<String, dynamic> _getOrderStatusDetails(String status) {
     switch (status) {
-      case "CREATED" :
+      case "CREATED":
         return {
           "icon": Icons.check_circle,
           "iconColor": Colors.green,
@@ -392,7 +479,7 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
           "textColor": Colors.red,
           "backgroundColor": Colors.red[100],
         };
-        case "BEING PROCESSED":
+      case "BEING PROCESSED":
         return {
           "icon": Icons.access_time,
           "iconColor": Colors.orange,

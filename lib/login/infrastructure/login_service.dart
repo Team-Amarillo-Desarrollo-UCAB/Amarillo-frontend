@@ -79,7 +79,7 @@ class AuthService {
       }
   }
 Future<bool> getInfoUser(String token, String id) async {
-    if (BaseUrl().BASE_URL == BaseUrl().AMARILLO) {
+    if (BaseUrl().BASE_URL == BaseUrl().AMARILLO || BaseUrl().BASE_URL == BaseUrl().VERDE) {
       final url = Uri.parse('$baseUrl/auth/current');
       try {
         final response = await http.get(
