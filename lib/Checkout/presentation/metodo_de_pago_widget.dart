@@ -22,14 +22,11 @@ class MetodosDePagoState extends State<MetodosDePago> {
     return Column(
       children: widget.paymentMethods.map((method) {
         return RadioListTile(
-          title: Text(
-            method.name,
-            style: const TextStyle(
-              fontFamily: 'Inter',
-              fontWeight: FontWeight.w600,
-              fontSize: 16,
-            ),
-          ),
+          title: Text(method.name,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+              )),
           value: method.idPayment,
           groupValue: _selectedMethod,
           onChanged: (value) {

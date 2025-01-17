@@ -7,10 +7,12 @@ void showCartEmptyDialog(BuildContext context) {
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)), // Bordes redondeados
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20)), // Bordes redondeados
         title: Column(
           children: const [
-            Icon(Icons.error, size: 50, color: Colors.orangeAccent), // Ícono de pregunta
+            Icon(Icons.error,
+                size: 50, color: Colors.orangeAccent), // Ícono de pregunta
             SizedBox(height: 10),
             Text(
               "Carrito vacío",
@@ -25,35 +27,33 @@ void showCartEmptyDialog(BuildContext context) {
           style: TextStyle(fontSize: 16),
         ),
         actions: [
-                          Container(
-                  decoration: BoxDecoration(
-                    gradient: TColor.gradient,
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  child: ElevatedButton(
-                    onPressed: () async {
+          Container(
+            decoration: BoxDecoration(
+              gradient: TColor.gradient,
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            child: ElevatedButton(
+              onPressed: () async {
                 Navigator.of(context).pop(); // Cerrar el popup
               },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.transparent,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                      shadowColor: Colors.transparent,
-                    ),
-                    child: const Text(
-                      'Entendido',
-                      style: TextStyle(
-                        fontFamily: 'Inter',
-                        fontWeight: FontWeight.w900,
-                        fontSize: 15,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ), 
-        ], 
-      ); 
-    }, 
-  ); 
-} 
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.transparent,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                shadowColor: Colors.transparent,
+              ),
+              child: const Text(
+                'Entendido',
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: Colors.white),
+              ),
+            ),
+          ),
+        ],
+      );
+    },
+  );
+}

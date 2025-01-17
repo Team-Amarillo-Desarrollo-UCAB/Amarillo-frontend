@@ -37,7 +37,8 @@ void showDetailProductDialog(
                 const Text(
                   'Descripción:',
                   style: TextStyle(
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
                   ),
                 ),
                 SizedBox(height: media.height * 0.01),
@@ -47,9 +48,8 @@ void showDetailProductDialog(
                     product.description,
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: media.width * 0.035,
-                      color: TColor.placeholder,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
                     ),
                   ),
                 ),
@@ -60,9 +60,8 @@ void showDetailProductDialog(
                     Text(
                       product.peso,
                       style: TextStyle(
-                        fontFamily: 'Inter',
-                        fontWeight: FontWeight.w900,
-                        fontSize: media.width * 0.04,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
                       ),
                     ),
                   ],
@@ -85,10 +84,8 @@ void showDetailProductDialog(
                     child: Text(
                       'Agregar al carrito',
                       style: TextStyle(
-                        fontFamily: 'Inter',
-                        fontWeight: FontWeight.w900,
-                        fontSize: media.width * 0.04,
-                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
                       ),
                     ),
                   ),

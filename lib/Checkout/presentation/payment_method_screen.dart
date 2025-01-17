@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../common/presentation/color_extension.dart';
-import 'metodo_de_pago_widget.dart'; 
+import 'metodo_de_pago_widget.dart';
 
 class RegisterPaymentPage extends StatefulWidget {
   final int totalItems;
@@ -51,7 +51,7 @@ class _RegisterPaymentPageState extends State<RegisterPaymentPage> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.of(context).pop(); 
+            Navigator.of(context).pop();
           },
         ),
         title: const Text("Registrar Pago"),
@@ -88,13 +88,14 @@ class _RegisterPaymentPageState extends State<RegisterPaymentPage> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text("Total de productos: ${widget.totalItems}"),
-                            Text("Total: \$${widget.totalPrice.toStringAsFixed(2)}",
-                              style: const TextStyle(fontWeight: FontWeight.bold),
+                            Text(
+                              "Total: \$${widget.totalPrice.toStringAsFixed(2)}",
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold),
                             ),
                           ],
                         ),
-                        Divider(
-                          color: Colors.grey.shade300),
+                        Divider(color: Colors.grey.shade300),
                         const SizedBox(height: 8),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -105,7 +106,8 @@ class _RegisterPaymentPageState extends State<RegisterPaymentPage> {
                                   ? "-"
                                   : "\$${discount.toStringAsFixed(2)}",
                               style: TextStyle(
-                                color: discount > 0 ? Colors.green : Colors.black,
+                                color:
+                                    discount > 0 ? Colors.green : Colors.black,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -173,7 +175,8 @@ class _RegisterPaymentPageState extends State<RegisterPaymentPage> {
               onPressed: () {
                 if (_validatePayment()) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Pago registrado exitosamente")),
+                    const SnackBar(
+                        content: Text("Pago registrado exitosamente")),
                   );
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -181,16 +184,17 @@ class _RegisterPaymentPageState extends State<RegisterPaymentPage> {
                   );
                 }
               },
-              child: const Text("Registrar pago", style: TextStyle(fontFamily: 'Inter',
-                      fontWeight: FontWeight.w900,
-                      fontSize: 15,
-                      color: Colors.white,)),
+              child: const Text("Registrar pago",
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: Colors.white)),
               style: ElevatedButton.styleFrom(
                 minimumSize: const Size(double.infinity, 48),
                 backgroundColor: Colors.orange,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
               ),
             ),
           ],

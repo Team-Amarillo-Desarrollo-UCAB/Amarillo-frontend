@@ -401,11 +401,9 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                       child: const Text(
                                         'Continuar',
                                         style: TextStyle(
-                                          fontFamily: 'Inter',
-                                          fontWeight: FontWeight.w900,
-                                          fontSize: 15,
-                                          color: Colors.white,
-                                        ),
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16,
+                                            color: Colors.white),
                                       ),
                                     ),
                                   ),
@@ -454,15 +452,11 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                         ),
                                         shadowColor: Colors.transparent,
                                       ),
-                                      child: const Text(
-                                        'Aceptar',
-                                        style: TextStyle(
-                                          fontFamily: 'Inter',
-                                          fontWeight: FontWeight.w900,
-                                          fontSize: 15,
-                                          color: Colors.white,
-                                        ),
-                                      ),
+                                      child: const Text('Aceptar',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16,
+                                              color: Colors.white)),
                                     ),
                                   ),
                                 ],

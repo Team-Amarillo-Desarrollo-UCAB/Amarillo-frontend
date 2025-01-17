@@ -67,15 +67,11 @@ class _StripePaymentViewState extends State<StripePaymentView> {
                           ),
                           shadowColor: Colors.transparent,
                         ),
-                        child: const Text(
-                          'Continuar',
-                          style: TextStyle(
-                            fontFamily: 'Inter',
-                            fontWeight: FontWeight.w900,
-                            fontSize: 15,
-                            color: Colors.white,
-                          ),
-                        ),
+                        child: const Text('Continuar',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                                color: Colors.white)),
                       ),
                     ),
                   ],
@@ -126,15 +122,11 @@ class _StripePaymentViewState extends State<StripePaymentView> {
                         ),
                         shadowColor: Colors.transparent,
                       ),
-                      child: const Text(
-                        'Continuar',
-                        style: TextStyle(
-                          fontFamily: 'Inter',
-                          fontWeight: FontWeight.w900,
-                          fontSize: 15,
-                          color: Colors.white,
-                        ),
-                      ),
+                      child: const Text('Continuar',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                              color: Colors.white)),
                     ),
                   ),
                 ],
@@ -229,14 +221,11 @@ class _StripePaymentViewState extends State<StripePaymentView> {
                 shadowColor: Colors.transparent,
               ),
               child: Text(
-                'Pagar con Stripe \$${widget.amount.toStringAsFixed(2)}',
-                style: TextStyle(
-                  fontFamily: 'Inter',
-                  fontWeight: FontWeight.w900,
-                  fontSize: 15,
-                  color: Colors.white,
-                ),
-              ),
+                  'Pagar con Stripe \$${widget.amount.toStringAsFixed(2)}',
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: Colors.white)),
             ),
           ),
         ]);
