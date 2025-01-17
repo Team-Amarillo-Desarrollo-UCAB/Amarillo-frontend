@@ -19,14 +19,12 @@ import 'product_widget.dart';
 class ProductView extends StatefulWidget {
   final String? searchQuery;
   const ProductView({super.key, this.searchQuery});
-
   @override
   State<ProductView> createState() => _ProductViewState();
 }
 
 class _ProductViewState extends State<ProductView> {
   TextEditingController _searchController = TextEditingController();
-
   List<Category> _categories = [];
   List<Product> _product = [];
   int _page = 1;
@@ -35,14 +33,12 @@ class _ProductViewState extends State<ProductView> {
   bool _isSearching = false;
   bool _initialLoadComplete = false;
   bool _searchLoadComplete = false;
-
   final CartUsecase _cartUsecase = CartUsecase();
   final DescuentoUsecase _descuentoUsecase = DescuentoUsecase();
   final ProductService _productService = ProductService(BaseUrl().BASE_URL);
   final ProductServiceSearch _productServiceSearch =
       ProductServiceSearch(BaseUrl().BASE_URL);
   final CategoryService _categoryService = CategoryService(BaseUrl().BASE_URL);
-
   Map<String, Future<double>> _discountedPriceFutures = {};
 
   @override
