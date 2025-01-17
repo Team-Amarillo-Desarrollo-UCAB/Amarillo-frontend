@@ -3,9 +3,9 @@ import 'package:desarrollo_frontend/Combo/domain/combo.dart';
 import 'package:desarrollo_frontend/Combo/infrastructure/combo_popular_service.dart';
 import 'package:desarrollo_frontend/Combo/presentation/combo_view.dart';
 import 'package:desarrollo_frontend/Combo/presentation/combo_widget.dart';
+import 'package:desarrollo_frontend/descuento/application/descuento_UseCase.dart';
 import 'package:desarrollo_frontend/descuento/domain/descuento.dart';
 import 'package:desarrollo_frontend/descuento/infrastructure/descuento_service.dart';
-import 'package:desarrollo_frontend/descuento/infrastructure/descuento_service_search_by_id.dart';
 import 'package:desarrollo_frontend/Producto/infrastructure/product_popular_service.dart';
 import 'package:desarrollo_frontend/descuento/presentation/promocion_screen.dart';
 import 'package:desarrollo_frontend/categorias/domain/category.dart';
@@ -53,12 +53,11 @@ class _HomeViewState extends State<HomeView> {
   List<Descuento> _descuentos = [];
   late UserProfile userProfile = Provider.of<UserProfile?>(context)!;
   final CartUsecase _cartUsecase = CartUsecase();
+  final DescuentoUsecase _descuentoUsecase = DescuentoUsecase();
   final ProductPopularService _productService =
       ProductPopularService(BaseUrl().BASE_URL);
   final ComboPopularService _comboService =
       ComboPopularService(BaseUrl().BASE_URL);
-  final DescuentoServiceSearchById _descuentoServiceSearchById =
-      DescuentoServiceSearchById(BaseUrl().BASE_URL);
   final DescuentoService _descuentoService =
       DescuentoService(BaseUrl().BASE_URL);
   final CategoryService _categoryService = CategoryService(BaseUrl().BASE_URL);
@@ -123,68 +122,6 @@ class _HomeViewState extends State<HomeView> {
     } catch (error) {
       print('Error al obtener descuentos: $error');
     }
-  }
-
-  Future<double> _getDiscountedPriceCombo(Combo combo) async {
-    if (combo.discount != "") {
-      try {
-        final descuento =
-            await _descuentoServiceSearchById.getDescuentoById(combo.discount);
-        final now = DateTime.now();
-
-        if (now.isBefore(descuento.fechaExp)) {
-          return double.parse(combo.price) * (1 - descuento.percentage);
-        } else {
-          print(
-              'El descuento no es válido porque la fecha de expedición es posterior a la fecha actual.');
-        }
-      } catch (error) {
-        print('Error al obtener el descuento: $error');
-      }
-    }
-    return double.parse(combo.price);
-  }
-
-  Future<double> _getDiscountedPriceProduct(Product product) async {
-    if (product.discount != "") {
-      try {
-        final descuento = await _descuentoServiceSearchById
-            .getDescuentoById(product.discount);
-        final now = DateTime.now();
-
-        if (now.isBefore(descuento.fechaExp)) {
-          return double.parse(product.price) * (1 - descuento.percentage);
-        } else {
-          print(
-              'El descuento no es válido porque la fecha de expedición es posterior a la fecha actual.');
-        }
-      } catch (error) {
-        print('Error al obtener el descuento: $error');
-      }
-    }
-    return double.parse(product.price);
-  }
-
-  void onAdd(CartItem item) async {
-    await _cartUsecase.loadCartItems();
-    bool isProductInCart =
-        _cartUsecase.cartItems.any((cartItem) => cartItem.name == item.name);
-    if (isProductInCart) {
-      CartItem existingItem = _cartUsecase.cartItems
-          .firstWhere((cartItem) => cartItem.name == item.name);
-      existingItem.incrementQuantity();
-    } else {
-      _cartUsecase.cartItems.add(item);
-    }
-    await _cartUsecase.saveCartItems();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(isProductInCart
-            ? '${item.name} cantidad incrementada'
-            : '${item.name} añadido al carrito'),
-        duration: const Duration(seconds: 2),
-      ),
-    );
   }
 
   @override
@@ -449,8 +386,8 @@ class _HomeViewState extends State<HomeView> {
                                       itemBuilder: (context, index) {
                                         final combo = _combo[index];
                                         return FutureBuilder<double>(
-                                          future:
-                                              _getDiscountedPriceCombo(combo),
+                                          future: _descuentoUsecase
+                                              .getDiscountedPriceCombo(combo),
                                           builder: (context, snapshot) {
                                             if (snapshot.connectionState ==
                                                 ConnectionState.waiting) {
@@ -465,19 +402,24 @@ class _HomeViewState extends State<HomeView> {
                                                   snapshot.data!;
                                               return ComboCard(
                                                 combo: combo,
-                                                onAdd: () => onAdd(CartItem(
-                                                    id_product:
-                                                        combo.id_product,
-                                                    imageUrl: combo.images[0],
-                                                    name: combo.name,
-                                                    price: discountedPrice,
-                                                    description:
-                                                        combo.description,
-                                                    peso: combo.peso,
-                                                    productId: combo.productId,
-                                                    isCombo: true,
-                                                    discount: combo.discount,
-                                                    category: combo.category)),
+                                                onAdd: () => _cartUsecase
+                                                    .onAddCart(CartItem(
+                                                        id_product:
+                                                            combo.id_product,
+                                                        imageUrl:
+                                                            combo.images[0],
+                                                        name: combo.name,
+                                                        price: discountedPrice,
+                                                        description:
+                                                            combo.description,
+                                                        peso: combo.peso,
+                                                        productId:
+                                                            combo.productId,
+                                                        isCombo: true,
+                                                        discount:
+                                                            combo.discount,
+                                                        category:
+                                                            combo.category)),
                                               );
                                             }
                                           },
@@ -508,8 +450,9 @@ class _HomeViewState extends State<HomeView> {
                                       itemBuilder: (context, index) {
                                         final product = _product[index];
                                         return FutureBuilder<double>(
-                                          future: _getDiscountedPriceProduct(
-                                              product),
+                                          future: _descuentoUsecase
+                                              .getDiscountedPriceProduct(
+                                                  product),
                                           builder: (context, snapshot) {
                                             if (snapshot.connectionState ==
                                                 ConnectionState.waiting) {
@@ -524,19 +467,22 @@ class _HomeViewState extends State<HomeView> {
                                                   snapshot.data!;
                                               return ProductCard2(
                                                 product: product,
-                                                onAdd: () => onAdd(CartItem(
-                                                    id_product:
-                                                        product.id_product,
-                                                    imageUrl: product.images[0],
-                                                    name: product.name,
-                                                    price: discountedPrice,
-                                                    description:
-                                                        product.description,
-                                                    peso: product.peso,
-                                                    isCombo: false,
-                                                    category: product.category,
-                                                    discount:
-                                                        product.discount)),
+                                                onAdd: () => _cartUsecase
+                                                    .onAddCart(CartItem(
+                                                        id_product:
+                                                            product.id_product,
+                                                        imageUrl:
+                                                            product.images[0],
+                                                        name: product.name,
+                                                        price: discountedPrice,
+                                                        description:
+                                                            product.description,
+                                                        peso: product.peso,
+                                                        isCombo: false,
+                                                        category:
+                                                            product.category,
+                                                        discount:
+                                                            product.discount)),
                                               );
                                             }
                                           },

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:desarrollo_frontend/Carrito/domain/cart_item.dart';
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CartUsecase {
@@ -37,5 +38,19 @@ class CartUsecase {
     await prefs.remove('cart_items');
     _cartItems = List<CartItem>.from(initialCartItems);
     saveCartItems();
+  }
+
+  void onAddCart(CartItem item) async {
+    await loadCartItems();
+    bool isProductInCart =
+        cartItems.any((cartItem) => cartItem.name == item.name);
+    if (isProductInCart) {
+      CartItem existingItem =
+          cartItems.firstWhere((cartItem) => cartItem.name == item.name);
+      existingItem.incrementQuantity();
+    } else {
+      cartItems.add(item);
+    }
+    await saveCartItems();
   }
 }

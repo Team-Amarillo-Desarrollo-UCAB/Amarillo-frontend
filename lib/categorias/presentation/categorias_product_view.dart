@@ -1,6 +1,7 @@
 import 'package:desarrollo_frontend/Carrito/application/cart_useCase.dart';
 import 'package:desarrollo_frontend/Carrito/domain/cart_item.dart';
 import 'package:desarrollo_frontend/Carrito/presentation/cart_screen.dart';
+import 'package:desarrollo_frontend/descuento/application/descuento_UseCase.dart';
 import 'package:desarrollo_frontend/descuento/infrastructure/descuento_service_search_by_id.dart';
 import 'package:desarrollo_frontend/Producto/domain/product.dart';
 import 'package:desarrollo_frontend/Producto/infrastructure/product_category_service.dart';
@@ -44,8 +45,7 @@ class _CategoriasProductViewState extends State<CategoriasProductView> {
   final ProductServiceSearch _productServiceSearch =
       ProductServiceSearch(BaseUrl().BASE_URL);
   final CategoryService _categoryService = CategoryService(BaseUrl().BASE_URL);
-  final DescuentoServiceSearchById _descuentoServiceSearchById =
-      DescuentoServiceSearchById(BaseUrl().BASE_URL);
+  final DescuentoUsecase _descuentoUsecase = DescuentoUsecase();
   Map<String, Future<double>> _discountedPriceFutures = {};
 
   @override
@@ -87,7 +87,7 @@ class _CategoriasProductViewState extends State<CategoriasProductView> {
 
           for (var product in filteredProducts) {
             _discountedPriceFutures[product.id_product] =
-                _getDiscountedPrice(product);
+                _descuentoUsecase.getDiscountedPriceProduct(product);
           }
           _page++;
         }
@@ -112,26 +112,6 @@ class _CategoriasProductViewState extends State<CategoriasProductView> {
     }
   }
 
-  Future<double> _getDiscountedPrice(Product product) async {
-    if (product.discount != "") {
-      try {
-        final descuento = await _descuentoServiceSearchById
-            .getDescuentoById(product.discount);
-        final now = DateTime.now();
-
-        if (now.isBefore(descuento.fechaExp)) {
-          return double.parse(product.price) * (1 - descuento.percentage);
-        } else {
-          print(
-              'El descuento no es válido porque la fecha de expedición es posterior a la fecha actual.');
-        }
-      } catch (error) {
-        print('Error al obtener el descuento: $error');
-      }
-    }
-    return double.parse(product.price);
-  }
-
   Future<void> _searchProductByName(String productName) async {
     setState(() {
       _isSearching = true;
@@ -149,7 +129,7 @@ class _CategoriasProductViewState extends State<CategoriasProductView> {
       setState(() {
         _product = [product];
         _discountedPriceFutures[product.id_product] =
-            _getDiscountedPrice(product);
+            _descuentoUsecase.getDiscountedPriceProduct(product);
         _isSearching = false;
       });
     } catch (error) {
@@ -159,28 +139,6 @@ class _CategoriasProductViewState extends State<CategoriasProductView> {
       });
       print('Error al buscar producto: $error');
     }
-  }
-
-  void onAdd(CartItem item) async {
-    await _cartUsecase.loadCartItems();
-    bool isProductInCart =
-        _cartUsecase.cartItems.any((cartItem) => cartItem.name == item.name);
-    if (isProductInCart) {
-      CartItem existingItem = _cartUsecase.cartItems
-          .firstWhere((cartItem) => cartItem.name == item.name);
-      existingItem.incrementQuantity();
-    } else {
-      _cartUsecase.cartItems.add(item);
-    }
-    await _cartUsecase.saveCartItems();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(isProductInCart
-            ? '${item.name} cantidad incrementada'
-            : '${item.name} añadido al carrito'),
-        duration: const Duration(seconds: 2),
-      ),
-    );
   }
 
   @override
@@ -330,7 +288,7 @@ class _CategoriasProductViewState extends State<CategoriasProductView> {
                                 final discountedPrice = snapshot.data!;
                                 return ProductCard2(
                                   product: product,
-                                  onAdd: () => onAdd(CartItem(
+                                  onAdd: () => _cartUsecase.onAddCart(CartItem(
                                       id_product: product.id_product,
                                       imageUrl: product.images[0],
                                       name: product.name,
