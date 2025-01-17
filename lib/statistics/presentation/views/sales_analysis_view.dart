@@ -1,65 +1,6 @@
+import 'dart:math';
 
-// import 'package:flutter/material.dart';
-// import '../widgets/net_profit_chart.dart';
-// import '../../domain/profit_data.dart';
-
-// class SalesAnalysisView extends StatelessWidget {
-//   final List<ProfitData> profitData;
-
-//   const SalesAnalysisView({Key? key, required this.profitData}) : super(key: key);
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       body: SafeArea(
-//         child: Column(
-//           children: [
-//             _buildHeader(),
-//             Expanded(
-//               child: SingleChildScrollView(
-//                 padding: const EdgeInsets.all(16),
-//                 child: Column(
-//                   children: [
-//                     const SizedBox(height: 16),
-//                     _buildNetProfitCard(),
-//                   ],
-//                 ),
-//               ),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-
-//   Widget _buildHeader() {
-//     return AppBar(
-//       title: const Text('Sales Analysis'),
-//       centerTitle: true,
-//     );
-//   }
-
-//   Widget _buildNetProfitCard() {
-//     return Card(
-//       elevation: 4,
-//       child: Padding(
-//         padding: const EdgeInsets.all(16),
-//         child: Column(
-//           crossAxisAlignment: CrossAxisAlignment.start,
-//           children: [
-//             const Text(
-//               'Net Profit for This Month',
-//               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-//             ),
-//             const SizedBox(height: 16),
-//             NetProfitChart(data: profitData),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
-
+import 'package:desarrollo_frontend/common/presentation/color_extension.dart';
 import 'package:desarrollo_frontend/statistics/domain/product_data.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -159,8 +100,25 @@ class SalesAnalysisView extends StatelessWidget {
     required this.profitData,
   }) : super(key: key);
 
+List<ProfitData> generateProfitDataWithColors(List<ProfitData> originalData) {
+  final random = Random();
+  return originalData.map((data) {
+    return ProfitData(
+      name: data.name,
+      value: data.value,
+      color: Color.fromARGB(
+        255,
+        random.nextInt(256), // Valor aleatorio para el canal rojo
+        random.nextInt(256), // Valor aleatorio para el canal verde
+        random.nextInt(256), // Valor aleatorio para el canal azul
+      ),
+    );
+  }).toList();
+}
+
   @override
   Widget build(BuildContext context) {
+    final profitDataWithColors = generateProfitDataWithColors(profitData);
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -175,7 +133,7 @@ class SalesAnalysisView extends StatelessWidget {
                     const SizedBox(height: 16),
                     _buildTrendAnalysisCard(),
                     const SizedBox(height: 16),
-                    _buildNetProfitCard(),
+                    _buildNetProfitCard(profitDataWithColors),
                   ],
                 ),
               ),
@@ -189,30 +147,7 @@ class SalesAnalysisView extends StatelessWidget {
   Widget _buildHeader() {
     return Column(
       children: [
-        Row(
-          children: [
-            IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: () {},
-            ),
-            const Text(
-              'Sales Analysis',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            _buildTabButton('Overview', true),
-            _buildTabButton('Market', false),
-            _buildTabButton('Mall', false),
-            _buildTabButton('Store', false),
-          ],
-        ),
+        const SizedBox(height: 20),
       ],
     );
   }
@@ -230,56 +165,70 @@ class SalesAnalysisView extends StatelessWidget {
     );
   }
 
-  Widget _buildAccumulatedProfitCard() {
-    return _buildCard(
-      'Contrast of Accumulated Profit',
-      SizedBox(
-        height: 200,
-        child: BarChart(
-          BarChartData(
-            alignment: BarChartAlignment.spaceAround,
-            maxY: 600,
-            barTouchData: BarTouchData(enabled: true),
-            titlesData: FlTitlesData(
-              show: true,
-              bottomTitles: AxisTitles(
-                sideTitles: SideTitles(
-                  showTitles: true,
-                  getTitlesWidget: (value, meta) {
-                    return Text('Product ${value.toInt() + 1}');
-                  },
+Widget _buildAccumulatedProfitCard() {
+  return _buildCard(
+    'Compras realizadas por producto',
+    SizedBox(
+      height: 200,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: SizedBox(
+          width: productsData.length * 80.0, // Aumenta el ancho para evitar superposición
+          child: BarChart(
+            BarChartData(
+              alignment: BarChartAlignment.spaceBetween, // Ajusta el espaciado entre grupos
+              maxY: 600,
+              barTouchData: BarTouchData(enabled: true),
+              titlesData: FlTitlesData(
+                show: true,
+                bottomTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: true,
+                    getTitlesWidget: (value, meta) {
+                      // Obtiene el índice actual y valida que esté dentro del rango
+                      int index = value.toInt();
+                      if (index >= 0 && index < productsData.length) {
+                        return Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: Text(
+                            productsData[index].name, 
+                            style: const TextStyle(fontSize: 10),
+                            overflow: TextOverflow.ellipsis, 
+                          ),
+                        );
+                      }
+                      return const SizedBox(); // Retorna un widget vacío si el índice es inválido
+                    },
+                  ),
                 ),
               ),
+              barGroups: productsData.asMap().entries.map((entry) {
+                final data = entry.value;
+                return BarChartGroupData(
+                  x: entry.key,
+                  barsSpace: 8, // Espaciado entre barras dentro del grupo
+                  barRods: [
+                    BarChartRodData(
+                      toY: data.quantity,
+                      width: 16,
+                      color: TColor.primary,
+                    ),
+                  ],
+                );
+              }).toList(),
             ),
-            barGroups: productsData.asMap().entries.map((entry) {
-              final data = entry.value;
-              return BarChartGroupData(
-                x: entry.key,
-                barRods: [
-                  BarChartRodData(
-                    toY: data.thisYear,
-                    color: Colors.blue[200],
-                  ),
-                  BarChartRodData(
-                    toY: data.target,
-                    color: Colors.blue,
-                  ),
-                  BarChartRodData(
-                    toY: data.lastYear,
-                    color: Colors.cyan,
-                  ),
-                ],
-              );
-            }).toList(),
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
+
+
 
   Widget _buildTrendAnalysisCard() {
     return _buildCard(
-      'Trend Analysis',
+      'Tendencia de compras mensuales',
       SizedBox(
         height: 200,
         child: LineChart(
@@ -290,15 +239,7 @@ class SalesAnalysisView extends StatelessWidget {
                   return FlSpot(data.x, data.actual);
                 }).toList(),
                 isCurved: true,
-                color: Colors.blue,
-                dotData: FlDotData(show: true),
-              ),
-              LineChartBarData(
-                spots: trendData.map((data) {
-                  return FlSpot(data.x, data.target);
-                }).toList(),
-                isCurved: true,
-                color: Colors.cyan,
+                color: TColor.secondary,
                 dotData: FlDotData(show: true),
               ),
             ],
@@ -308,9 +249,9 @@ class SalesAnalysisView extends StatelessWidget {
     );
   }
 
-Widget _buildNetProfitCard() {
+Widget _buildNetProfitCard(profitDataWithColors) {
   return _buildCard(
-    'Net Profit for This Month',
+    'Categorías más compradas',
     NetProfitChart(data: profitData),
   );
 }
@@ -333,7 +274,6 @@ Widget _buildNetProfitCard() {
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                const Icon(Icons.arrow_forward, size: 20),
               ],
             ),
             const SizedBox(height: 16),
@@ -343,39 +283,4 @@ Widget _buildNetProfitCard() {
       ),
     );
   }
-}
-
-// Data models
-
-// Example usage:
-void main() {
-  runApp(MaterialApp(
-    home: SalesAnalysisView(
-      productsData: [
-        ProductData(thisYear: 200, target: 500, lastYear: 100),
-        ProductData(thisYear: 300, target: 250, lastYear: 200),
-        ProductData(thisYear: 400, target: 300, lastYear: 300),
-      ],
-      trendData: List.generate(
-        6,
-            (index) => TrendData(
-          x: index.toDouble(),
-          actual: 400 + 200 * index.toDouble(),
-          target: 300 + 250 * index.toDouble(),
-        ),
-      ),
-      profitData: [
-  ProfitData(name: 'Rosa', value: 169, color: Colors.pink[100]!),
-  ProfitData(name: 'Lavanda', value: 143, color: Colors.purple[200]!),
-  ProfitData(name: 'Benzil Benzoato', value: 124, color: Colors.blue[300]!),
-  ProfitData(name: 'Almizole', value: 118, color: Colors.teal[300]!),
-  ProfitData(name: 'Sandalo', value: 116, color: Colors.green[400]!),
-  ProfitData(name: 'Alcohol', value: 110, color: Colors.indigo[900]!),
-  ProfitData(name: 'Jazmin', value: 106, color: Colors.blueGrey),
-  ProfitData(name: 'Pomelo', value: 92, color: Colors.grey[600]!),
-  ProfitData(name: 'Limón', value: 72, color: Colors.lime[300]!),
-  ProfitData(name: 'Naranja', value: 60, color: Colors.orange[200]!),
-],
-    ),
-  ));
 }

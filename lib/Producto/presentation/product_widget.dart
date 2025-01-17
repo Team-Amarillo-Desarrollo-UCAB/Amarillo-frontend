@@ -83,7 +83,8 @@ class _ProductCard2State extends State<ProductCard2> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const PerfumeDetailPage(),
+            builder: (context) => PerfumeDetailPage(product: widget.product),
+            // builder: (context) => PerfumeDetailPage(),
           ),
         );
       },

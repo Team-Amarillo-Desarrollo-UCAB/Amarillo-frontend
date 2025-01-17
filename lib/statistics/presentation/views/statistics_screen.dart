@@ -1,48 +1,85 @@
+import 'package:desarrollo_frontend/Combo/infrastructure/combo_service.dart';
 import 'package:desarrollo_frontend/statistics/domain/product_data.dart';
 import 'package:flutter/material.dart';
+import '../../../Producto/infrastructure/product_service.dart';
+import '../../../common/presentation/color_extension.dart';
+import '../../../order/infrastructure/order-service.dart';
+import '../../application/get_profit_usecase.dart';
 import '../../domain/profit_data.dart';
 import '../../domain/trend_data.dart';
 import 'sales_analysis_view.dart';
 
 class StatisticsScreen extends StatelessWidget {
   const StatisticsScreen({Key? key}) : super(key: key);
+  
+
+  Future<Map<String, dynamic>> fetchStatistics() async {
+    final productService = ProductService('https://amarillo-backend-production.up.railway.app');
+    final orderService = OrderService('https://amarillo-backend-production.up.railway.app');
+    final comboService = ComboService('https://amarillo-backend-production.up.railway.app');
+    final statisticsService = StatisticsService(
+      productService: productService,
+      orderService: orderService,
+      comboService: comboService,
+    );
+
+    final trends = await statisticsService.getPurchaseTrends();
+    final categories = await statisticsService.getMostPurchasedCategories();
+    final products = await statisticsService.getMostPurchasedProducts();
+
+    return {
+      'trends': trends,
+      'categories': categories,
+      'products': products,
+    };
+  }
 
   @override
   Widget build(BuildContext context) {
-    // Aquí pasas los datos de ejemplo o dinámicos
-    final productsData = [
-      ProductData(thisYear: 200, target: 500, lastYear: 100),
-      ProductData(thisYear: 300, target: 250, lastYear: 200),
-      ProductData(thisYear: 400, target: 300, lastYear: 300),
-    ];
-
-    final trendData = List.generate(
-      6,
-      (index) => TrendData(
-        x: index.toDouble(),
-        actual: 400 + 200 * index.toDouble(),
-        target: 300 + 250 * index.toDouble(),
-      ),
-    );
-
-    final profitData = [
-      ProfitData(name: 'Rosa', value: 169, color: Colors.pink[100]!),
-      ProfitData(name: 'Lavanda', value: 143, color: Colors.purple[200]!),
-      ProfitData(name: 'Benzil Benzoato', value: 124, color: Colors.blue[300]!),
-      ProfitData(name: 'Almizole', value: 118, color: Colors.teal[300]!),
-      ProfitData(name: 'Sandalo', value: 116, color: Colors.green[400]!),
-    ];
-
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Estadísticas'),
+        backgroundColor: TColor.secondary,
         centerTitle: true,
+        title: const Text('Estadísticas',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
       ),
-      body: SalesAnalysisView(
-        productsData: productsData,
-        trendData: trendData,
-        profitData: profitData,
+      body: FutureBuilder<Map<String, dynamic>>(
+        future: fetchStatistics(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(
+              child: Text(
+                'Error al cargar las estadísticas: ${snapshot.error}',
+                style: const TextStyle(color: Colors.red),
+              ),
+            );
+          } else if (snapshot.hasData) {
+            final data = snapshot.data!;
+            final trendData = data['trends'] as List<TrendData>;
+            final profitData = data['categories'] as List<ProfitData>;
+            final productsData = data['products'] as List<ProductData>;
+
+            return SalesAnalysisView(
+              productsData: productsData,
+              trendData: trendData,
+              profitData: profitData,
+            );
+          } else {
+            return const Center(
+              child: Text('No se encontraron datos.'),
+            );
+          }
+        },
       ),
     );
   }
 }
+

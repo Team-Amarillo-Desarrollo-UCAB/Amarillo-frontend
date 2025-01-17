@@ -1,10 +1,14 @@
+import 'package:desarrollo_frontend/Producto/domain/product.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_3d_viewer/flutter_3d_viewer.dart';
 import 'package:model_viewer_plus/model_viewer_plus.dart';
 
 
 class PerfumeDetailPage extends StatefulWidget {
-  const PerfumeDetailPage({Key? key}) : super(key: key);
+  final Product product;
+  const PerfumeDetailPage({
+    Key? key, required this.product
+    }) : super(key: key);
 
   @override
   State<PerfumeDetailPage> createState() => _PerfumeDetailPageState();
@@ -15,35 +19,7 @@ class _PerfumeDetailPageState extends State<PerfumeDetailPage> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
 
-  final List<Map<String, dynamic>> _media = [
-    {
-      'type': '3d', // Especifica que este es un modelo 3D.
-      'src': 'assets/3d/Alcohol_Gel_Bottle_0114001746_texture.glb',
-    },
-    {
-      'type': 'image', // Especifica que este es una imagen.
-      'src': 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-JcvdCWfmZ0XEtyscmk8wBpHATLPnqG.png',
-    },
-    {
-      'type': 'image',
-      'src': 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-JcvdCWfmZ0XEtyscmk8wBpHATLPnqG.png',
-    },
-  ];
 
-  final List<Map<String, dynamic>> similarProducts = [
-    {
-      'image': 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-JcvdCWfmZ0XEtyscmk8wBpHATLPnqG.png',
-      'name': 'N°5 L\'EAU',
-    },
-    {
-      'image': 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-JcvdCWfmZ0XEtyscmk8wBpHATLPnqG.png',
-      'name': 'COCO',
-    },
-    {
-      'image': 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-JcvdCWfmZ0XEtyscmk8wBpHATLPnqG.png',
-      'name': 'N°5',
-    },
-  ];
 
   @override
   void dispose() {
@@ -53,6 +29,7 @@ class _PerfumeDetailPageState extends State<PerfumeDetailPage> {
 
   @override
   Widget build(BuildContext context) {
+    final product = widget.product;
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
       body: SafeArea(
@@ -64,9 +41,8 @@ class _PerfumeDetailPageState extends State<PerfumeDetailPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildImageSlider(),
+                    _buildImageSlider(product),
                     _buildProductInfo(),
-                    _buildSimilarProducts(),
                   ],
                 ),
               ),
@@ -97,37 +73,35 @@ class _PerfumeDetailPageState extends State<PerfumeDetailPage> {
     );
   }
 
-Widget _buildImageSlider() {
+Widget _buildImageSlider(Product product) {
   return Stack(
     children: [
       SizedBox(
         height: 300,
         child: PageView.builder(
           controller: _pageController,
+          itemCount: product.image3d != null ? 1 : product.images.length, // Verifica cuántos elementos debe renderizar.
           onPageChanged: (index) {
             setState(() {
               _currentPage = index;
             });
           },
-          itemCount: _media.length,
           itemBuilder: (context, index) {
-            final item = _media[index];
-
-            if (item['type'] == '3d') {
-              // Renderiza el modelo 3D con ModelViewer
+            if (product.image3d != null && index == 0) {
+              // Si hay imagen 3D, muestra el modelo en el primer slide.
               return ModelViewer(
-                src: item['src'], // Ruta al modelo .glb
+                src: product.image3d!, // Ruta al modelo .glb
                 alt: "Modelo 3D",
                 ar: true, // Habilita realidad aumentada (opcional)
                 autoRotate: true,
                 cameraControls: true,
               );
             } else {
-              // Renderiza una imagen
+              // Si no hay imagen 3D, muestra las imágenes normales.
               return Container(
                 padding: const EdgeInsets.all(20),
                 child: Image.network(
-                  item['src'],
+                  product.images[0],
                   fit: BoxFit.contain,
                 ),
               );
@@ -135,32 +109,30 @@ Widget _buildImageSlider() {
           },
         ),
       ),
-
-        Positioned(
-          bottom: 20,
-          left: 0,
-          right: 0,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: List.generate(
-              _media.length,
-              (index) => Container(
-                margin: const EdgeInsets.symmetric(horizontal: 4),
-                width: 8,
-                height: 8,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: _currentPage == index
-                      ? Colors.black
-                      : Colors.grey.withOpacity(0.3),
-                ),
+      Positioned(
+        bottom: 10,
+        left: 0,
+        right: 0,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: List.generate(
+            product.image3d != null ? 1 : product.images.length,
+            (index) => Container(
+              margin: const EdgeInsets.symmetric(horizontal: 4),
+              width: 8,
+              height: 8,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: _currentPage == index ? Colors.black : Colors.grey,
               ),
             ),
           ),
         ),
-      ],
-    );
-  }
+      ),
+    ],
+  );
+}
+
 
   Widget _buildProductInfo() {
     return Padding(
@@ -213,62 +185,7 @@ Widget _buildImageSlider() {
     );
   }
 
-  Widget _buildSimilarProducts() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Padding(
-          padding: EdgeInsets.all(16.0),
-          child: Text(
-            'Similar this',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-        SizedBox(
-          height: 120,
-          child: ListView.builder(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            scrollDirection: Axis.horizontal,
-            itemCount: similarProducts.length,
-            itemBuilder: (context, index) {
-              return Container(
-                width: 100,
-                margin: const EdgeInsets.symmetric(horizontal: 4),
-                child: Column(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Image.network(
-                          similarProducts[index]['image'],
-                          fit: BoxFit.contain,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      similarProducts[index]['name'],
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-        ),
-      ],
-    );
-  }
-
+  
   Widget _buildBottomBar() {
     return Container(
       padding: const EdgeInsets.all(16),
