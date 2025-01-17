@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_3d_viewer/flutter_3d_viewer.dart';
 import 'package:model_viewer_plus/model_viewer_plus.dart';
 
+import '../../common/presentation/color_extension.dart';
+
 class PerfumeDetailPage extends StatefulWidget {
   final Product product;
   const PerfumeDetailPage({Key? key, required this.product}) : super(key: key);
@@ -209,26 +211,6 @@ class _PerfumeDetailPageState extends State<PerfumeDetailPage> {
       ),
       child: Row(
         children: [
-          Container(
-            width: 50,
-            height: 50,
-            margin: const EdgeInsets.only(right: 16),
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey[300]!),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: IconButton(
-              icon: Icon(
-                isFavorite ? Icons.favorite : Icons.favorite_border,
-                color: isFavorite ? Colors.red : Colors.grey,
-              ),
-              onPressed: () {
-                setState(() {
-                  isFavorite = !isFavorite;
-                });
-              },
-            ),
-          ),
           Expanded(
             child: ElevatedButton(
               onPressed: () {
@@ -247,14 +229,14 @@ class _PerfumeDetailPageState extends State<PerfumeDetailPage> {
                     context);
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.black,
+                backgroundColor: TColor.primary,
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
               child: const Text(
-                '+ Add To Cart',
+                'Añadir al carrito',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,

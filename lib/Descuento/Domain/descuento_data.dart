@@ -21,7 +21,7 @@ class DescuentoData {
         description: json['description'] ?? '',
         percentage: (json['percentage'] ?? 0).toDouble(),
         image: json['image'] ??
-            'https://t4.ftcdn.net/jpg/04/99/93/31/360_F_499933117_ZAUBfv3P1HEOsZDrnkbNCt4jc3AodArl.jpg',
+            'https://res.cloudinary.com/dxttqmyxu/image/upload/v1736998301/mimsoiff4abol3t809oz.png',
         fechaExp: json['expireDate'] ?? "2026-01-16T23:59:59.999Z");
   }
 }
