@@ -34,6 +34,7 @@ class _ProductViewState extends State<ProductView> {
   bool _hasMore = true;
   bool _isSearching = false;
   bool _initialLoadComplete = false;
+  bool _searchLoadComplete = false;
 
   final CartUsecase _cartUsecase = CartUsecase();
   final DescuentoUsecase _descuentoUsecase = DescuentoUsecase();
@@ -114,6 +115,7 @@ class _ProductViewState extends State<ProductView> {
   Future<void> _searchProductByName(String productName) async {
     setState(() {
       _isSearching = true;
+      _searchLoadComplete = false;
       _product.clear();
       _discountedPriceFutures.clear();
       _page = 1;
@@ -121,6 +123,15 @@ class _ProductViewState extends State<ProductView> {
     });
 
     String formattedProductName = Uri.encodeComponent(productName.trim());
+
+    Future.delayed(Duration(seconds: 3), () {
+      if (_isSearching) {
+        setState(() {
+          _searchLoadComplete = true;
+          _isSearching = false;
+        });
+      }
+    });
 
     try {
       Product product =
@@ -130,10 +141,12 @@ class _ProductViewState extends State<ProductView> {
         _discountedPriceFutures[product.id_product] =
             _descuentoUsecase.getDiscountedPriceProduct(product);
         _isSearching = false;
+        _searchLoadComplete = true;
       });
     } catch (error) {
       setState(() {
         _isSearching = false;
+        _searchLoadComplete = true;
         _product.clear();
       });
       print('Error al buscar producto: $error');
@@ -149,11 +162,12 @@ class _ProductViewState extends State<ProductView> {
         title: const Text('Productos',
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
         leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => const MainTabView()));
-            }),
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => const MainTabView()));
+          },
+        ),
         actions: [
           IconButton(
             icon: Icon(Icons.shopping_cart, color: TColor.black),
@@ -167,9 +181,9 @@ class _ProductViewState extends State<ProductView> {
         ],
       ),
       body: NotificationListener<ScrollNotification>(
-        onNotification: (ScrollNotification) {
-          if (ScrollNotification.metrics.pixels ==
-                  ScrollNotification.metrics.maxScrollExtent &&
+        onNotification: (ScrollNotification notification) {
+          if (notification.metrics.pixels ==
+                  notification.metrics.maxScrollExtent &&
               !_isSearching) {
             _loadMoreProducts();
           }
@@ -236,9 +250,9 @@ class _ProductViewState extends State<ProductView> {
                   ),
                 ),
                 const SizedBox(height: 10),
-                !_initialLoadComplete
+                (!_initialLoadComplete || _isSearching)
                     ? Center(child: CircularProgressIndicator())
-                    : _product.isEmpty
+                    : (_product.isEmpty && _searchLoadComplete)
                         ? Center(
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
