@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:http/http.dart' as http;
+import '../common/infrastructure/tokenUser.dart';
 import 'message_widget.dart';
 import 'dart:convert';
 
@@ -37,7 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Chatbot con Gemini AI')),
+      appBar: AppBar(title: Text('Godely Chatbot 🤖')),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
@@ -75,6 +76,15 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   const SizedBox(width: 15),
+                  IconButton(
+                    icon: Icon(Icons.send),
+                    onPressed: () {
+                      final message = _textController.text;
+                      if (message.isNotEmpty) {
+                        _sendChatMessage(message);
+                      }
+                    },
+                  ),
                 ],
               ),
             ),
@@ -107,12 +117,13 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _sendChatMessage(String message) async {
-    // setState(() {
-    //   messages.add({"sender": "user", "text": message});
-    // });
+    setState(() {
+      messages.add({"sender": "user", "text": message});
+    });
+    final token = await TokenUser().getToken();
     final productsResponse = await http.get(Uri.parse(backendUrl), headers: {
       'Authorization':
-          'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMyOTMwODJlLWQ4M2EtNDFlOC1hMDVlLTgzZDAwODRkNzMzYiIsImlhdCI6MTczNjk2MTcyOCwiZXhwIjoxNzM3MDQ4MTI4fQ.BOwr9QtDcykmgJ_sBuvb_F7TQHYXR8KUuFlSaJtiRt4',
+          'Bearer $token',
     });
 
     if (productsResponse.statusCode != 200) {

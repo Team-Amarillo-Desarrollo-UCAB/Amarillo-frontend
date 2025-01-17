@@ -15,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../Cupon/presentation/cupon_screen.dart';
 import '../../Users/domain/user_profile.dart';
+import '../../chatbot/prueba2.dart';
 import '../../common/infrastructure/base_url.dart';
 import '../../common/presentation/color_extension.dart';
 import '../../common/presentation/common_widget/category_cell.dart';
@@ -628,6 +629,19 @@ class _HomeViewState extends State<HomeView> {
             onTap: () {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => ComboView()));
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.chat,
+                color: Colors.white),
+            title: const Text('GoDely ChatBot',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                )),
+            onTap: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => HomeScreen()));
             },
           ),
           const SizedBox(height: 150),
