@@ -1,6 +1,6 @@
 import 'package:desarrollo_frontend/Carrito/application/cart_useCase.dart';
 import 'package:desarrollo_frontend/Carrito/presentation/cart_screen.dart';
-import 'package:desarrollo_frontend/descuento/infrastructure/descuento_service_search_by_id.dart';
+import 'package:desarrollo_frontend/descuento/application/descuento_UseCase.dart';
 import 'package:desarrollo_frontend/categorias/domain/category.dart';
 import 'package:desarrollo_frontend/categorias/infrasestructure/category_service.dart';
 import 'package:desarrollo_frontend/common/presentation/common_widget/category_cell.dart';
@@ -34,13 +34,13 @@ class _ProductViewState extends State<ProductView> {
   bool _hasMore = true;
   bool _isSearching = false;
 
-  final CartUsecase _cartService = CartUsecase();
+  final CartUsecase _cartUsecase = CartUsecase();
+  final DescuentoUsecase _descuentoUsecase = DescuentoUsecase();
   final ProductService _productService = ProductService(BaseUrl().BASE_URL);
   final ProductServiceSearch _productServiceSearch =
       ProductServiceSearch(BaseUrl().BASE_URL);
   final CategoryService _categoryService = CategoryService(BaseUrl().BASE_URL);
-  final DescuentoServiceSearchById _descuentoServiceSearchById =
-      DescuentoServiceSearchById(BaseUrl().BASE_URL);
+
   Map<String, Future<double>> _discountedPriceFutures = {};
 
   @override
@@ -81,7 +81,7 @@ class _ProductViewState extends State<ProductView> {
 
           for (var product in filteredProducts) {
             _discountedPriceFutures[product.id_product] =
-                _getDiscountedPrice(product);
+                _descuentoUsecase.getDiscountedPriceProduct(product);
           }
           _page++;
         }
@@ -106,26 +106,6 @@ class _ProductViewState extends State<ProductView> {
     }
   }
 
-  Future<double> _getDiscountedPrice(Product product) async {
-    if (product.discount != "") {
-      try {
-        final descuento = await _descuentoServiceSearchById
-            .getDescuentoById(product.discount);
-        final now = DateTime.now();
-
-        if (now.isBefore(descuento.fechaExp)) {
-          return double.parse(product.price) * (1 - descuento.percentage);
-        } else {
-          print(
-              'El descuento no es válido porque la fecha de expedición es posterior a la fecha actual.');
-        }
-      } catch (error) {
-        print('Error al obtener el descuento: $error');
-      }
-    }
-    return double.parse(product.price);
-  }
-
   Future<void> _searchProductByName(String productName) async {
     setState(() {
       _isSearching = true;
@@ -143,7 +123,7 @@ class _ProductViewState extends State<ProductView> {
       setState(() {
         _product = [product];
         _discountedPriceFutures[product.id_product] =
-            _getDiscountedPrice(product);
+            _descuentoUsecase.getDiscountedPriceProduct(product);
         _isSearching = false;
       });
     } catch (error) {
@@ -153,28 +133,6 @@ class _ProductViewState extends State<ProductView> {
       });
       print('Error al buscar producto: $error');
     }
-  }
-
-  void onAdd(CartItem item) async {
-    await _cartService.loadCartItems();
-    bool isProductInCart =
-        _cartService.cartItems.any((cartItem) => cartItem.name == item.name);
-    if (isProductInCart) {
-      CartItem existingItem = _cartService.cartItems
-          .firstWhere((cartItem) => cartItem.name == item.name);
-      existingItem.incrementQuantity();
-    } else {
-      _cartService.cartItems.add(item);
-    }
-    await _cartService.saveCartItems();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(isProductInCart
-            ? '${item.name} cantidad incrementada'
-            : '${item.name} añadido al carrito'),
-        duration: const Duration(seconds: 2),
-      ),
-    );
   }
 
   @override
@@ -317,17 +275,19 @@ class _ProductViewState extends State<ProductView> {
                                 final discountedPrice = snapshot.data!;
                                 return ProductCard2(
                                   product: product,
-                                  onAdd: () => onAdd(CartItem(
-                                    id_product: product.id_product,
-                                    imageUrl: product.images[0],
-                                    name: product.name,
-                                    price: discountedPrice,
-                                    description: product.description,
-                                    peso: product.peso,
-                                    isCombo: false,
-                                    discount: product.discount,
-                                    category: product.category,
-                                  )),
+                                  onAdd: () => _cartUsecase.onAddCart(
+                                      CartItem(
+                                        id_product: product.id_product,
+                                        imageUrl: product.images[0],
+                                        name: product.name,
+                                        price: discountedPrice,
+                                        description: product.description,
+                                        peso: product.peso,
+                                        isCombo: false,
+                                        discount: product.discount,
+                                        category: product.category,
+                                      ),
+                                      context),
                                 );
                               }
                             },
