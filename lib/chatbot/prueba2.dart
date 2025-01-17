@@ -116,22 +116,53 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+Future<List> fetchAllProducts() async {
+  final token = await TokenUser().getToken();
+  final List allProducts = [];
+  int currentPage = 1;
+  int perPage = 5;
+  bool hasMore = true;
+
+  while (hasMore) {
+    final productsResponse = await http.get(
+      Uri.parse('$backendUrl?page=$currentPage&perPage=$perPage'),
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (productsResponse.statusCode == 200) {
+      final List products = jsonDecode(productsResponse.body);
+      allProducts.addAll(products);
+      
+      // Si recibimos menos productos que perPage, significa que es la última página
+      if (products.length < perPage) {
+        hasMore = false;
+      } else {
+        currentPage++; // Si no es la última página, pasamos a la siguiente
+      }
+    } else {
+      _showError('No se pudo obtener productos.');
+      hasMore = false; // Detener el bucle si la solicitud falla
+    }
+  }
+
+  return allProducts;
+}
+
   Future<void> _sendChatMessage(String message) async {
     setState(() {
       messages.add({"sender": "user", "text": message});
     });
     final token = await TokenUser().getToken();
-    final productsResponse = await http.get(Uri.parse(backendUrl), headers: {
-      'Authorization':
-          'Bearer $token',
-    });
+    final productsResponse = await fetchAllProducts();
 
-    if (productsResponse.statusCode != 200) {
+    if (productsResponse.isEmpty) {
       _showError('No se pudo obtener una respuesta');
     }
-    print("response:" + productsResponse.body);
+    print("response:" + productsResponse.toString());
     // Decodifica la lista de productos
-    final List products = jsonDecode(productsResponse.body);
+    final List products = productsResponse;
     final prompt =
       'El usuario dijo: "$message". Aquí hay una lista de productos:${products.map((p) => "${p['name']}").join(', ')}.Selecciona los productos que sean relevantes para la solicitud del usuario. Genera una respuesta cálida y amigable para el usuario.';
     try{
