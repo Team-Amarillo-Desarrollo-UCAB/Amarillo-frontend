@@ -27,8 +27,8 @@ void showDetailCartItemDialog(BuildContext context, CartItem product,
                   product.name,
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    fontWeight: FontWeight.w900,
-                    fontSize: media.width * 0.05,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
                   ),
                 ),
                 SizedBox(height: media.height * 0.02),
@@ -40,7 +40,8 @@ void showDetailCartItemDialog(BuildContext context, CartItem product,
                 const Text(
                   'Descripción:',
                   style: TextStyle(
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
                   ),
                 ),
                 SizedBox(height: media.height * 0.01),
@@ -50,9 +51,8 @@ void showDetailCartItemDialog(BuildContext context, CartItem product,
                     product.description,
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: media.width * 0.035,
-                      color: TColor.placeholder,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
                     ),
                   ),
                 ),
@@ -61,7 +61,8 @@ void showDetailCartItemDialog(BuildContext context, CartItem product,
                   const Text(
                     'Lista de Productos:',
                     style: TextStyle(
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
                     ),
                   ),
                   Padding(
@@ -82,9 +83,8 @@ void showDetailCartItemDialog(BuildContext context, CartItem product,
                               return Text(
                                 snapshot.data!.name,
                                 style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: media.width * 0.035,
-                                  color: TColor.placeholder,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
                                 ),
                               );
                             } else {
@@ -103,24 +103,24 @@ void showDetailCartItemDialog(BuildContext context, CartItem product,
                     const Text(
                       'Precio:',
                       style: TextStyle(
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
                       ),
                     ),
                     SizedBox(width: media.width * 0.02),
                     Text(
                       '${product.price.toStringAsFixed(2)} USD',
                       style: TextStyle(
-                        fontWeight: FontWeight.w900,
-                        fontSize: media.width * 0.04,
-                        color: Colors.green,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
                       ),
                     ),
                     SizedBox(width: media.width * 0.02),
                     Text(
                       product.peso,
                       style: TextStyle(
-                        fontWeight: FontWeight.w900,
-                        fontSize: media.width * 0.04,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
                       ),
                     ),
                   ],

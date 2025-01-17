@@ -173,11 +173,9 @@ class _CartScreenState extends State<CartScreen> {
                     child: const Text(
                       'Proceder a la orden',
                       style: TextStyle(
-                        fontFamily: 'Inter',
-                        fontWeight: FontWeight.w900,
-                        fontSize: 15,
-                        color: Colors.white,
-                      ),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          color: Colors.white),
                     ),
                   ),
                 ),

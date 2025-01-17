@@ -25,7 +25,8 @@ class _DetailedMapViewState extends State<DetailedMapView> {
   int routeIndex = 0;
   late Timer movementTimer;
 
-  final String apiKey = '5b3ce3597851110001cf62481239918cf053437d8c9ad46a0fd38846';
+  final String apiKey =
+      '5b3ce3597851110001cf62481239918cf053437d8c9ad46a0fd38846';
 
   @override
   void initState() {
@@ -52,7 +53,7 @@ class _DetailedMapViewState extends State<DetailedMapView> {
 
       List<LatLng> points = [];
       for (var coord in routeGeometry) {
-        points.add(LatLng(coord[1], coord[0])); 
+        points.add(LatLng(coord[1], coord[0]));
       }
 
       setState(() {
@@ -63,9 +64,11 @@ class _DetailedMapViewState extends State<DetailedMapView> {
               routeIndex++;
               currentPosition = routePoints[routeIndex];
               // Verifica si el delivery ha llegado a su destino
-              if (_hasArrivedAtDestination(currentPosition, widget.destination)) {
+              if (_hasArrivedAtDestination(
+                  currentPosition, widget.destination)) {
                 timer.cancel();
-                _showArrivalDialog(context); // Mostrar el pop-up al llegar al destino
+                _showArrivalDialog(
+                    context); // Mostrar el pop-up al llegar al destino
               }
             });
           } else {
@@ -79,7 +82,8 @@ class _DetailedMapViewState extends State<DetailedMapView> {
   }
 
   bool _hasArrivedAtDestination(LatLng current, LatLng destination) {
-    const double threshold = 0.0002; // Aumentamos la tolerancia de la comparación
+    const double threshold =
+        0.0002; // Aumentamos la tolerancia de la comparación
     return (current.latitude - destination.latitude).abs() < threshold &&
         (current.longitude - destination.longitude).abs() < threshold;
   }
@@ -90,11 +94,23 @@ class _DetailedMapViewState extends State<DetailedMapView> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('¡Entrega Completa!'),
-          content: Text('¡Su delivery ya ha llegado!'),
+          title: Text('¡Entrega Completa!',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+              )),
+          content: Text('¡Su delivery ya ha llegado!',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+              )),
           actions: <Widget>[
             TextButton(
-              child: Text('Cerrar'),
+              child: Text('Cerrar',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  )),
               onPressed: () {
                 Navigator.of(context).pop(); // Cerrar el diálogo
               },
@@ -109,7 +125,11 @@ class _DetailedMapViewState extends State<DetailedMapView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Mapa detallado'),
+        title: Text('Mapa detallado',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+            )),
         centerTitle: true,
       ),
       body: GoogleMap(
