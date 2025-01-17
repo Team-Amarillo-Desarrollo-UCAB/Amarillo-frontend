@@ -38,6 +38,7 @@ class _CategoriasProductViewState extends State<CategoriasProductView> {
   bool _isLoading = false;
   bool _hasMore = true;
   bool _isSearching = false;
+  bool _initialLoadComplete = false;
   final CartUsecase _cartUsecase = CartUsecase();
   final ProductCategoryService _productService =
       ProductCategoryService(BaseUrl().BASE_URL);
@@ -50,13 +51,10 @@ class _CategoriasProductViewState extends State<CategoriasProductView> {
   @override
   void initState() {
     super.initState();
-    _loadMoreProducts();
-    _loadCategories();
+    _loadInitialData();
     if (widget.searchQuery != null && widget.searchQuery!.isNotEmpty) {
       _searchController.text = widget.searchQuery!;
       _searchProductByName(widget.searchQuery!);
-    } else {
-      _loadMoreProducts();
     }
   }
 
@@ -64,6 +62,13 @@ class _CategoriasProductViewState extends State<CategoriasProductView> {
   void dispose() {
     _searchController.dispose();
     super.dispose();
+  }
+
+  Future<void> _loadInitialData() async {
+    await Future.wait([_loadMoreProducts(), _loadCategories()]);
+    setState(() {
+      _initialLoadComplete = true;
+    });
   }
 
   Future<void> _loadMoreProducts() async {
@@ -244,67 +249,71 @@ class _CategoriasProductViewState extends State<CategoriasProductView> {
                   ),
                 ),
                 const SizedBox(height: 10),
-                _product.isEmpty
-                    ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Lottie.network(
-                              "https://assets10.lottiefiles.com/packages/lf20_02epxjye.json",
-                              width: MediaQuery.of(context).size.width / 3 * 2,
-                            ),
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 40),
-                              child: Text(
-                                "No se ha encontrado el producto: '${_searchController.text}'",
-                                style: GoogleFonts.montserrat(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 30,
-                                  color: Colors.indigo,
+                !_initialLoadComplete
+                    ? Center(child: CircularProgressIndicator())
+                    : _product.isEmpty
+                        ? Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Lottie.network(
+                                  "https://assets10.lottiefiles.com/packages/lf20_02epxjye.json",
+                                  width:
+                                      MediaQuery.of(context).size.width / 3 * 2,
                                 ),
-                                textAlign: TextAlign.center,
-                              ),
+                                Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 40),
+                                  child: Text(
+                                    "No se ha encontrado el producto: '${_searchController.text}'",
+                                    style: GoogleFonts.montserrat(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 30,
+                                      color: Colors.indigo,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                      )
-                    : ListView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: _product.length,
-                        itemBuilder: (context, index) {
-                          final product = _product[index];
-                          return FutureBuilder<double>(
-                            future: _discountedPriceFutures[product.id_product],
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                return Center(
-                                    child: CircularProgressIndicator());
-                              } else if (snapshot.hasError) {
-                                return Text('Error: ${snapshot.error}');
-                              } else {
-                                final discountedPrice = snapshot.data!;
-                                return ProductCard2(
-                                  product: product,
-                                  onAdd: () => _cartUsecase.onAddCart(
-                                      CartItem(
-                                          id_product: product.id_product,
-                                          imageUrl: product.images[0],
-                                          name: product.name,
-                                          price: discountedPrice,
-                                          description: product.description,
-                                          peso: product.peso,
-                                          isCombo: false,
-                                          discount: product.discount,
-                                          category: product.category),
-                                      context),
-                                );
-                              }
+                          )
+                        : ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: _product.length,
+                            itemBuilder: (context, index) {
+                              final product = _product[index];
+                              return FutureBuilder<double>(
+                                future:
+                                    _discountedPriceFutures[product.id_product],
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return Center(
+                                        child: CircularProgressIndicator());
+                                  } else if (snapshot.hasError) {
+                                    return Text('Error: ${snapshot.error}');
+                                  } else {
+                                    final discountedPrice = snapshot.data!;
+                                    return ProductCard2(
+                                      product: product,
+                                      onAdd: () => _cartUsecase.onAddCart(
+                                          CartItem(
+                                              id_product: product.id_product,
+                                              imageUrl: product.images[0],
+                                              name: product.name,
+                                              price: discountedPrice,
+                                              description: product.description,
+                                              peso: product.peso,
+                                              isCombo: false,
+                                              discount: product.discount,
+                                              category: product.category),
+                                          context),
+                                    );
+                                  }
+                                },
+                              );
                             },
-                          );
-                        },
-                      ),
+                          ),
               ],
             ),
           ),
