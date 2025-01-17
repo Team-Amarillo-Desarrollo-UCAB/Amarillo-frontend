@@ -92,21 +92,17 @@ class UserProfileScreen extends StatelessWidget {
             ),
             ], 
           ), 
-                    ListTile(
-            leading: Icon(Icons.bar_chart, color: TColor.primary),
-            title: const Text('Estadísticas'),
-            trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const StatisticsScreen()),
-              );
-              },
-            ),
-             Divider(
-              thickness: 1,
-              color: TColor.secondary.withOpacity(0.5),
-            ),
+            //         ListTile(
+            // leading: Icon(Icons.bar_chart, color: TColor.primary),
+            // title: const Text('Estadísticas'),
+            // trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+            // onTap: () {
+            //   Navigator.push(
+            //     context,
+            //     MaterialPageRoute(builder: (context) => const StatisticsScreen()),
+            //   );
+            //   },
+            // ),
           ListTile(
             leading: const Icon(Icons.logout, color: Colors.red),
             title: const Text('Cerrar Sesión', style: TextStyle(color: Colors.red)),

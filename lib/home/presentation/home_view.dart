@@ -15,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../Cupon/presentation/cupon_screen.dart';
 import '../../Users/domain/user_profile.dart';
+import '../../Users/presentation/notification_screen.dart';
 import '../../chatbot/prueba2.dart';
 import '../../common/infrastructure/base_url.dart';
 import '../../common/presentation/color_extension.dart';
@@ -560,13 +561,24 @@ class _HomeViewState extends State<HomeView> {
                                   xOffset = 250;
                                   yOffset = 70;
                                   isDrawerOpen = true;
+                                  
                                 });
                               },
                             ),
-                      const Icon(
-                        Icons.notifications,
-                        color: Colors.yellow,
-                      ),
+                       IconButton(
+                              icon: const Icon(
+                                Icons.notifications,
+                                color: Colors.yellow,
+                              ),
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            NotificationsView()));
+                              },
+                            ),
+                      
                     ],
                   ),
                 ),
