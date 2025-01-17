@@ -129,7 +129,7 @@ class _CategoriasProductViewState extends State<CategoriasProductView> {
 
     String formattedProductName = Uri.encodeComponent(productName.trim());
 
-    Future.delayed(Duration(seconds: 3), () {
+    Future.delayed(Duration(seconds: 5), () {
       if (_isSearching) {
         setState(() {
           _searchLoadComplete = true;
@@ -167,11 +167,12 @@ class _CategoriasProductViewState extends State<CategoriasProductView> {
         title: const Text('Productos',
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
         leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => const ProductView()));
-            }),
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => const ProductView()));
+          },
+        ),
         actions: [
           IconButton(
             icon: Icon(Icons.shopping_cart, color: TColor.black),
@@ -185,9 +186,9 @@ class _CategoriasProductViewState extends State<CategoriasProductView> {
         ],
       ),
       body: NotificationListener<ScrollNotification>(
-        onNotification: (ScrollNotification) {
-          if (ScrollNotification.metrics.pixels ==
-                  ScrollNotification.metrics.maxScrollExtent &&
+        onNotification: (ScrollNotification notification) {
+          if (notification.metrics.pixels ==
+                  notification.metrics.maxScrollExtent &&
               !_isSearching) {
             _loadMoreProducts();
           }
@@ -264,7 +265,7 @@ class _CategoriasProductViewState extends State<CategoriasProductView> {
                 const SizedBox(height: 10),
                 (!_initialLoadComplete || _isSearching)
                     ? Center(child: CircularProgressIndicator())
-                    : (_product.isEmpty || _searchLoadComplete)
+                    : (_product.isEmpty && _searchLoadComplete)
                         ? Center(
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
