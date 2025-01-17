@@ -51,7 +51,7 @@ class FirebaseApi {
       // Realiza la solicitud POST al servidor
       final response = await http.post(url, headers: headers, body: body);
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         print('Token enviado exitosamente');
       } else {
         print('Error al enviar token: ${response.statusCode}');
