@@ -250,6 +250,7 @@ class _MapScreenState extends State<MapScreen> {
         onPressed: () {
           widget.onLocationSelected(_selectedPosition, _selectedAddress);
         },
+        child: Icon(Icons.check),
       ),
     );
   }
