@@ -40,7 +40,7 @@ class CartUsecase {
     saveCartItems();
   }
 
-  void onAddCart(CartItem item) async {
+  void onAddCart(CartItem item, BuildContext context) async {
     await loadCartItems();
     bool isProductInCart =
         cartItems.any((cartItem) => cartItem.name == item.name);
@@ -52,5 +52,13 @@ class CartUsecase {
       cartItems.add(item);
     }
     await saveCartItems();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(isProductInCart
+            ? '${item.name} cantidad incrementada'
+            : '${item.name} añadido al carrito'),
+        duration: const Duration(seconds: 2),
+      ),
+    );
   }
 }

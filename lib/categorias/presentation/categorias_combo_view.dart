@@ -182,19 +182,20 @@ class _CategoriasComboViewState extends State<CategoriasComboView> {
                                   final discountedPrice = snapshot.data!;
                                   return ComboCard(
                                     combo: combo,
-                                    onAdd: () =>
-                                        _cartUsecase.onAddCart(CartItem(
-                                      id_product: combo.id_product,
-                                      imageUrl: combo.images[0],
-                                      name: combo.name,
-                                      price: discountedPrice,
-                                      description: combo.description,
-                                      peso: combo.peso,
-                                      productId: combo.productId,
-                                      isCombo: true,
-                                      discount: combo.discount,
-                                      category: combo.category,
-                                    )),
+                                    onAdd: () => _cartUsecase.onAddCart(
+                                        CartItem(
+                                          id_product: combo.id_product,
+                                          imageUrl: combo.images[0],
+                                          name: combo.name,
+                                          price: discountedPrice,
+                                          description: combo.description,
+                                          peso: combo.peso,
+                                          productId: combo.productId,
+                                          isCombo: true,
+                                          discount: combo.discount,
+                                          category: combo.category,
+                                        ),
+                                        context),
                                   );
                                 }
                               },

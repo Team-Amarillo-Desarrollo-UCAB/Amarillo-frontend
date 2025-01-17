@@ -403,23 +403,26 @@ class _HomeViewState extends State<HomeView> {
                                               return ComboCard(
                                                 combo: combo,
                                                 onAdd: () => _cartUsecase
-                                                    .onAddCart(CartItem(
-                                                        id_product:
-                                                            combo.id_product,
-                                                        imageUrl:
-                                                            combo.images[0],
-                                                        name: combo.name,
-                                                        price: discountedPrice,
-                                                        description:
-                                                            combo.description,
-                                                        peso: combo.peso,
-                                                        productId:
-                                                            combo.productId,
-                                                        isCombo: true,
-                                                        discount:
-                                                            combo.discount,
-                                                        category:
-                                                            combo.category)),
+                                                    .onAddCart(
+                                                        CartItem(
+                                                            id_product: combo
+                                                                .id_product,
+                                                            imageUrl: combo
+                                                                .images[0],
+                                                            name: combo.name,
+                                                            price:
+                                                                discountedPrice,
+                                                            description: combo
+                                                                .description,
+                                                            peso: combo.peso,
+                                                            productId: combo
+                                                                .productId,
+                                                            isCombo: true,
+                                                            discount:
+                                                                combo.discount,
+                                                            category:
+                                                                combo.category),
+                                                        context),
                                               );
                                             }
                                           },
@@ -467,22 +470,25 @@ class _HomeViewState extends State<HomeView> {
                                                   snapshot.data!;
                                               return ProductCard2(
                                                 product: product,
-                                                onAdd: () => _cartUsecase
-                                                    .onAddCart(CartItem(
-                                                        id_product:
-                                                            product.id_product,
-                                                        imageUrl:
-                                                            product.images[0],
-                                                        name: product.name,
-                                                        price: discountedPrice,
-                                                        description:
-                                                            product.description,
-                                                        peso: product.peso,
-                                                        isCombo: false,
-                                                        category:
-                                                            product.category,
-                                                        discount:
-                                                            product.discount)),
+                                                onAdd: () =>
+                                                    _cartUsecase.onAddCart(
+                                                        CartItem(
+                                                            id_product: product
+                                                                .id_product,
+                                                            imageUrl: product
+                                                                .images[0],
+                                                            name: product.name,
+                                                            price:
+                                                                discountedPrice,
+                                                            description: product
+                                                                .description,
+                                                            peso: product.peso,
+                                                            isCombo: false,
+                                                            category: product
+                                                                .category,
+                                                            discount: product
+                                                                .discount),
+                                                        context),
                                               );
                                             }
                                           },

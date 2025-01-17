@@ -3,7 +3,7 @@ import 'package:desarrollo_frontend/Carrito/presentation/cart_screen.dart';
 import 'package:desarrollo_frontend/Combo/domain/combo.dart';
 import 'package:desarrollo_frontend/Combo/infrastructure/combo_service.dart';
 import 'package:desarrollo_frontend/Combo/presentation/combo_widget.dart';
-import 'package:desarrollo_frontend/descuento/infrastructure/descuento_service_search_by_id.dart';
+import 'package:desarrollo_frontend/descuento/application/descuento_UseCase.dart';
 import 'package:desarrollo_frontend/categorias/domain/category.dart';
 import 'package:desarrollo_frontend/categorias/infrasestructure/category_service.dart';
 import 'package:desarrollo_frontend/common/infrastructure/base_url.dart';
@@ -29,8 +29,7 @@ class _ComboViewState extends State<ComboView> {
   final CartUsecase _cartUsecase = CartUsecase();
   final ComboService _comboService = ComboService(BaseUrl().BASE_URL);
   final CategoryService _categoryService = CategoryService(BaseUrl().BASE_URL);
-  final DescuentoServiceSearchById _descuentoServiceSearchById =
-      DescuentoServiceSearchById(BaseUrl().BASE_URL);
+  final DescuentoUsecase _descuentoUsecase = DescuentoUsecase();
   Map<String, Future<double>> _discountedPriceFutures = {};
   @override
   void initState() {
@@ -53,7 +52,7 @@ class _ComboViewState extends State<ComboView> {
           _combo.addAll(newProducts);
           for (var combo in newProducts) {
             _discountedPriceFutures[combo.id_product] =
-                _getDiscountedPrice(combo);
+                _descuentoUsecase.getDiscountedPriceCombo(combo);
           }
           _page++;
         }
@@ -75,48 +74,6 @@ class _ComboViewState extends State<ComboView> {
     } catch (error) {
       print('Error al obtener categorías: $error');
     }
-  }
-
-  Future<double> _getDiscountedPrice(Combo combo) async {
-    if (combo.discount != "") {
-      try {
-        final descuento =
-            await _descuentoServiceSearchById.getDescuentoById(combo.discount);
-        final now = DateTime.now();
-
-        if (now.isBefore(descuento.fechaExp)) {
-          return double.parse(combo.price) * (1 - descuento.percentage);
-        } else {
-          print(
-              'El descuento no es válido porque la fecha de expedición es posterior a la fecha actual.');
-        }
-      } catch (error) {
-        print('Error al obtener el descuento: $error');
-      }
-    }
-    return double.parse(combo.price);
-  }
-
-  void onAdd(CartItem item) async {
-    await _cartUsecase.loadCartItems();
-    bool isProductInCart =
-        _cartUsecase.cartItems.any((cartItem) => cartItem.name == item.name);
-    if (isProductInCart) {
-      CartItem existingItem = _cartUsecase.cartItems
-          .firstWhere((cartItem) => cartItem.name == item.name);
-      existingItem.incrementQuantity();
-    } else {
-      _cartUsecase.cartItems.add(item);
-    }
-    await _cartUsecase.saveCartItems();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(isProductInCart
-            ? '${item.name} cantidad incrementada'
-            : '${item.name} añadido al carrito'),
-        duration: const Duration(seconds: 2),
-      ),
-    );
   }
 
   @override
@@ -214,18 +171,20 @@ class _ComboViewState extends State<ComboView> {
                                   final discountedPrice = snapshot.data!;
                                   return ComboCard(
                                     combo: combo,
-                                    onAdd: () => onAdd(CartItem(
-                                      id_product: combo.id_product,
-                                      imageUrl: combo.images[0],
-                                      name: combo.name,
-                                      price: discountedPrice,
-                                      description: combo.description,
-                                      peso: combo.peso,
-                                      productId: combo.productId,
-                                      isCombo: true,
-                                      discount: combo.discount,
-                                      category: combo.category,
-                                    )),
+                                    onAdd: () => _cartUsecase.onAddCart(
+                                        CartItem(
+                                          id_product: combo.id_product,
+                                          imageUrl: combo.images[0],
+                                          name: combo.name,
+                                          price: discountedPrice,
+                                          description: combo.description,
+                                          peso: combo.peso,
+                                          productId: combo.productId,
+                                          isCombo: true,
+                                          discount: combo.discount,
+                                          category: combo.category,
+                                        ),
+                                        context),
                                   );
                                 }
                               },

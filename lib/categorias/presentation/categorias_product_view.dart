@@ -2,7 +2,6 @@ import 'package:desarrollo_frontend/Carrito/application/cart_useCase.dart';
 import 'package:desarrollo_frontend/Carrito/domain/cart_item.dart';
 import 'package:desarrollo_frontend/Carrito/presentation/cart_screen.dart';
 import 'package:desarrollo_frontend/descuento/application/descuento_UseCase.dart';
-import 'package:desarrollo_frontend/descuento/infrastructure/descuento_service_search_by_id.dart';
 import 'package:desarrollo_frontend/Producto/domain/product.dart';
 import 'package:desarrollo_frontend/Producto/infrastructure/product_category_service.dart';
 import 'package:desarrollo_frontend/Producto/infrastructure/product_service_search.dart';
@@ -288,16 +287,18 @@ class _CategoriasProductViewState extends State<CategoriasProductView> {
                                 final discountedPrice = snapshot.data!;
                                 return ProductCard2(
                                   product: product,
-                                  onAdd: () => _cartUsecase.onAddCart(CartItem(
-                                      id_product: product.id_product,
-                                      imageUrl: product.images[0],
-                                      name: product.name,
-                                      price: discountedPrice,
-                                      description: product.description,
-                                      peso: product.peso,
-                                      isCombo: false,
-                                      discount: product.discount,
-                                      category: product.category)),
+                                  onAdd: () => _cartUsecase.onAddCart(
+                                      CartItem(
+                                          id_product: product.id_product,
+                                          imageUrl: product.images[0],
+                                          name: product.name,
+                                          price: discountedPrice,
+                                          description: product.description,
+                                          peso: product.peso,
+                                          isCombo: false,
+                                          discount: product.discount,
+                                          category: product.category),
+                                      context),
                                 );
                               }
                             },
