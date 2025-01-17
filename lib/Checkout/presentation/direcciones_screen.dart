@@ -52,7 +52,7 @@ class ListaDireccionesState extends State<ListaDirecciones> {
           label: Text(
             'Añadir nueva dirección',
             style: TextStyle(
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.bold,
                 fontSize: 16,
                 color: TColor.primary),
           ),

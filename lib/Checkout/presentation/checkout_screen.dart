@@ -178,9 +178,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: TColor.white,
       appBar: AppBar(
-        titleSpacing: 0,
         centerTitle: true,
         backgroundColor: TColor.secondary,
         title: const Text(
@@ -199,14 +197,14 @@ class CheckoutScreenState extends State<CheckoutScreen> {
       ),
       body: SingleChildScrollView(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const Padding(
               padding: EdgeInsets.all(16.0),
               child: Text(
                 'Envía a',
                 style: TextStyle(
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.bold,
                   fontSize: 16,
                 ),
               ),
@@ -231,7 +229,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
               child: Text(
                 'Ingrese la fecha y hora de preferencial',
                 style: TextStyle(
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.bold,
                   fontSize: 16,
                 ),
               ),
@@ -250,7 +248,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
               child: Text(
                 'Seleccione el metodo de pago',
                 style: TextStyle(
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.bold,
                   fontSize: 16,
                 ),
               ),
@@ -275,7 +273,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                   const Text(
                     'Cupones',
                     style: TextStyle(
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.bold,
                       fontSize: 16,
                     ),
                   ),
@@ -284,15 +282,15 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                       ? const Text(
                           'No hay cupón seleccionado',
                           style: TextStyle(
-                            fontWeight: FontWeight.w400,
-                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
                           ),
                         )
                       : Text(
                           'Cupón seleccionado: ${selectedCupon!.code} - ${selectedCupon!.amount}%',
                           style: const TextStyle(
-                            fontWeight: FontWeight.w400,
-                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
                           ),
                         ),
                   const SizedBox(height: 10),
@@ -305,7 +303,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                     label: Text(
                       'Seleccionar cupón',
                       style: TextStyle(
-                          fontWeight: FontWeight.w600,
+                          fontWeight: FontWeight.bold,
                           fontSize: 16,
                           color: TColor.primary),
                     ),
