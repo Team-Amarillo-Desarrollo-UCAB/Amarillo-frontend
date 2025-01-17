@@ -1,14 +1,13 @@
+import 'package:desarrollo_frontend/Carrito/application/cart_useCase.dart';
+import 'package:desarrollo_frontend/Carrito/domain/cart_item.dart';
 import 'package:desarrollo_frontend/Producto/domain/product.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_3d_viewer/flutter_3d_viewer.dart';
 import 'package:model_viewer_plus/model_viewer_plus.dart';
 
-
 class PerfumeDetailPage extends StatefulWidget {
   final Product product;
-  const PerfumeDetailPage({
-    Key? key, required this.product
-    }) : super(key: key);
+  const PerfumeDetailPage({Key? key, required this.product}) : super(key: key);
 
   @override
   State<PerfumeDetailPage> createState() => _PerfumeDetailPageState();
@@ -18,8 +17,8 @@ class _PerfumeDetailPageState extends State<PerfumeDetailPage> {
   bool isFavorite = false;
   final PageController _pageController = PageController();
   int _currentPage = 0;
-
-
+  bool _show3D = false;
+  final CartUsecase _cartUsecase = CartUsecase();
 
   @override
   void dispose() {
@@ -42,12 +41,12 @@ class _PerfumeDetailPageState extends State<PerfumeDetailPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _buildImageSlider(product),
-                    _buildProductInfo(),
+                    _buildProductInfo(product),
                   ],
                 ),
               ),
             ),
-            _buildBottomBar(),
+            _buildBottomBar(product),
           ],
         ),
       ),
@@ -73,68 +72,80 @@ class _PerfumeDetailPageState extends State<PerfumeDetailPage> {
     );
   }
 
-Widget _buildImageSlider(Product product) {
-  return Stack(
-    children: [
-      SizedBox(
-        height: 300,
-        child: PageView.builder(
-          controller: _pageController,
-          itemCount: product.image3d != null ? 1 : product.images.length, // Verifica cuántos elementos debe renderizar.
-          onPageChanged: (index) {
-            setState(() {
-              _currentPage = index;
-            });
-          },
-          itemBuilder: (context, index) {
-            if (product.image3d != null && index == 0) {
-              // Si hay imagen 3D, muestra el modelo en el primer slide.
-              return ModelViewer(
-                src: product.image3d!, // Ruta al modelo .glb
-                alt: "Modelo 3D",
-                ar: true, // Habilita realidad aumentada (opcional)
-                autoRotate: true,
-                cameraControls: true,
-              );
-            } else {
-              // Si no hay imagen 3D, muestra las imágenes normales.
-              return Container(
-                padding: const EdgeInsets.all(20),
-                child: Image.network(
-                  product.images[0],
-                  fit: BoxFit.contain,
-                ),
-              );
-            }
-          },
+  Widget _buildImageSlider(Product product) {
+    return Stack(
+      children: [
+        SizedBox(
+          height: 300,
+          child: PageView.builder(
+            controller: _pageController,
+            itemCount: 1, // Solo mostramos una imagen inicialmente
+            onPageChanged: (index) {
+              setState(() {
+                _currentPage = index;
+              });
+            },
+            itemBuilder: (context, index) {
+              if (_show3D && product.image3d != null) {
+                // Muestra el modelo 3D si el botón ha sido presionado y hay una imagen 3D
+                return ModelViewer(
+                  src: product.image3d!, // Ruta al modelo .glb
+                  alt: "Modelo 3D",
+                  ar: true, // Habilita realidad aumentada (opcional)
+                  autoRotate: true,
+                  cameraControls: true,
+                );
+              } else {
+                // Muestra la imagen 2D
+                return Container(
+                  padding: const EdgeInsets.all(20),
+                  child: Image.network(
+                    product.images[0],
+                    fit: BoxFit.contain,
+                  ),
+                );
+              }
+            },
+          ),
         ),
-      ),
-      Positioned(
-        bottom: 10,
-        left: 0,
-        right: 0,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: List.generate(
-            product.image3d != null ? 1 : product.images.length,
-            (index) => Container(
-              margin: const EdgeInsets.symmetric(horizontal: 4),
-              width: 8,
-              height: 8,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: _currentPage == index ? Colors.black : Colors.grey,
+        Positioned(
+          bottom: 10,
+          left: 0,
+          right: 0,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(
+              1,
+              (index) => Container(
+                margin: const EdgeInsets.symmetric(horizontal: 4),
+                width: 8,
+                height: 8,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: _currentPage == index ? Colors.black : Colors.grey,
+                ),
               ),
             ),
           ),
         ),
-      ),
-    ],
-  );
-}
+        if (product.image3d != null)
+          Positioned(
+            top: 10,
+            right: 10,
+            child: ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  _show3D = !_show3D; // Cambia entre la imagen 2D y 3D
+                });
+              },
+              child: Text(_show3D ? "Ver imagen 2D" : "Ver imagen 3D"),
+            ),
+          ),
+      ],
+    );
+  }
 
-
-  Widget _buildProductInfo() {
+  Widget _buildProductInfo(Product product) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -145,9 +156,9 @@ Widget _buildImageSlider(Product product) {
             children: [
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
+                children: [
                   Text(
-                    'Chanel',
+                    product.name,
                     style: TextStyle(
                       color: Colors.grey,
                       fontSize: 16,
@@ -155,7 +166,7 @@ Widget _buildImageSlider(Product product) {
                   ),
                   SizedBox(height: 4),
                   Text(
-                    'Eaude Toilette',
+                    product.peso,
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -163,8 +174,8 @@ Widget _buildImageSlider(Product product) {
                   ),
                 ],
               ),
-              const Text(
-                '\$135.00',
+              Text(
+                product.price,
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -173,8 +184,8 @@ Widget _buildImageSlider(Product product) {
             ],
           ),
           const SizedBox(height: 16),
-          const Text(
-            'N°5 L\'EAU is the N°5 of today. A vibrant abstract floral under the banner of modernity, with freshness as its core.',
+          Text(
+            product.description,
             style: TextStyle(
               color: Colors.grey,
               height: 1.5,
@@ -185,8 +196,7 @@ Widget _buildImageSlider(Product product) {
     );
   }
 
-  
-  Widget _buildBottomBar() {
+  Widget _buildBottomBar(Product product) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -222,7 +232,21 @@ Widget _buildImageSlider(Product product) {
           ),
           Expanded(
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                _cartUsecase.onAddCart(
+                    CartItem(
+                      id_product: product.id_product,
+                      imageUrl: product.images[0],
+                      name: product.name,
+                      price: double.parse(product.price),
+                      description: product.description,
+                      peso: product.peso,
+                      isCombo: false,
+                      discount: product.discount,
+                      category: product.category,
+                    ),
+                    context);
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.black,
                 padding: const EdgeInsets.symmetric(vertical: 16),
