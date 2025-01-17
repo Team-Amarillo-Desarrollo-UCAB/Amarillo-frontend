@@ -1,4 +1,5 @@
 import 'package:desarrollo_frontend/Checkout/domain/direccion.dart';
+import 'package:desarrollo_frontend/common/presentation/color_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
@@ -40,11 +41,15 @@ class AddDireccionDialogState extends State<AddDireccionDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text('Añadir nueva dirección',
+      title: Center(
+        child: Text(
+          'Añadir nueva dirección',
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 16,
-          )),
+          ),
+        ),
+      ),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -62,6 +67,8 @@ class AddDireccionDialogState extends State<AddDireccionDialog> {
             onPressed: _selectCoordinates,
             child: Text('Seleccionar ubicación en el mapa',
                 style: TextStyle(
+                  color: TColor.primaryText,
+                  backgroundColor: TColor.secondary,
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
                 )),
@@ -99,8 +106,10 @@ class AddDireccionDialogState extends State<AddDireccionDialog> {
           },
           child: Text('Cancelar',
               style: TextStyle(
+                color: TColor.primaryText,
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
+                backgroundColor: TColor.secondary,
               )),
         ),
         TextButton(
@@ -120,8 +129,10 @@ class AddDireccionDialogState extends State<AddDireccionDialog> {
           },
           child: Text('Añadir',
               style: TextStyle(
+                color: TColor.primaryText,
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
+                backgroundColor: TColor.secondary,
               )),
         ),
       ],
@@ -238,11 +249,6 @@ class _MapScreenState extends State<MapScreen> {
             markerId: MarkerId('selected-location'),
             position: _selectedPosition,
           ),
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          widget.onLocationSelected(_selectedPosition, _selectedAddress);
         },
       ),
     );
