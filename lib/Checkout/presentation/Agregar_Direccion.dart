@@ -246,6 +246,12 @@ class _MapScreenState extends State<MapScreen> {
           ),
         },
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          widget.onLocationSelected(_selectedPosition, _selectedAddress);
+        },
+        child: Icon(Icons.check),
+      ),
     );
   }
 }
