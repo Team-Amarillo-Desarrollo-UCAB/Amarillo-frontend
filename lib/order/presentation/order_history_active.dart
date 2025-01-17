@@ -50,7 +50,6 @@ class _HistoryOrderScreenState extends State<OrderHistoryScreen> {
         _scrollController.position.maxScrollExtent - 200 &&
         !_isLoading &&
         _hasMore) {
-      _loadMoreOrders();
     }
   }
 
@@ -91,33 +90,6 @@ class _HistoryOrderScreenState extends State<OrderHistoryScreen> {
     }
   }
 
-  void _loadMoreOrders() async {
-    if (_isLoading || !_hasMore) return;
-    setState(() => _isLoading = true);
-    try {
-      List<Order> newOrders = _isActiveTab
-          ? await orderService.getOrders(_page, ["CREATED","BEING PROCESSED","SHIPPED"])
-          : await orderService.getOrders(_page, ["DELIVERED","CANCELLED"]);
-      setState(() {
-        if (newOrders.isEmpty) {
-          _hasMore = false;
-        } else {
-          if (_isActiveTab) {
-            activeOrders.addAll(newOrders);
-          } else {
-            pastOrders.addAll(newOrders);
-          }
-          _page++;
-        }
-      });
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error al cargar más órdenes: $e')),
-      );
-    } finally {
-      setState(() => _isLoading = false);
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -282,7 +254,7 @@ class _HistoryOrderScreenState extends State<OrderHistoryScreen> {
                                         TextButton(
                                           onPressed: () {
                                             cancelOrder(context, order.orderId);
-                                            fetchOrders();
+                                            Future.delayed(Duration(seconds: 5), () => fetchOrders());
                                           },
                                           child: Text("Cancelar Orden",
                                               style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
@@ -400,7 +372,7 @@ class _HistoryOrderScreenState extends State<OrderHistoryScreen> {
                                                 ? "Reportar problema" 
                                                 : "Reportar problema", 
                                                 style: order.orderReport == ' ' 
-                                                ? TextStyle(fontSize: 16, color: TColor.primary, fontWeight: FontWeight.bold) 
+                                                ? TextStyle(fontSize: 15, color: TColor.primary, fontWeight: FontWeight.bold) 
                                                 : TextStyle(fontSize: 14, color: Colors.grey, fontWeight: FontWeight.bold),
                                           ),
                                         ),
@@ -413,13 +385,18 @@ class _HistoryOrderScreenState extends State<OrderHistoryScreen> {
                                             style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 14),
                                           ),
                                         ),
-                                      TextButton(
-                                        onPressed: () {
-                                          showRefundDialog(context, order.orderId);
-                                        },
-                                        child: Text(
-                                          "Pedir reembolso",
-                                          style: TextStyle(color: Colors.orange, fontWeight: FontWeight.bold, fontSize: 14),
+                                      Expanded(  // Agregar Expanded para evitar que el botón se pegue al borde
+                                        child: Align(
+                                           alignment: Alignment.centerRight,
+                                          child: TextButton(
+                                            onPressed: () {
+                                              showRefundDialog(context, order.orderId);
+                                            },
+                                            child: Text(
+                                              "Reembolsar",
+                                              style: TextStyle(color: Colors.orange, fontWeight: FontWeight.bold, fontSize: 15),
+                                            ),
+                                          ),
                                         ),
                                       ),
                                     ],

@@ -7,6 +7,7 @@ import 'dart:convert';
 class AddDireccionDialog extends StatefulWidget {
   final Function(Direccion) onAdd;
   const AddDireccionDialog({super.key, required this.onAdd});
+
   @override
   AddDireccionDialogState createState() => AddDireccionDialogState();
 }
@@ -15,36 +16,24 @@ class AddDireccionDialogState extends State<AddDireccionDialog> {
   final TextEditingController _nameController = TextEditingController();
   LatLng? _selectedPosition;
   String _selectedAddress = '';
+
   void _selectCoordinates() async {
     final result = await Navigator.of(context).push(MaterialPageRoute(
       builder: (context) => MapScreen(
-        onTap: (position) {
-          Navigator.of(context).pop(position);
+        onLocationSelected: (position, address) {
+          Navigator.of(context).pop({
+            'position': position,
+            'address': address,
+          });
         },
       ),
     ));
+
     if (result != null) {
       setState(() {
-        _selectedPosition = result;
+        _selectedPosition = result['position'];
+        _selectedAddress = result['address'];
       });
-      _getAddressFromCoordinates(
-          _selectedPosition!.latitude, _selectedPosition!.longitude);
-    }
-  }
-
-  Future<void> _getAddressFromCoordinates(
-      double latitude, double longitude) async {
-    final apiKey = 'pk.d24036d884f990ee74f8b4a9f2e46fbe';
-    final url =
-        'https://us1.locationiq.com/v1/reverse.php?key=$apiKey&lat=$latitude&lon=$longitude&format=json';
-    final response = await http.get(Uri.parse(url));
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      setState(() {
-        _selectedAddress = data['display_name'];
-      });
-    } else {
-      print('Failed to get address');
     }
   }
 
@@ -62,7 +51,7 @@ class AddDireccionDialogState extends State<AddDireccionDialog> {
           SizedBox(height: 16),
           ElevatedButton(
             onPressed: _selectCoordinates,
-            child: Text('Obtener coordenadas'),
+            child: Text('Seleccionar ubicación en el mapa'),
           ),
           if (_selectedPosition != null)
             Column(
@@ -104,26 +93,97 @@ class AddDireccionDialogState extends State<AddDireccionDialog> {
 }
 
 class MapScreen extends StatefulWidget {
-  final Function(LatLng) onTap;
-  MapScreen({required this.onTap});
+  final Function(LatLng, String) onLocationSelected;
+  MapScreen({required this.onLocationSelected});
+
   @override
   _MapScreenState createState() => _MapScreenState();
 }
 
 class _MapScreenState extends State<MapScreen> {
+  late GoogleMapController _mapController;
+  final TextEditingController _searchController = TextEditingController();
   LatLng _selectedPosition = LatLng(10.464898, -66.953192);
+  String _selectedAddress = '';
+
+  Future<void> _searchLocation(String query) async {
+    final apiKey = 'pk.d24036d884f990ee74f8b4a9f2e46fbe';
+    final url = 'https://us1.locationiq.com/v1/autocomplete.php?key=$apiKey&q=$query&countrycodes=ve&format=json';
+
+    final response = await http.get(Uri.parse(url));
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      if (data.isNotEmpty) {
+        final firstResult = data[0];
+        final latitude = double.parse(firstResult['lat']);
+        final longitude = double.parse(firstResult['lon']);
+        final address = firstResult['display_name'];
+
+        setState(() {
+          _selectedPosition = LatLng(latitude, longitude);
+          _selectedAddress = address;
+        });
+
+        _mapController.animateCamera(
+          CameraUpdate.newLatLng(_selectedPosition),
+        );
+      }
+    } else {
+      print('Error al buscar la ubicación');
+    }
+  }
+
+  Future<void> _getAddressFromCoordinates(double latitude, double longitude) async {
+    final apiKey = 'pk.d24036d884f990ee74f8b4a9f2e46fbe';
+    final url =
+        'https://us1.locationiq.com/v1/reverse.php?key=$apiKey&lat=$latitude&lon=$longitude&format=json';
+
+    final response = await http.get(Uri.parse(url));
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      setState(() {
+        _selectedAddress = data['display_name'];
+      });
+    } else {
+      print('Error al obtener la dirección');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Selecciona una ubicación'),
+        centerTitle: true,
+        bottom: PreferredSize(
+          preferredSize: Size.fromHeight(56.0),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              controller: _searchController,
+              decoration: InputDecoration(
+                hintText: 'Buscar ubicación...',
+                suffixIcon: IconButton(
+                  icon: Icon(Icons.search),
+                  onPressed: () => _searchLocation(_searchController.text),
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+              ),
+            ),
+          ),
+        ),
       ),
       body: GoogleMap(
-        onTap: (position) {
+        onMapCreated: (controller) {
+          _mapController = controller;
+        },
+        onTap: (position) async {
           setState(() {
             _selectedPosition = position;
           });
-          widget.onTap(position);
+          await _getAddressFromCoordinates(position.latitude, position.longitude);
         },
         initialCameraPosition: CameraPosition(
           target: _selectedPosition,
@@ -135,6 +195,12 @@ class _MapScreenState extends State<MapScreen> {
             position: _selectedPosition,
           ),
         },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          widget.onLocationSelected(_selectedPosition, _selectedAddress);
+        },
+        child: Icon(Icons.check),
       ),
     );
   }

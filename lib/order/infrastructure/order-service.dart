@@ -26,7 +26,7 @@ class OrderService {
         'Authorization': 'Bearer $token',
       }
     );
-  print("Código de respuesta: ${response.statusCode}"); // Debug
+  print("Código de respuesta amarillo: ${response.statusCode}"); // Debug
 
   if (response.statusCode == 200) {
     final Map<String, dynamic> decodedData = json.decode(response.body);
@@ -68,7 +68,7 @@ class OrderService {
           'Authorization': 'Bearer $token',
         },
       );
-      print("Estado: $s, Código de respuesta: ${response.statusCode}"); // Debug
+      print("Estado: $s, Código de respuesta orange: ${response.statusCode}"); // Debug
 
       if (response.statusCode == 200) {
         final List<dynamic> decodedData = json.decode(response.body);
@@ -101,9 +101,82 @@ class OrderService {
     }
   }
 
-
-  // Retornar todas las órdenes obtenidas
   return allOrders;
+}else if(baseUrl == 'https://godelybackgreen.up.railway.app/api') {
+  if(status.contains('CREATED') || (status.contains('BEING PROCESSED') || (status.contains('SHIPPED')))){
+    final url = Uri.parse('$baseUrl/order/many/active');
+    final response = await http.get(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+      print(status);
+      print("Código de respuesta verde: ${response.statusCode}"); 
+    if (response.statusCode == 200) {
+      final List<dynamic> decodedData = json.decode(response.body);
+      print(decodedData); 
+
+      return decodedData.map((json) {
+        final orderData = OrderDataGreen.fromJson(json);
+        return Order(
+          orderId: orderData.id,
+          items: orderData.products,
+          bundles: orderData.bundles,
+          latitude: orderData.latitude,
+          longitude: orderData.longitude,
+          directionName: orderData.directionName,
+          status: orderData.orderState,
+          totalAmount: orderData.totalAmount,
+          orderReport: 'No hay reporte',
+          subTotal: '0',
+          deliveryFee: '0',
+          discount: '0',
+          currency: orderData.currency,
+          paymentMethod: orderData.orderPayment,
+          creationDate: orderData.orderCreatedDate.toString(),
+        );
+      }).toList();
+  } else {
+    throw Exception('Error al obtener las órdenes con backend Verde en activas');
+  }
+  }else{
+      final url = Uri.parse('$baseUrl/order/many/past');
+    final response = await http.get(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+      print(status);
+      print("Código de respuesta verde past: ${response.statusCode}"); 
+    if (response.statusCode == 200) {
+      final List<dynamic> decodedData = json.decode(response.body);
+
+      return decodedData.map((json) {
+        final orderData = OrderDataGreen.fromJson(json);
+        return Order(
+          orderId: orderData.id,
+          items: orderData.products,
+          bundles: orderData.bundles,
+          latitude: orderData.latitude,
+          longitude: orderData.longitude,
+          directionName: orderData.directionName,
+          status: orderData.orderState,
+          totalAmount: orderData.totalAmount,
+          orderReport: 'No hay reporte',
+          subTotal: '0',
+          deliveryFee: '0',
+          discount: '0',
+          currency: orderData.currency,
+          paymentMethod: orderData.orderPayment,
+          creationDate: orderData.orderCreatedDate.toString(),
+        );
+      }).toList();
+  } else {
+    throw Exception('Error al obtener las órdenes con backend Verde');
+  }
+  }
 }else{
   throw Exception('Error al obtener las órdenes de los backends');
 }
@@ -232,7 +305,7 @@ Future<List<Order>> getAllOrders(int perpage, List<String> status) async {
           orderReport: ' ',
           subTotal: '0',
           deliveryFee: '0',
-          discount: orderData.orderDiscount,
+          discount: '0',
           currency: orderData.currency,
           paymentMethod: orderData.orderPayment,
           creationDate: orderData.orderCreatedDate.toString(),
@@ -267,7 +340,7 @@ Future<List<Order>> getAllOrders(int perpage, List<String> status) async {
           orderReport: ' ',
           subTotal: '0',
           deliveryFee: '0',
-          discount: orderData.orderDiscount,
+          discount: '0',
           currency: orderData.currency,
           paymentMethod: orderData.orderPayment,
           creationDate: orderData.orderCreatedDate.toString(),

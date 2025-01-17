@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:desarrollo_frontend/Carrito/domain/cart_item.dart';
+import 'package:desarrollo_frontend/common/presentation/custom_error_message.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -52,13 +54,12 @@ class CartUsecase {
       cartItems.add(item);
     }
     await saveCartItems();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(isProductInCart
+    SnackbarUtil.showAwesomeSnackBar(
+        context: context,
+        title: 'Listo!',
+        message: isProductInCart
             ? '${item.name} cantidad incrementada'
-            : '${item.name} añadido al carrito'),
-        duration: const Duration(seconds: 2),
-      ),
-    );
+            : '${item.name} añadido al carrito',
+        contentType: ContentType.success);
   }
 }
