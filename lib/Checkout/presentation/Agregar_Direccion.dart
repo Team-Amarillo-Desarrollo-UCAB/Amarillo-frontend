@@ -196,62 +196,70 @@ class _MapScreenState extends State<MapScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Selecciona una ubicación',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
-            )),
-        centerTitle: true,
-        bottom: PreferredSize(
-          preferredSize: Size.fromHeight(56.0),
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                hintText: 'Buscar ubicación...',
-                suffixIcon: IconButton(
-                  icon: Icon(Icons.search),
-                  onPressed: () => _searchLocation(_searchController.text),
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
+  return Scaffold(
+    appBar: AppBar(
+      title: Text('Selecciona una ubicación',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+          )),
+      centerTitle: true,
+      bottom: PreferredSize(
+        preferredSize: Size.fromHeight(56.0),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: TextField(
+            controller: _searchController,
+            decoration: InputDecoration(
+              hintText: 'Buscar ubicación...',
+              suffixIcon: IconButton(
+                icon: Icon(Icons.search),
+                onPressed: () => _searchLocation(_searchController.text),
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8.0),
               ),
             ),
           ),
         ),
       ),
-      body: GoogleMap(
-        onMapCreated: (controller) {
-          _mapController = controller;
-        },
-        onTap: (position) async {
-          setState(() {
-            _selectedPosition = position;
-          });
-          await _getAddressFromCoordinates(
-              position.latitude, position.longitude);
-        },
-        initialCameraPosition: CameraPosition(
-          target: _selectedPosition,
-          zoom: 15,
-        ),
-        markers: {
-          Marker(
-            markerId: MarkerId('selected-location'),
-            position: _selectedPosition,
+    ),
+    body: Stack(
+      children: [
+        GoogleMap(
+          onMapCreated: (controller) {
+            _mapController = controller;
+          },
+          onTap: (position) async {
+            setState(() {
+              _selectedPosition = position;
+            });
+            await _getAddressFromCoordinates(
+                position.latitude, position.longitude);
+          },
+          initialCameraPosition: CameraPosition(
+            target: _selectedPosition,
+            zoom: 15,
           ),
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          widget.onLocationSelected(_selectedPosition, _selectedAddress);
-        },
-        child: Icon(Icons.check),
-      ),
-    );
+          markers: {
+            Marker(
+              markerId: MarkerId('selected-location'),
+              position: _selectedPosition,
+            ),
+          },
+        ),
+        Positioned(
+          bottom: 25,
+          left: 16, 
+          child: FloatingActionButton(
+            onPressed: () {
+              widget.onLocationSelected(_selectedPosition, _selectedAddress);
+            },
+            child: Icon(Icons.check),
+          ),
+        ),
+      ],
+    ),
+  );
   }
 }

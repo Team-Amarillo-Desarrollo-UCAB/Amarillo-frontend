@@ -370,36 +370,22 @@ class _HistoryOrderScreenState extends State<OrderHistoryScreen> {
                                             );
                                           },
                                           child: Text(order.orderReport == ' ' 
-                                                ? "Reportar problema" 
-                                                : "Reportar problema", 
+                                                ? "Reportar" 
+                                                : "Reportar", 
                                                 style: order.orderReport == ' ' 
-                                                ? TextStyle(fontSize: 15, color: TColor.primary, fontWeight: FontWeight.bold) 
-                                                : TextStyle(fontSize: 14, color: Colors.grey, fontWeight: FontWeight.bold),
+                                                ? TextStyle( color: TColor.primary, fontWeight: FontWeight.bold) 
+                                                : TextStyle( color: Colors.grey, fontWeight: FontWeight.bold),
                                           ),
                                         ),
-                                      if (order.status != "CANCELLED") 
-                                        TextButton(
-                                          onPressed: () {
-                                          },
-                                          child: Text(
-                                            "Reordenar",
-                                            style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 14),
-                                          ),
-                                        ),
-                                      Expanded(  
-                                        child: Align(
-                                           alignment: Alignment.centerRight,
-                                          child: TextButton(
+                                          TextButton(
                                             onPressed: () {
                                               showRefundDialog(context, order.orderId);
                                             },
                                             child: Text(
                                               "Reembolsar",
-                                              style: TextStyle(color: Colors.orange, fontWeight: FontWeight.bold, fontSize: 15),
+                                              style: TextStyle(color: Colors.orange, fontWeight: FontWeight.bold),
                                             ),
                                           ),
-                                        ),
-                                      ),
                                     ],
                                   ),
                                 ],
