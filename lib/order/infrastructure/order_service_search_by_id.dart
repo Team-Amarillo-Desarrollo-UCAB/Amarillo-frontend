@@ -1,4 +1,5 @@
 import 'package:desarrollo_frontend/order/domain/orderData.dart';
+import 'package:desarrollo_frontend/order/domain/orderDataGreen.dart';
 import 'package:desarrollo_frontend/order/domain/orderDataOrange.dart';
 
 import '../../common/infrastructure/tokenUser.dart';
@@ -81,8 +82,43 @@ class OrderServiceSearchById {
       }else {
         throw Exception('Error al obtener la orden con backend naranja');
       }
+    }else if(baseUrl == 'https://godelybackgreen.up.railway.app/api') {
+      final response =
+          await http.get(
+            Uri.parse('$baseUrl/order/one/$orderId'),
+            headers: {
+              'Authorization': 'Bearer $token',
+            });
+      print("Código de respuesta: ${response.statusCode}"); // Debug
+      print("la url es: $baseUrl");
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(response.body);
+
+        final orderData = OrderDataGreen.fromJson(data);
+
+        return Order(
+        orderId: orderData.id,
+        items: orderData.products,
+        bundles: orderData.bundles,
+        latitude: double.parse(orderData.latitude),
+          longitude: double.parse(orderData.longitude),
+        directionName: orderData.directionName,
+        status: orderData.orderState,
+        totalAmount: orderData.totalAmount,
+        orderReport: '',
+        subTotal: '0',
+        deliveryFee: '0',
+        discount: '0',
+        currency: orderData.currency,
+        paymentMethod: orderData.orderPayment,
+        creationDate: orderData.orderCreatedDate.toString(),
+        );
+      }else {
+        throw Exception('Error al obtener la orden con backend verde');
+      }
+     
     }else{
-      throw Exception('Error al obtener la orden con backends');
+      throw Exception('Error al obtener la orden');
     }
   }
 }

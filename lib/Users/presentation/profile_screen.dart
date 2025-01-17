@@ -28,20 +28,7 @@ class UserProfileScreen extends StatelessWidget {
                 CircleAvatar(
                   radius: 80,
                   backgroundImage: NetworkImage(userProfile.image),
-                ), 
-                Positioned(
-                  bottom: 0,
-                  right: 0,
-                  child: GestureDetector(
-                    onTap: () {
-                    },
-                    child: CircleAvatar(
-                      radius: 20,
-                      backgroundColor: TColor.secondary,
-                      child: const Icon(Icons.edit, color: Colors.white),
-                    ), 
-                  ), 
-                ), 
+                ),
               ], // Children del Stack
             ), 
           ), 
@@ -79,8 +66,8 @@ class UserProfileScreen extends StatelessWidget {
                 title: const Text('Notificaciones'),
                 trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                 onTap: () { 
-                  /*Navigator.push(context, MaterialPageRoute(
-                                       builder: (context) => NotificationsView()));*/
+                  Navigator.push(context, MaterialPageRoute(
+                                       builder: (context) => NotificationsView()));
                 }, // onTap
               ), 
               Divider(

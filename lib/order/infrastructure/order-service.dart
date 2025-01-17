@@ -123,8 +123,8 @@ class OrderService {
           orderId: orderData.id,
           items: orderData.products,
           bundles: orderData.bundles,
-          latitude: orderData.latitude,
-          longitude: orderData.longitude,
+          latitude: double.parse(orderData.latitude),
+          longitude: double.parse(orderData.longitude),
           directionName: orderData.directionName,
           status: orderData.orderState,
           totalAmount: orderData.totalAmount,
@@ -159,8 +159,8 @@ class OrderService {
           orderId: orderData.id,
           items: orderData.products,
           bundles: orderData.bundles,
-          latitude: orderData.latitude,
-          longitude: orderData.longitude,
+          latitude: double.parse(orderData.latitude),
+          longitude: double.parse(orderData.longitude),
           directionName: orderData.directionName,
           status: orderData.orderState,
           totalAmount: orderData.totalAmount,
@@ -297,8 +297,8 @@ Future<List<Order>> getAllOrders(int perpage, List<String> status) async {
           orderId: orderData.id,
           items: orderData.products,
           bundles: orderData.bundles,
-          latitude: orderData.latitude,
-          longitude: orderData.longitude,
+          latitude: double.parse(orderData.latitude),
+          longitude: double.parse(orderData.longitude),
           directionName: orderData.directionName,
           status: orderData.orderState,
           totalAmount: orderData.totalAmount,
@@ -315,7 +315,7 @@ Future<List<Order>> getAllOrders(int perpage, List<String> status) async {
     throw Exception('Error al obtener las órdenes con backend Verde en activas');
   }
   }else{
-      final url = Uri.parse('$baseUrl/order/many/active');
+      final url = Uri.parse('$baseUrl/order/many/past');
     final response = await http.get(
         url,
         headers: {
@@ -332,8 +332,8 @@ Future<List<Order>> getAllOrders(int perpage, List<String> status) async {
           orderId: orderData.id,
           items: orderData.products,
           bundles: orderData.bundles,
-          latitude: orderData.latitude,
-          longitude: orderData.longitude,
+          latitude: double.parse(orderData.latitude),
+          longitude: double.parse(orderData.longitude),
           directionName: orderData.directionName,
           status: orderData.orderState,
           totalAmount: orderData.totalAmount,

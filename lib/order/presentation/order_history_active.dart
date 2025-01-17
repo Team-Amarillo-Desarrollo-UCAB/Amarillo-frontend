@@ -385,7 +385,7 @@ class _HistoryOrderScreenState extends State<OrderHistoryScreen> {
                                             style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 14),
                                           ),
                                         ),
-                                      Expanded(  // Agregar Expanded para evitar que el botón se pegue al borde
+                                      Expanded(  
                                         child: Align(
                                            alignment: Alignment.centerRight,
                                           child: TextButton(
