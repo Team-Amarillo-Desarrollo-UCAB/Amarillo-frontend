@@ -40,27 +40,55 @@ class AddDireccionDialogState extends State<AddDireccionDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text('Añadir nueva dirección'),
+      title: Text('Añadir nueva dirección',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+          )),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           TextField(
             controller: _nameController,
-            decoration: InputDecoration(labelText: 'Nombre de la dirección'),
+            decoration: InputDecoration(
+                labelText: 'Nombre de la dirección',
+                labelStyle: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                )),
           ),
           SizedBox(height: 16),
           ElevatedButton(
             onPressed: _selectCoordinates,
-            child: Text('Seleccionar ubicación en el mapa'),
+            child: Text('Seleccionar ubicación en el mapa',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                )),
           ),
-          if (_selectedPosition != null)
-            Column(
-              children: [
-                Text('Latitud: ${_selectedPosition!.latitude}'),
-                Text('Longitud: ${_selectedPosition!.longitude}'),
-              ],
-            ),
-          if (_selectedAddress.isNotEmpty) Text('Dirección: $_selectedAddress'),
+          if (_selectedPosition != null) SizedBox(height: 16),
+          Column(
+            children: [
+              Text('Latitud: ${_selectedPosition!.latitude}',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  )),
+              SizedBox(height: 10),
+              Text('Longitud: ${_selectedPosition!.longitude}',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  )),
+            ],
+          ),
+          SizedBox(height: 16),
+          if (_selectedAddress.isNotEmpty)
+            Text('Dirección: $_selectedAddress',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                )),
         ],
       ),
       actions: [
@@ -68,7 +96,11 @@ class AddDireccionDialogState extends State<AddDireccionDialog> {
           onPressed: () {
             Navigator.of(context).pop();
           },
-          child: Text('Cancelar'),
+          child: Text('Cancelar',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+              )),
         ),
         TextButton(
           onPressed: () {
@@ -85,7 +117,11 @@ class AddDireccionDialogState extends State<AddDireccionDialog> {
               Navigator.of(context).pop();
             }
           },
-          child: Text('Añadir'),
+          child: Text('Añadir',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+              )),
         ),
       ],
     );
@@ -108,7 +144,8 @@ class _MapScreenState extends State<MapScreen> {
 
   Future<void> _searchLocation(String query) async {
     final apiKey = 'pk.d24036d884f990ee74f8b4a9f2e46fbe';
-    final url = 'https://us1.locationiq.com/v1/autocomplete.php?key=$apiKey&q=$query&countrycodes=ve&format=json';
+    final url =
+        'https://us1.locationiq.com/v1/autocomplete.php?key=$apiKey&q=$query&countrycodes=ve&format=json';
 
     final response = await http.get(Uri.parse(url));
     if (response.statusCode == 200) {
@@ -133,7 +170,8 @@ class _MapScreenState extends State<MapScreen> {
     }
   }
 
-  Future<void> _getAddressFromCoordinates(double latitude, double longitude) async {
+  Future<void> _getAddressFromCoordinates(
+      double latitude, double longitude) async {
     final apiKey = 'pk.d24036d884f990ee74f8b4a9f2e46fbe';
     final url =
         'https://us1.locationiq.com/v1/reverse.php?key=$apiKey&lat=$latitude&lon=$longitude&format=json';
@@ -153,7 +191,11 @@ class _MapScreenState extends State<MapScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Selecciona una ubicación'),
+        title: Text('Selecciona una ubicación',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+            )),
         centerTitle: true,
         bottom: PreferredSize(
           preferredSize: Size.fromHeight(56.0),
@@ -183,7 +225,8 @@ class _MapScreenState extends State<MapScreen> {
           setState(() {
             _selectedPosition = position;
           });
-          await _getAddressFromCoordinates(position.latitude, position.longitude);
+          await _getAddressFromCoordinates(
+              position.latitude, position.longitude);
         },
         initialCameraPosition: CameraPosition(
           target: _selectedPosition,
@@ -200,7 +243,6 @@ class _MapScreenState extends State<MapScreen> {
         onPressed: () {
           widget.onLocationSelected(_selectedPosition, _selectedAddress);
         },
-        child: Icon(Icons.check),
       ),
     );
   }
