@@ -1,5 +1,6 @@
+import 'package:desarrollo_frontend/Carrito/application/cart_useCase.dart';
 import 'package:desarrollo_frontend/Carrito/presentation/cart_screen.dart';
-import 'package:desarrollo_frontend/Descuento/Infrastructure/descuento_service_search_by_id.dart';
+import 'package:desarrollo_frontend/descuento/infrastructure/descuento_service_search_by_id.dart';
 import 'package:desarrollo_frontend/categorias/domain/category.dart';
 import 'package:desarrollo_frontend/categorias/infrasestructure/category_service.dart';
 import 'package:desarrollo_frontend/common/presentation/common_widget/category_cell.dart';
@@ -12,7 +13,6 @@ import '../../common/presentation/color_extension.dart';
 import '../infrastructure/product_service.dart';
 import '../infrastructure/product_service_search.dart';
 import '../../Carrito/domain/cart_item.dart';
-import '../../Carrito/infrastructure/cart_service.dart';
 import '../domain/product.dart';
 import 'product_widget.dart';
 
@@ -34,7 +34,7 @@ class _ProductViewState extends State<ProductView> {
   bool _hasMore = true;
   bool _isSearching = false;
 
-  final CartService _cartService = CartService();
+  final CartUsecase _cartService = CartUsecase();
   final ProductService _productService = ProductService(BaseUrl().BASE_URL);
   final ProductServiceSearch _productServiceSearch =
       ProductServiceSearch(BaseUrl().BASE_URL);
@@ -153,17 +153,6 @@ class _ProductViewState extends State<ProductView> {
       });
       print('Error al buscar producto: $error');
     }
-  }
-
-
-  void _resetSearch() {
-    setState(() {
-      _isSearching = false;
-      _product.clear();
-      _page = 1;
-      _hasMore = true;
-      _loadMoreProducts();
-    });
   }
 
   void onAdd(CartItem item) async {
@@ -286,28 +275,29 @@ class _ProductViewState extends State<ProductView> {
                 const SizedBox(height: 10),
                 _product.isEmpty
                     ? Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Lottie.network(
-                          "https://assets10.lottiefiles.com/packages/lf20_02epxjye.json",
-                          width: MediaQuery.of(context).size.width / 4.5 * 2.5,
-                        ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 40),
-                          child: Text(
-                            "No se ha encontrado el producto: '${_searchController.text}'",
-                            style: GoogleFonts.montserrat(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 24,
-                              color: Colors.indigo,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Lottie.network(
+                              "https://assets10.lottiefiles.com/packages/lf20_02epxjye.json",
+                              width:
+                                  MediaQuery.of(context).size.width / 4.5 * 2.5,
                             ),
-                            textAlign: TextAlign.center,
-                          ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 40),
+                              child: Text(
+                                "No se ha encontrado el producto: '${_searchController.text}'",
+                                style: GoogleFonts.montserrat(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 24,
+                                  color: Colors.indigo,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                  )
+                      )
                     : ListView.builder(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),

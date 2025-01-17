@@ -1,20 +1,19 @@
+import 'package:desarrollo_frontend/Carrito/application/cart_useCase.dart';
 import 'package:desarrollo_frontend/Carrito/domain/cart_item.dart';
-import 'package:desarrollo_frontend/Carrito/infrastructure/cart_service.dart';
 import 'package:desarrollo_frontend/Carrito/presentation/cart_screen.dart';
 import 'package:desarrollo_frontend/Combo/domain/combo.dart';
 import 'package:desarrollo_frontend/Combo/infrastructure/combo_service.dart';
 import 'package:desarrollo_frontend/Combo/presentation/combo_widget.dart';
-import 'package:desarrollo_frontend/Descuento/Domain/descuento.dart';
-import 'package:desarrollo_frontend/Descuento/Infrastructure/descuento_service.dart';
-import 'package:desarrollo_frontend/Descuento/Infrastructure/descuento_service_search_by_id.dart';
+import 'package:desarrollo_frontend/descuento/domain/descuento.dart';
+import 'package:desarrollo_frontend/descuento/infrastructure/descuento_service.dart';
+import 'package:desarrollo_frontend/descuento/infrastructure/descuento_service_search_by_id.dart';
 import 'package:desarrollo_frontend/Producto/domain/product.dart';
 import 'package:desarrollo_frontend/Producto/infrastructure/product_service.dart';
 import 'package:desarrollo_frontend/Producto/presentation/product_widget.dart';
 import 'package:desarrollo_frontend/common/infrastructure/base_url.dart';
 import 'package:desarrollo_frontend/common/presentation/main_tabview.dart';
 import 'package:flutter/material.dart';
-
-import '../common/presentation/color_extension.dart';
+import '../../common/presentation/color_extension.dart';
 
 class PromocionesView extends StatefulWidget {
   const PromocionesView({super.key});
@@ -28,7 +27,7 @@ class _PromocionesViewState extends State<PromocionesView> {
   List<Product> _products = [];
   bool _isLoading = true;
   bool _showCombo = true;
-  final CartService _cartService = CartService();
+  final CartUsecase _cartUsecase = CartUsecase();
   final ComboService _comboService = ComboService(BaseUrl().BASE_URL);
   final DescuentoService _descuentoService =
       DescuentoService(BaseUrl().BASE_URL);
@@ -142,17 +141,17 @@ class _PromocionesViewState extends State<PromocionesView> {
   }
 
   void onAdd(CartItem item) async {
-    await _cartService.loadCartItems();
+    await _cartUsecase.loadCartItems();
     bool isProductInCart =
-        _cartService.cartItems.any((cartItem) => cartItem.name == item.name);
+        _cartUsecase.cartItems.any((cartItem) => cartItem.name == item.name);
     if (isProductInCart) {
-      CartItem existingItem = _cartService.cartItems
+      CartItem existingItem = _cartUsecase.cartItems
           .firstWhere((cartItem) => cartItem.name == item.name);
       existingItem.incrementQuantity();
     } else {
-      _cartService.cartItems.add(item);
+      _cartUsecase.cartItems.add(item);
     }
-    await _cartService.saveCartItems();
+    await _cartUsecase.saveCartItems();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(isProductInCart

@@ -1,25 +1,20 @@
 import 'dart:convert';
-
-import 'package:desarrollo_frontend/Carrito/infrastructure/cart_service_createorder.dart';
+import 'package:desarrollo_frontend/Carrito/application/cart_useCase.dart';
+import 'package:desarrollo_frontend/Carrito/infrastructure/cart_service_createOrder.dart';
 import 'package:desarrollo_frontend/Checkout/domain/direccion.dart';
 import 'package:desarrollo_frontend/Checkout/infrastructure/payment_service.dart';
 import 'package:desarrollo_frontend/Checkout/presentation/Agregar_Direccion.dart';
 import 'package:desarrollo_frontend/Checkout/presentation/direcciones_screen.dart';
 import 'package:desarrollo_frontend/Checkout/presentation/fecha_hora_widget.dart';
 import 'package:desarrollo_frontend/Checkout/presentation/metodo_de_pago_widget.dart';
-import 'package:desarrollo_frontend/Checkout/presentation/paypal_payment_page.dart';
 import 'package:desarrollo_frontend/Checkout/presentation/pie_pagina_widget.dart';
-import 'package:desarrollo_frontend/Combo/domain/combo.dart';
 import 'package:desarrollo_frontend/Cupon/domain/Cupon.dart';
 import 'package:desarrollo_frontend/Cupon/presentation/cupon_screen.dart';
-import 'package:desarrollo_frontend/Producto/domain/product.dart';
 import 'package:desarrollo_frontend/common/presentation/color_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../common/infrastructure/base_url.dart';
-import '../../common/presentation/common_widget/round_button.dart';
 import '../../Carrito/domain/cart_item.dart';
-import '../../Carrito/infrastructure/cart_service.dart';
 import '../../common/presentation/main_tabview.dart';
 import '../../order/application/order_repository.dart';
 import 'stripe_payment_view1.dart';
@@ -28,13 +23,13 @@ class CheckoutScreen extends StatefulWidget {
   final int totalItems;
   final double totalPrice;
   final List<CartItem> listCartItems;
-  final CartService cartService;
+  final CartUsecase cartUsecase;
   const CheckoutScreen(
       {super.key,
       required this.totalItems,
       required this.totalPrice,
       required this.listCartItems,
-      required this.cartService});
+      required this.cartUsecase});
 
   @override
   CheckoutScreenState createState() => CheckoutScreenState();
@@ -110,7 +105,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
       widget.listCartItems.clear();
       listProducts.clear();
       listCombos.clear();
-      widget.cartService.clearCartItems();
+      widget.cartUsecase.clearCartItems();
     });
   }
 

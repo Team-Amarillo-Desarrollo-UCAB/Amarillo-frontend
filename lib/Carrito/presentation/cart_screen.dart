@@ -1,10 +1,10 @@
+import 'package:desarrollo_frontend/Carrito/application/cart_useCase.dart';
 import 'package:desarrollo_frontend/Checkout/presentation/checkout_screen.dart';
 import 'package:flutter/material.dart';
 import '../../common/presentation/color_extension.dart';
 import '../../common/presentation/main_tabview.dart';
 import '../domain/cart_item.dart';
 import 'cart_item_widget.dart';
-import '../infrastructure/cart_service.dart';
 import 'error_cart_empty.dart';
 
 class CartScreen extends StatefulWidget {
@@ -15,8 +15,8 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
-   CartService _cartService =  CartService(); 
-    List<CartItem> _cartItems = [];
+  CartUsecase _cartUsecase = CartUsecase();
+  List<CartItem> _cartItems = [];
 
   @override
   void initState() {
@@ -25,9 +25,9 @@ class _CartScreenState extends State<CartScreen> {
   }
 
   Future<void> _loadCartItems() async {
-    await _cartService.loadCartItems();
+    await _cartUsecase.loadCartItems();
     setState(() {
-      _cartItems = _cartService.cartItems;
+      _cartItems = _cartUsecase.cartItems;
     });
   }
 
@@ -39,21 +39,21 @@ class _CartScreenState extends State<CartScreen> {
   void _incrementItemQuantity(CartItem item) {
     setState(() {
       item.incrementQuantity();
-      CartService().saveCartItems();
+      CartUsecase().saveCartItems();
     });
   }
 
   void _decrementItemQuantity(CartItem item) {
     setState(() {
       item.decrementQuantity();
-      CartService().saveCartItems();
+      CartUsecase().saveCartItems();
     });
   }
 
   void _removeItem(CartItem item) {
     setState(() {
       _cartItems.remove(item);
-      CartService().saveCartItems();
+      CartUsecase().saveCartItems();
     });
   }
 
@@ -80,21 +80,20 @@ class _CartScreenState extends State<CartScreen> {
               itemCount: _cartItems.length,
               itemBuilder: (context, index) {
                 final item = _cartItems[index];
-                 return Dismissible(
-                  key: Key(item.id_product), 
-                  direction: DismissDirection.endToStart, 
-                  
+                return Dismissible(
+                  key: Key(item.id_product),
+                  direction: DismissDirection.endToStart,
                   background: Container(
                     color: const Color.fromARGB(255, 255, 63, 49),
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     alignment: Alignment.centerRight,
                     child: const Icon(Icons.delete, color: Colors.white),
                   ),
-
                   onDismissed: (direction) {
-                    _removeItem(item); 
+                    _removeItem(item);
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('${item.name} eliminado del carrito')),
+                      SnackBar(
+                          content: Text('${item.name} eliminado del carrito')),
                     );
                   },
                   child: CartItemWidget(
@@ -148,20 +147,19 @@ class _CartScreenState extends State<CartScreen> {
                   ),
                   child: ElevatedButton(
                     onPressed: () {
-                      if (_cartItems.length > 0){
-                                             Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => CheckoutScreen(
-                                        totalItems: _cartItems.length,
-                                        totalPrice: _totalPrice,
-                                        cartService: _cartService, 
-                                        listCartItems: _cartItems, 
-                                      ),
-                                    ),
-                                  );
-                      }
-                      else{
+                      if (_cartItems.length > 0) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CheckoutScreen(
+                              totalItems: _cartItems.length,
+                              totalPrice: _totalPrice,
+                              cartUsecase: _cartUsecase,
+                              listCartItems: _cartItems,
+                            ),
+                          ),
+                        );
+                      } else {
                         showCartEmptyDialog(context);
                       }
                     },

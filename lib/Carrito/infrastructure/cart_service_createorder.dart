@@ -51,7 +51,6 @@ class CartServiceCreateOrder {
       'instructions': instructions,
     });
 
-    // Por ahora, el cuerpo para ORANGE es el mismo
     final bodyOrange = jsonEncode({
       'address': address,
       'latitude': latitude,

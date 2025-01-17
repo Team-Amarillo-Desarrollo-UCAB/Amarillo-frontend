@@ -1,7 +1,7 @@
 import 'package:desarrollo_frontend/Combo/domain/combo.dart';
 import 'package:desarrollo_frontend/Combo/presentation/detailcombo_screen.dart';
-import 'package:desarrollo_frontend/Descuento/Domain/descuento.dart';
-import 'package:desarrollo_frontend/Descuento/Infrastructure/descuento_service_search_by_id.dart';
+import 'package:desarrollo_frontend/descuento/domain/descuento.dart';
+import 'package:desarrollo_frontend/descuento/infrastructure/descuento_service_search_by_id.dart';
 import 'package:desarrollo_frontend/Producto/infrastructure/product_service_search_by_id.dart';
 import 'package:desarrollo_frontend/common/infrastructure/base_url.dart';
 import 'package:flutter/material.dart';

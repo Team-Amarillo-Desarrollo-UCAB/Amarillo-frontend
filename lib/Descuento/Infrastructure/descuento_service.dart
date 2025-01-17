@@ -1,6 +1,6 @@
 import 'dart:convert';
-import 'package:desarrollo_frontend/Descuento/Domain/descuento.dart';
-import 'package:desarrollo_frontend/Descuento/Domain/descuento_data.dart';
+import 'package:desarrollo_frontend/descuento/domain/descuento.dart';
+import 'package:desarrollo_frontend/descuento/domain/descuento_data.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 

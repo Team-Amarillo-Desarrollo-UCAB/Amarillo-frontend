@@ -1,6 +1,6 @@
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
+import 'package:desarrollo_frontend/Carrito/application/cart_useCase.dart';
 import 'package:desarrollo_frontend/Carrito/domain/cart_item.dart';
-import 'package:desarrollo_frontend/Carrito/infrastructure/cart_service.dart';
 import 'package:desarrollo_frontend/Carrito/presentation/cart_screen.dart';
 import 'package:flutter/material.dart';
 import '../../Combo/infrastructure/combo_service_search_by_id.dart';
@@ -29,7 +29,7 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
       ProductServiceSearchbyId(BaseUrl().BASE_URL);
   final ComboServiceSearchById _comboService =
       ComboServiceSearchById(BaseUrl().BASE_URL);
-  final CartService _cartService = CartService();
+  final CartUsecase _cartUsecase = CartUsecase();
 
   @override
   void initState() {
@@ -71,28 +71,28 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
   }
 
   void onAdd(CartItem item, int quantity) async {
-    await _cartService.loadCartItems();
+    await _cartUsecase.loadCartItems();
     bool isProductInCart =
-        _cartService.cartItems.any((cartItem) => cartItem.name == item.name);
+        _cartUsecase.cartItems.any((cartItem) => cartItem.name == item.name);
     if (!isProductInCart) {
-      _cartService.cartItems.add(item);
-      for (int i = 0; i < quantity-1 ; i++) {
+      _cartUsecase.cartItems.add(item);
+      for (int i = 0; i < quantity - 1; i++) {
         item.incrementQuantity();
       }
-      await _cartService.saveCartItems();
+      await _cartUsecase.saveCartItems();
       SnackbarUtil.showAwesomeSnackBar(
-      context: context,
-      title: 'Reordenado con exito',
-      message: 'Los productos ya se han añadido correctamente al carrito.',
-      contentType: ContentType.success,
-    );
+        context: context,
+        title: 'Reordenado con exito',
+        message: 'Los productos ya se han añadido correctamente al carrito.',
+        contentType: ContentType.success,
+      );
     } else {
       SnackbarUtil.showAwesomeSnackBar(
-      context: context,
-      title: 'Error',
-      message: 'El carrito debe estar vacío para reordenar.',
-      contentType: ContentType.failure,
-    );
+        context: context,
+        title: 'Error',
+        message: 'El carrito debe estar vacío para reordenar.',
+        contentType: ContentType.failure,
+      );
     }
   }
 
@@ -394,8 +394,7 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
               padding: const EdgeInsets.all(16.0),
               child: ElevatedButton(
                 onPressed: () async {
-                  await reordenarProductosYCombos(order.items,
-                      order.bundles); 
+                  await reordenarProductosYCombos(order.items, order.bundles);
                   Navigator.push(
                     context,
                     MaterialPageRoute(

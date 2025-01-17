@@ -1,5 +1,5 @@
-import 'package:desarrollo_frontend/Descuento/Domain/descuento.dart';
-import 'package:desarrollo_frontend/Descuento/Infrastructure/descuento_service_search_by_id.dart';
+import 'package:desarrollo_frontend/descuento/domain/descuento.dart';
+import 'package:desarrollo_frontend/descuento/infrastructure/descuento_service_search_by_id.dart';
 import 'package:desarrollo_frontend/Producto/domain/product.dart';
 import 'package:desarrollo_frontend/Producto/presentation/DetailProduct/detailproduct_screen.dart';
 import 'package:desarrollo_frontend/common/infrastructure/base_url.dart';
@@ -79,19 +79,18 @@ class _ProductCard2State extends State<ProductCard2> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-    onTap: () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const PerfumeDetailPage(),
-        ),
-      );
-    },
-  onLongPress: () {
-    // Muestra el diálogo al mantener presionado
-    showDetailProductDialog(context, widget.product, widget.onAdd);
-  },
-
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const PerfumeDetailPage(),
+          ),
+        );
+      },
+      onLongPress: () {
+        // Muestra el diálogo al mantener presionado
+        showDetailProductDialog(context, widget.product, widget.onAdd);
+      },
       child: Card(
         elevation: 5,
         margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),

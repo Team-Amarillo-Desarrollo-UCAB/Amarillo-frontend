@@ -1,7 +1,7 @@
+import 'package:desarrollo_frontend/Carrito/application/cart_useCase.dart';
 import 'package:desarrollo_frontend/Carrito/domain/cart_item.dart';
-import 'package:desarrollo_frontend/Carrito/infrastructure/cart_service.dart';
 import 'package:desarrollo_frontend/Carrito/presentation/cart_screen.dart';
-import 'package:desarrollo_frontend/Descuento/Infrastructure/descuento_service_search_by_id.dart';
+import 'package:desarrollo_frontend/descuento/infrastructure/descuento_service_search_by_id.dart';
 import 'package:desarrollo_frontend/Producto/domain/product.dart';
 import 'package:desarrollo_frontend/Producto/infrastructure/product_category_service.dart';
 import 'package:desarrollo_frontend/Producto/infrastructure/product_service_search.dart';
@@ -38,7 +38,7 @@ class _CategoriasProductViewState extends State<CategoriasProductView> {
   bool _isLoading = false;
   bool _hasMore = true;
   bool _isSearching = false;
-  final CartService _cartService = CartService();
+  final CartUsecase _cartUsecase = CartUsecase();
   final ProductCategoryService _productService =
       ProductCategoryService(BaseUrl().BASE_URL);
   final ProductServiceSearch _productServiceSearch =
@@ -73,7 +73,8 @@ class _CategoriasProductViewState extends State<CategoriasProductView> {
       _isLoading = true;
     });
     try {
-      List<Product> newProducts = await _productService.getProducts(_page, [widget.idCategory]);
+      List<Product> newProducts =
+          await _productService.getProducts(_page, [widget.idCategory]);
       setState(() {
         if (newProducts.isEmpty) {
           _hasMore = false;
@@ -161,17 +162,17 @@ class _CategoriasProductViewState extends State<CategoriasProductView> {
   }
 
   void onAdd(CartItem item) async {
-    await _cartService.loadCartItems();
+    await _cartUsecase.loadCartItems();
     bool isProductInCart =
-        _cartService.cartItems.any((cartItem) => cartItem.name == item.name);
+        _cartUsecase.cartItems.any((cartItem) => cartItem.name == item.name);
     if (isProductInCart) {
-      CartItem existingItem = _cartService.cartItems
+      CartItem existingItem = _cartUsecase.cartItems
           .firstWhere((cartItem) => cartItem.name == item.name);
       existingItem.incrementQuantity();
     } else {
-      _cartService.cartItems.add(item);
+      _cartUsecase.cartItems.add(item);
     }
-    await _cartService.saveCartItems();
+    await _cartUsecase.saveCartItems();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(isProductInCart
@@ -288,28 +289,28 @@ class _CategoriasProductViewState extends State<CategoriasProductView> {
                 const SizedBox(height: 10),
                 _product.isEmpty
                     ? Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Lottie.network(
-                            "https://assets10.lottiefiles.com/packages/lf20_02epxjye.json",
-                            width: MediaQuery.of(context).size.width / 3 * 2,
-                          ),
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 40),
-                            child: Text(
-                              "No se ha encontrado el producto: '${_searchController.text}'",
-                              style: GoogleFonts.montserrat(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 30,
-                                color: Colors.indigo,
-                              ),
-                              textAlign: TextAlign.center,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Lottie.network(
+                              "https://assets10.lottiefiles.com/packages/lf20_02epxjye.json",
+                              width: MediaQuery.of(context).size.width / 3 * 2,
                             ),
-                          ),
-                        ],
-                      ),
-                    )
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 40),
+                              child: Text(
+                                "No se ha encontrado el producto: '${_searchController.text}'",
+                                style: GoogleFonts.montserrat(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 30,
+                                  color: Colors.indigo,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
                     : ListView.builder(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),

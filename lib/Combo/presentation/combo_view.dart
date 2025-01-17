@@ -1,8 +1,9 @@
+import 'package:desarrollo_frontend/Carrito/application/cart_useCase.dart';
 import 'package:desarrollo_frontend/Carrito/presentation/cart_screen.dart';
 import 'package:desarrollo_frontend/Combo/domain/combo.dart';
 import 'package:desarrollo_frontend/Combo/infrastructure/combo_service.dart';
 import 'package:desarrollo_frontend/Combo/presentation/combo_widget.dart';
-import 'package:desarrollo_frontend/Descuento/Infrastructure/descuento_service_search_by_id.dart';
+import 'package:desarrollo_frontend/descuento/infrastructure/descuento_service_search_by_id.dart';
 import 'package:desarrollo_frontend/categorias/domain/category.dart';
 import 'package:desarrollo_frontend/categorias/infrasestructure/category_service.dart';
 import 'package:desarrollo_frontend/common/infrastructure/base_url.dart';
@@ -10,7 +11,6 @@ import 'package:desarrollo_frontend/common/presentation/common_widget/category_c
 import 'package:desarrollo_frontend/common/presentation/main_tabview.dart';
 import 'package:flutter/material.dart';
 import '../../Carrito/domain/cart_item.dart';
-import '../../Carrito/infrastructure/cart_service.dart';
 import '../../common/presentation/color_extension.dart';
 
 class ComboView extends StatefulWidget {
@@ -26,7 +26,7 @@ class _ComboViewState extends State<ComboView> {
   bool _isLoading = false;
   bool _hasMore = true;
   bool _isSearching = false;
-  final CartService _cartService = CartService();
+  final CartUsecase _cartUsecase = CartUsecase();
   final ComboService _comboService = ComboService(BaseUrl().BASE_URL);
   final CategoryService _categoryService = CategoryService(BaseUrl().BASE_URL);
   final DescuentoServiceSearchById _descuentoServiceSearchById =
@@ -98,17 +98,17 @@ class _ComboViewState extends State<ComboView> {
   }
 
   void onAdd(CartItem item) async {
-    await _cartService.loadCartItems();
+    await _cartUsecase.loadCartItems();
     bool isProductInCart =
-        _cartService.cartItems.any((cartItem) => cartItem.name == item.name);
+        _cartUsecase.cartItems.any((cartItem) => cartItem.name == item.name);
     if (isProductInCart) {
-      CartItem existingItem = _cartService.cartItems
+      CartItem existingItem = _cartUsecase.cartItems
           .firstWhere((cartItem) => cartItem.name == item.name);
       existingItem.incrementQuantity();
     } else {
-      _cartService.cartItems.add(item);
+      _cartUsecase.cartItems.add(item);
     }
-    await _cartService.saveCartItems();
+    await _cartUsecase.saveCartItems();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(isProductInCart
