@@ -350,44 +350,123 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                           instructions,
                           widget.totalPrice);
                       showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          title: const Text('¡Orden creada con éxito!'),
-                          content: Text(
-                              'Tu pedido ha sido procesado. ID de la orden: ${createService.idOrder}. Pronto recibirás una confirmación.'),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                _clearCart();
-                                Navigator.of(context).pop();
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => MainTabView()),
-                                );
-                              },
-                              child: const Text('Continuar'),
-                            ),
-                          ],
-                        ),
-                      );
+                          context: context,
+                          builder: (context) => AlertDialog(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20)),
+                                title: Column(
+                                  children: const [
+                                    Icon(Icons.check,
+                                        size: 50, color: Colors.orangeAccent),
+                                    SizedBox(height: 10),
+                                    Text(
+                                      "¡Orden creada con éxito!",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 18),
+                                    ),
+                                  ],
+                                ),
+                                content: Text(
+                                  "Tu pedido ha sido procesado. ID de la orden: ${createService.idOrder}. Pronto recibirás una confirmación.",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(fontSize: 16),
+                                ),
+                                actions: [
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      gradient: TColor.gradient,
+                                      borderRadius: BorderRadius.circular(10.0),
+                                    ),
+                                    child: ElevatedButton(
+                                      onPressed: () async {
+                                        _clearCart();
+                                        Navigator.of(context).pop();
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  MainTabView()),
+                                        );
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.transparent,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10.0),
+                                        ),
+                                        shadowColor: Colors.transparent,
+                                      ),
+                                      child: const Text(
+                                        'Continuar',
+                                        style: TextStyle(
+                                          fontFamily: 'Inter',
+                                          fontWeight: FontWeight.w900,
+                                          fontSize: 15,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ));
                     } catch (error) {
                       showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          title: const Text('Error al crear la orden'),
-                          content: Text(
-                              'Ha ocurrido un error al procesar tu pedido. Por favor, inténtalo de nuevo más tarde.\n\nError: $error'),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: const Text('Aceptar'),
-                            ),
-                          ],
-                        ),
-                      );
+                          context: context,
+                          builder: (context) => AlertDialog(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20)),
+                                title: Column(
+                                  children: const [
+                                    Icon(Icons.error,
+                                        size: 50, color: Colors.orangeAccent),
+                                    SizedBox(height: 10),
+                                    Text(
+                                      "Error al crear la orden",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 18),
+                                    ),
+                                  ],
+                                ),
+                                content: Text(
+                                  "Ha ocurrido un error al procesar tu pedido. Por favor, inténtalo de nuevo más tarde.\n\nError: $error",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(fontSize: 16),
+                                ),
+                                actions: [
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      gradient: TColor.gradient,
+                                      borderRadius: BorderRadius.circular(10.0),
+                                    ),
+                                    child: ElevatedButton(
+                                      onPressed: () async {
+                                        Navigator.of(context).pop();
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.transparent,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10.0),
+                                        ),
+                                        shadowColor: Colors.transparent,
+                                      ),
+                                      child: const Text(
+                                        'Aceptar',
+                                        style: TextStyle(
+                                          fontFamily: 'Inter',
+                                          fontWeight: FontWeight.w900,
+                                          fontSize: 15,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ));
                     }
                   },
                   icon: Icon(
