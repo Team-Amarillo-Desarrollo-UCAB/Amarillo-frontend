@@ -1,5 +1,6 @@
 import 'package:desarrollo_frontend/Checkout/domain/direccion.dart';
 import 'package:desarrollo_frontend/common/presentation/color_extension.dart';
+import 'package:desarrollo_frontend/common/presentation/common_widget/round_button.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
@@ -63,16 +64,25 @@ class AddDireccionDialogState extends State<AddDireccionDialog> {
                 )),
           ),
           SizedBox(height: 16),
-          ElevatedButton(
+          RoundButton(
+              title: "Seleccionar ubicacion en el mapa",
+              onPressed: () {
+                _selectCoordinates();
+              },
+              type: RoundButtonType.bgPrimary,
+              customGradient: TColor.gradient),
+
+          /*  ElevatedButton(
             onPressed: _selectCoordinates,
+            style: ElevatedButton.styleFrom( backgroundColor:  TColor.secondary ),
             child: Text('Seleccionar ubicación en el mapa',
                 style: TextStyle(
                   color: TColor.primaryText,
                   backgroundColor: TColor.secondary,
                   fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                )),
-          ),
+                  fontSize: 16
+                ))
+          ),*/
           SizedBox(height: 16),
           if (_selectedPosition != null)
             Column(
@@ -100,7 +110,32 @@ class AddDireccionDialogState extends State<AddDireccionDialog> {
         ],
       ),
       actions: [
-        TextButton(
+        RoundButton(
+            title: "Cancelar",
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            type: RoundButtonType.bgPrimary,
+            customGradient: TColor.gradient),
+        RoundButton(
+            title: "Añadir",
+            onPressed: () {
+              final nombre = _nameController.text;
+              if (nombre.isNotEmpty && _selectedAddress.isNotEmpty) {
+                final nuevaDireccion = Direccion(
+                  nombre: nombre,
+                  direccionCompleta: _selectedAddress,
+                  latitude: _selectedPosition!.latitude,
+                  longitude: _selectedPosition!.longitude,
+                  isSelected: false,
+                );
+                widget.onAdd(nuevaDireccion);
+                Navigator.of(context).pop();
+              }
+            },
+            type: RoundButtonType.bgPrimary,
+            customGradient: TColor.gradient),
+        /*TextButton(
           onPressed: () {
             Navigator.of(context).pop();
           },
@@ -109,7 +144,6 @@ class AddDireccionDialogState extends State<AddDireccionDialog> {
                 color: TColor.primaryText,
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
-                backgroundColor: TColor.secondary,
               )),
         ),
         TextButton(
@@ -132,9 +166,8 @@ class AddDireccionDialogState extends State<AddDireccionDialog> {
                 color: TColor.primaryText,
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
-                backgroundColor: TColor.secondary,
               )),
-        ),
+        ),*/
       ],
     );
   }
