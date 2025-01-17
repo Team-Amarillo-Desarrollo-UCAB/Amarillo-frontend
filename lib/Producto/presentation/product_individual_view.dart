@@ -99,8 +99,8 @@ class _PerfumeDetailPageState extends State<PerfumeDetailPage> {
                 // Muestra la imagen 2D
                 return Container(
                   padding: const EdgeInsets.all(20),
-                  child: Image(
-                    image: NetworkImage(product.images[0]),
+                  child: Image.network(
+                    (product.images[0] as NetworkImage).url,
                     fit: BoxFit.contain,
                   ),
                 );
