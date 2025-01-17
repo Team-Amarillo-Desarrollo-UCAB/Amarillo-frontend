@@ -15,7 +15,8 @@ class UserProfileScreen extends StatelessWidget {
     final userProfile = Provider.of<UserProfile>(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Perfil'), 
+        backgroundColor: TColor.secondary,
+        title: const Text('Perfil',style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)), 
         centerTitle: true,
         automaticallyImplyLeading: false, 
       ), 

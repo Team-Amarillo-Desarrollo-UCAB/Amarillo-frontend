@@ -50,6 +50,27 @@ class OrderServiceChangeState {
         errorMessage: response.body,
       );
     }
+  }else if((baseUrl == 'https://godelybackgreen.up.railway.app/api')) {
+    final url = Uri.parse('$baseUrl/order/update/$orderId');
+
+    final response = await http.patch(
+      url,
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(body),
+    );
+
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      return Response(isSuccessful: true);
+    } else {
+      return Response(
+        isSuccessful: false,
+        errorMessage: response.body,
+      );
+    }
+    
   }
     return Response(isSuccessful: false, errorMessage: 'Error al cambiar el estado de la orden');
   }
@@ -65,6 +86,11 @@ class OrderServiceChangeState {
         "status": "CANCELLED",
       };
       return await changeOrderState(body, orderId);
+    }else if('https://godelybackgreen.up.railway.app/api' == baseUrl) {
+      final Map<String, dynamic> body = {
+        "status": "CANCELLED",
+      };
+      return await changeOrderState(body, orderId); 
     }else{
       return Response(isSuccessful: false, errorMessage: 'Error al cambiar el estado de la orden');
     }

@@ -73,77 +73,76 @@ class _PerfumeDetailPageState extends State<PerfumeDetailPage> {
   }
 
   Widget _buildImageSlider(Product product) {
-    return Stack(
-      children: [
-        SizedBox(
-          height: 300,
-          child: PageView.builder(
-            controller: _pageController,
-            itemCount: 1, // Solo mostramos una imagen inicialmente
-            onPageChanged: (index) {
-              setState(() {
-                _currentPage = index;
-              });
-            },
-            itemBuilder: (context, index) {
-              if (_show3D && product.image3d != null) {
-                // Muestra el modelo 3D si el botón ha sido presionado y hay una imagen 3D
-                return ModelViewer(
-                  src: product.image3d!, // Ruta al modelo .glb
-                  alt: "Modelo 3D",
-                  ar: true, // Habilita realidad aumentada (opcional)
-                  autoRotate: true,
-                  cameraControls: true,
-                );
-              } else {
-                // Muestra la imagen 2D
-                return Container(
-                  padding: const EdgeInsets.all(20),
-                  child: Image.network(
+  return Stack(
+    children: [
+      SizedBox(
+        height: 300,
+        child: PageView.builder(
+          controller: _pageController,
+          itemCount: 1, 
+          onPageChanged: (index) {
+            setState(() {
+              _currentPage = index;
+            });
+          },
+          itemBuilder: (context, index) {
+            if (_show3D && product.image3d != '') {
+              return ModelViewer(
+                src: product.image3d!, 
+                alt: "Modelo 3D",
+                ar: true, 
+                autoRotate: true,
+                cameraControls: true,
+              );
+            } else {
+              return Container(
+                padding: const EdgeInsets.all(20),
+                child: Image.network(
                     (product.images[0] as NetworkImage).url,
                     fit: BoxFit.contain,
                   ),
-                );
-              }
-            },
-          ),
+              );
+            }
+          },
         ),
-        Positioned(
-          bottom: 10,
-          left: 0,
-          right: 0,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: List.generate(
-              1,
-              (index) => Container(
-                margin: const EdgeInsets.symmetric(horizontal: 4),
-                width: 8,
-                height: 8,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: _currentPage == index ? Colors.black : Colors.grey,
-                ),
+      ),
+      Positioned(
+        bottom: 10,
+        left: 0,
+        right: 0,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: List.generate(
+            1,
+            (index) => Container(
+              margin: const EdgeInsets.symmetric(horizontal: 4),
+              width: 8,
+              height: 8,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: _currentPage == index ? Colors.black : Colors.grey,
               ),
             ),
           ),
         ),
-        if (product.image3d != null)
-          Positioned(
-            top: 10,
-            right: 10,
-            child: ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  _show3D = !_show3D; // Cambia entre la imagen 2D y 3D
-                });
-              },
-              child: Text(_show3D ? "Ver imagen 2D" : "Ver imagen 3D"),
-            ),
+      ),
+      if (product.image3d != '')
+        Positioned(
+          top: 10,
+          right: 10,
+          child: ElevatedButton(
+            onPressed: () {
+              setState(() {
+                _show3D = !_show3D; 
+              });
+            },
+            child: Text(_show3D ? "Ver imagen 2D" : "Ver imagen 3D"),
           ),
-      ],
-    );
-  }
+        ),
+    ],
+  );
+}
+
 
   Widget _buildProductInfo(Product product) {
     return Padding(

@@ -95,7 +95,8 @@ class _HistoryOrderScreenState extends State<OrderHistoryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Historial de orden"),
+        backgroundColor: TColor.secondary,
+        title: const Text("Historial de orden",style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
         centerTitle: true,
       ),
       body: Column(
